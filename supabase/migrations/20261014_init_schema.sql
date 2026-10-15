@@ -131,6 +131,16 @@ CREATE POLICY "Internal staff can view leads" ON public.leads
 CREATE POLICY "Internal staff can update leads" ON public.leads
   FOR UPDATE TO authenticated USING (true);
 
+-- Allow web admin (anon key) to read and manage leads
+CREATE POLICY "Anon can view leads" ON public.leads
+  FOR SELECT TO anon USING (true);
+
+CREATE POLICY "Anon can update leads" ON public.leads
+  FOR UPDATE TO anon USING (true);
+
+CREATE POLICY "Anon can delete leads" ON public.leads
+  FOR DELETE TO anon USING (true);
+
 -- Authenticated staff can view and add consultation logs
 CREATE POLICY "Internal staff can view consultation history" ON public.consultation_history
   FOR SELECT TO authenticated USING (true);

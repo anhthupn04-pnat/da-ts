@@ -1,0 +1,12 @@
+# Large files & raw documents
+*.pdf
+*.docx
+brain_yeu_cau.txt
+pdf_extracted.json
+extract_summary.py
+prepare_seed_data.py
+
+# Dependencies & build outputs
+node_modules
+.next
+.git
