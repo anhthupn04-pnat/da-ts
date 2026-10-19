@@ -6,6 +6,7 @@ import {
   deleteLeadFromDb,
   batchAssignLeadsInDb
 } from '@/lib/db';
+import { requireManagerOrAdminAuth, requireAdmissionsAuth } from '@/lib/auth-middleware';
 
 /**
  * GET /api/leads
@@ -130,8 +131,13 @@ export async function PATCH(request: Request) {
   try {
     const body = await request.json();
 
-    // Phân công hàng loạt
+    // Phân công hàng loạt: Chỉ Quản lý (MANAGER) hoặc Quản trị viên (ADMIN) mới có quyền
     if (body.action === 'batch_assign') {
+      const auth = await requireManagerOrAdminAuth(request, body.requesterId);
+      if (!auth.authorized) {
+        return auth.response!;
+      }
+
       const { leadIds, staffId, staffName } = body;
       if (!Array.isArray(leadIds) || leadIds.length === 0 || !staffId) {
         return NextResponse.json(
@@ -143,7 +149,12 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ success: true, count });
     }
 
-    // Cập nhật từng hồ sơ
+    // Cập nhật từng hồ sơ: Chuyên viên tuyển sinh, Quản lý hoặc Admin
+    const auth = await requireAdmissionsAuth(request, body.requesterId);
+    if (!auth.authorized) {
+      return auth.response!;
+    }
+
     if (!body.id) {
       return NextResponse.json(
         { success: false, error: 'Thiếu mã hồ sơ thí sinh cần cập nhật.' },
@@ -164,9 +175,16 @@ export async function PATCH(request: Request) {
 /**
  * DELETE /api/leads
  * Xóa vĩnh viễn hồ sơ thí sinh khỏi Database
+ * Ràng buộc RBAC: Chỉ Quản lý (MANAGER) hoặc Quản trị viên (ADMIN) mới được xóa.
+ * Chuyên viên tuyển sinh (STAFF_ADMISSIONS) và Marketing (STAFF_MARKETING) không có quyền xóa.
  */
 export async function DELETE(request: Request) {
   try {
+    const auth = await requireManagerOrAdminAuth(request);
+    if (!auth.authorized) {
+      return auth.response!;
+    }
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 

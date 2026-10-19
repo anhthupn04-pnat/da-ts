@@ -7,7 +7,9 @@ import {
   getKPIStats,
   getStaffList,
   getConsultationLogs,
-  getCampaigns
+  getCampaigns,
+  getCurrentUser,
+  getSafeCurrentUser
 } from '@/data/storage';
 import { STUDY_PROGRAMS } from '@/data/programsData';
 import { Lead, KPIStats, UserProfile, MarketingCampaign } from '@/types';
@@ -27,27 +29,48 @@ import {
   Megaphone,
   PhoneCall,
   Target,
-  DollarSign
+  DollarSign,
+  ShieldAlert
 } from 'lucide-react';
 
 export default function ReportsPage() {
+  const [currentUser, setCurrentUser] = useState<UserProfile>(getSafeCurrentUser());
   const [leads, setLeads] = useState<Lead[]>([]);
   const [stats, setStats] = useState<KPIStats | null>(null);
   const [staffList, setStaffList] = useState<UserProfile[]>([]);
   const [campaigns, setCampaigns] = useState<MarketingCampaign[]>([]);
 
   useEffect(() => {
+    setCurrentUser(getCurrentUser() || getSafeCurrentUser());
     setLeads(getLeads());
     setStats(getKPIStats());
     setStaffList(getStaffList());
     setCampaigns(getCampaigns());
   }, []);
 
+  const canAccessReports = ['ADMIN', 'MANAGER'].includes(currentUser?.role?.toUpperCase?.());
+
+  if (!canAccessReports) {
+    return (
+      <div className="max-w-xl mx-auto my-12 p-8 bg-white rounded-3xl border border-rose-200 text-center space-y-4 shadow-lg">
+        <div className="w-14 h-14 mx-auto rounded-full bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
+          <ShieldAlert className="w-7 h-7" />
+        </div>
+        <h2 className="text-lg font-black text-slate-900">403 Forbidden - Quyền Truy Cập Bị Từ Chối</h2>
+        <p className="text-xs text-slate-600 leading-relaxed">
+          Phân hệ Báo Cáo & Thống Kê Tuyển Sinh Chuyên Sâu (Analytics Dashboard) chỉ dành riêng cho vai trò <strong>Quản Lý (MANAGER)</strong> và <strong>Quản Trị Viên (ADMIN)</strong>.
+        </p>
+      </div>
+    );
+  }
+
   if (!stats) return null;
 
   // 1. Phân tích hiệu suất chuyên viên (Officer Performance)
   const logs = getConsultationLogs();
-  const counselors = staffList.filter(s => s.role === 'counselor');
+  const counselors = staffList.filter(
+    s => s.role === 'counselor' || s.role === 'STAFF_ADMISSIONS' || (s.role as any) === 'STAFF'
+  );
   const officerPerformance = counselors.map(c => {
     const assignedLeads = leads.filter(l => l.assignedTo === c.id);
     const officerLogs = logs.filter(lg => lg.staffId === c.id);

@@ -1,8 +1,14 @@
 import { NextResponse } from 'next/server';
 import { autoAssignRoundRobin, autoAssignByRegion, batchReassignLeads, getSafeCurrentUser } from '@/data/storage';
+import { requireManagerOrAdminAuth } from '@/lib/auth-middleware';
 
 export async function POST(request: Request) {
   try {
+    const authCheck = await requireManagerOrAdminAuth(request);
+    if (!authCheck.authorized) {
+      return authCheck.response!;
+    }
+
     const body = await request.json();
     const { action, leadIds, targetStaffId, user } = body;
 

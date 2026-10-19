@@ -95,7 +95,17 @@ export default function LeadModal({ lead, onClose, onLeadUpdated }: LeadModalPro
     { code: 'cancelled', label: '10. Từ chối / Hủy', color: 'bg-rose-100 text-rose-800 border-rose-300' }
   ];
 
+  const isManagerOrAdmin =
+    currentUser.role === 'ADMIN' ||
+    currentUser.role === 'MANAGER' ||
+    (currentUser as any).role === 'admin' ||
+    (currentUser as any).role === 'manager';
+
   const handleStatusChange = (status: LeadStatus) => {
+    if (currentUser.role === 'STAFF_MARKETING') {
+      showToast('Chuyên viên Marketing không có quyền thay đổi tiến độ hoặc kết quả trúng tuyển của thí sinh!');
+      return;
+    }
     const res = updateLead(lead.id, { status });
     if (res.success && res.lead) {
       setCurrentLead(res.lead);
@@ -114,6 +124,10 @@ export default function LeadModal({ lead, onClose, onLeadUpdated }: LeadModalPro
   };
 
   const handleAssignChange = (staffId: string) => {
+    if (!isManagerOrAdmin) {
+      showToast('Chỉ Quản lý hoặc Quản trị viên mới có quyền điều chuyển phân công chuyên viên!');
+      return;
+    }
     const staff = staffList.find(s => s.id === staffId);
     const res = updateLead(lead.id, {
       assignedTo: staffId,
@@ -260,8 +274,12 @@ export default function LeadModal({ lead, onClose, onLeadUpdated }: LeadModalPro
             <span className="font-bold text-slate-600">Trạng thái:</span>
             <select
               value={currentLead.status}
+              disabled={currentUser.role === 'STAFF_MARKETING'}
               onChange={e => handleStatusChange(e.target.value as LeadStatus)}
-              className="font-bold text-xs p-1.5 rounded-xl border border-blue-400 bg-white text-blue-900 shadow-2xs"
+              className={`font-bold text-xs p-1.5 rounded-xl border border-blue-400 bg-white text-blue-900 shadow-2xs ${
+                currentUser.role === 'STAFF_MARKETING' ? 'opacity-60 cursor-not-allowed bg-slate-100' : ''
+              }`}
+              title={currentUser.role === 'STAFF_MARKETING' ? 'Chuyên viên Marketing không có quyền sửa trạng thái thí sinh' : 'Cập nhật tiến độ'}
             >
               {PIPELINE_STATUSES.map(s => (
                 <option key={s.code} value={s.code}>{s.label}</option>
@@ -269,8 +287,8 @@ export default function LeadModal({ lead, onClose, onLeadUpdated }: LeadModalPro
             </select>
           </div>
 
-          {/* Officer assign */}
-          {(currentUser.role === 'admin' || currentUser.role === 'manager') && (
+          {/* Officer assign (Manager or Admin) */}
+          {isManagerOrAdmin && (
             <div className="flex items-center gap-2">
               <span className="font-bold text-slate-600">Chuyên viên phụ trách:</span>
               <select
@@ -279,7 +297,7 @@ export default function LeadModal({ lead, onClose, onLeadUpdated }: LeadModalPro
                 className="font-medium text-xs p-1.5 rounded-xl border border-slate-300 bg-white text-slate-800"
               >
                 <option value="">-- Chưa phân công --</option>
-                {staffList.filter(s => s.role === 'counselor').map(s => (
+                {staffList.filter(s => s.role === 'counselor' || s.role === 'STAFF_ADMISSIONS' || (s.role as any) === 'STAFF').map(s => (
                   <option key={s.id} value={s.id}>{s.fullName} ({s.assignedRegion || 'Toàn ban'})</option>
                 ))}
               </select>

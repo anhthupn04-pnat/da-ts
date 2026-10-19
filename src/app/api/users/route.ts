@@ -52,7 +52,14 @@ export async function POST(request: Request) {
     const email = (body.email || '').trim().toLowerCase();
     const username = (body.username || '').trim().toLowerCase();
     const password = (body.password || '').trim();
-    const role = (body.role || 'STAFF').toUpperCase() === 'ADMIN' ? 'ADMIN' : 'STAFF';
+    
+    let role: 'ADMIN' | 'MANAGER' | 'STAFF_ADMISSIONS' | 'STAFF_MARKETING' = 'STAFF_ADMISSIONS';
+    const rawRole = (body.role || '').toUpperCase();
+    if (rawRole === 'ADMIN') role = 'ADMIN';
+    else if (rawRole === 'MANAGER') role = 'MANAGER';
+    else if (rawRole === 'STAFF_MARKETING') role = 'STAFF_MARKETING';
+    else if (rawRole === 'STAFF_ADMISSIONS' || rawRole === 'STAFF') role = 'STAFF_ADMISSIONS';
+
     const phone = (body.phone || '').trim();
     const department = (body.department || '').trim();
 

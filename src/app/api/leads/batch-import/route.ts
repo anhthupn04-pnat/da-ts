@@ -1,8 +1,14 @@
 import { NextResponse } from 'next/server';
 import { batchAddLeadsWithTransaction, getSafeCurrentUser } from '@/data/storage';
+import { requireMarketingAuth } from '@/lib/auth-middleware';
 
 export async function POST(request: Request) {
   try {
+    const authCheck = await requireMarketingAuth(request);
+    if (!authCheck.authorized) {
+      return authCheck.response!;
+    }
+
     const body = await request.json();
     const { newLeadsList, deduplicationMode = 'merge_history', fileName = 'import_file.xlsx', user } = body;
 

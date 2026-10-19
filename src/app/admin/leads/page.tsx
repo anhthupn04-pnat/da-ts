@@ -134,10 +134,22 @@ export default function LeadsManagementPage() {
     return matchesSearch && matchesStatus && matchesProgram && matchesSource;
   });
 
+  // 4-Tier RBAC Role Flags
+  const isManagerOrAdmin =
+    currentUser.role === 'ADMIN' ||
+    currentUser.role === 'MANAGER' ||
+    (currentUser as any).role === 'admin' ||
+    (currentUser as any).role === 'manager';
+  const isMarketing = currentUser.role === 'STAFF_MARKETING';
+  const isAdmissionsStaff =
+    currentUser.role === 'STAFF_ADMISSIONS' ||
+    currentUser.role === 'STAFF' ||
+    (currentUser as any).role === 'counselor';
+
   // Xóa thí sinh (Ràng buộc: chỉ Admin & Manager)
   const handleDelete = async (id: string, name: string) => {
-    if (currentUser.role === 'counselor') {
-      alert('Chuyên viên tư vấn không có quyền xóa thí sinh theo chính sách bảo mật!');
+    if (!isManagerOrAdmin) {
+      alert('Chuyên viên không có quyền xóa thí sinh (chỉ được chuyển trạng thái "Từ chối / Hủy") theo chính sách bảo mật RBAC!');
       return;
     }
 
@@ -220,8 +232,13 @@ export default function LeadsManagementPage() {
     }
   };
 
-  // Xoay vòng Round-Robin
+  // Xoay vòng Round-Robin (Manager / Admin)
   const handleRoundRobin = () => {
+    if (!isManagerOrAdmin) {
+      alert('Chỉ Quản lý (MANAGER) hoặc Quản trị viên (ADMIN) mới có quyền phân bổ thí sinh theo Round-Robin!');
+      return;
+    }
+
     const unassignedIds = filtered.filter(l => !l.assignedTo).map(l => l.id);
     const targetIds = selectedLeadIds.length > 0 ? selectedLeadIds : unassignedIds;
 
@@ -240,8 +257,13 @@ export default function LeadsManagementPage() {
     }
   };
 
-  // Phân chia theo khu vực
+  // Phân chia theo khu vực (Manager / Admin)
   const handleAssignByRegion = () => {
+    if (!isManagerOrAdmin) {
+      alert('Chỉ Quản lý (MANAGER) hoặc Quản trị viên (ADMIN) mới có quyền phân bổ theo khu vực!');
+      return;
+    }
+
     const targetIds = selectedLeadIds.length > 0 ? selectedLeadIds : filtered.map(l => l.id);
     if (confirm(`Tự động phân bổ ${targetIds.length} thí sinh theo địa bàn phụ trách (Đà Nẵng, Quảng Nam, Huế, Tây Nguyên...)?`)) {
       const res = autoAssignByRegion(targetIds, currentUser);
@@ -253,8 +275,13 @@ export default function LeadsManagementPage() {
     }
   };
 
-  // Chuyển giao hàng loạt (Batch Reassign)
+  // Chuyển giao hàng loạt (Batch Reassign - Manager / Admin)
   const handleBatchReassign = () => {
+    if (!isManagerOrAdmin) {
+      alert('Chỉ Quản lý (MANAGER) hoặc Quản trị viên (ADMIN) mới có quyền điều chuyển hồ sơ hàng loạt!');
+      return;
+    }
+
     if (!targetStaffId) {
       alert('Vui lòng chọn chuyên viên tiếp nhận.');
       return;
@@ -269,10 +296,10 @@ export default function LeadsManagementPage() {
     }
   };
 
-  // Xuất file Excel
+  // Xuất file Excel (Manager / Admin)
   const exportToExcel = () => {
-    if (currentUser.role === 'counselor') {
-      alert('Chuyên viên tư vấn không được quyền xuất toàn bộ cơ sở dữ liệu trừ khi được Trưởng phòng phê duyệt!');
+    if (!isManagerOrAdmin) {
+      alert('Chuyên viên không được quyền xuất toàn bộ cơ sở dữ liệu trừ khi được Trưởng phòng phê duyệt!');
       return;
     }
 
@@ -324,16 +351,28 @@ export default function LeadsManagementPage() {
     <div className="space-y-6">
       
       {/* Top Banner: RBAC Row-Level Security Notice */}
-      {currentUser.role === 'counselor' ? (
-        <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-blue-900 flex items-center justify-between text-xs">
+      {isAdmissionsStaff ? (
+        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2.5">
-            <UserCheck className="w-5 h-5 text-blue-600 shrink-0" />
+            <UserCheck className="w-5 h-5 text-emerald-600 shrink-0" />
             <div>
-              <strong>Phạm vi dữ liệu chuyên viên (Data Scope):</strong> Bạn đang xem danh sách các thí sinh được phân công phụ trách trực tiếp (<code className="font-mono text-blue-800">WHERE assigned_to = {currentUser.fullName}</code>).
+              <strong>Phạm vi dữ liệu Chuyên viên Tuyển sinh (STAFF_ADMISSIONS):</strong> Bạn đang xem danh sách các thí sinh được phân công phụ trách hoặc chưa được gán (<code className="font-mono text-emerald-800 bg-emerald-100 px-1 py-0.5 rounded">assigned_to = {currentUser.fullName} OR IS NULL</code>). Quyền hạn: Tiếp nhận, tư vấn, xác thực học bạ, chuyển trạng thái (không xóa hồ sơ).
             </div>
           </div>
-          <span className="font-bold text-blue-700 bg-blue-100 px-2.5 py-1 rounded-lg">
-            {leads.length} Thí sinh phụ trách
+          <span className="font-bold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-lg shrink-0">
+            {leads.length} Thí sinh trong phạm vi
+          </span>
+        </div>
+      ) : isMarketing ? (
+        <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2.5">
+            <Sparkles className="w-5 h-5 text-amber-600 shrink-0" />
+            <div>
+              <strong>Phạm vi dữ liệu Chuyên viên Marketing (STAFF_MARKETING):</strong> Quản lý nguồn đăng ký, chiến dịch tuyển sinh, gắn mã UTM và import danh sách leads thô từ file Excel/CSV.
+            </div>
+          </div>
+          <span className="font-bold text-amber-800 bg-amber-100 px-2.5 py-1 rounded-lg shrink-0">
+            {leads.length} Leads toàn hệ thống
           </span>
         </div>
       ) : (
@@ -341,7 +380,7 @@ export default function LeadsManagementPage() {
           <div className="flex items-center gap-2.5">
             <Sparkles className="w-5 h-5 text-amber-400 shrink-0" />
             <div>
-              <strong className="text-amber-400">Quyền Hạn Toàn Cơ Sở ({currentUser.role === 'admin' ? 'Super Admin' : 'Admissions Manager'}):</strong> Bạn có toàn quyền xem, điều phối Round-Robin, phân bổ theo khu vực địa lý và duyệt hồ sơ đặc biệt.
+              <strong className="text-amber-400">Quyền Điều Phối Toàn Ban ({currentUser.role === 'ADMIN' ? 'Quản Trị Viên - ADMIN' : 'Quản Lý / Trưởng Phòng - MANAGER'}):</strong> Toàn quyền xem, điều phối xoay vòng Round-Robin, phân bổ theo khu vực địa lý, duyệt trúng tuyển và xuất báo cáo.
             </div>
           </div>
 
@@ -436,7 +475,7 @@ export default function LeadsManagementPage() {
           </button>
 
           {/* Export Excel (Admin/Manager) */}
-          {currentUser.role !== 'counselor' && (
+          {isManagerOrAdmin && (
             <button
               onClick={exportToExcel}
               className="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-bold text-xs rounded-xl shadow-2xs transition flex items-center gap-1.5 cursor-pointer"
@@ -657,11 +696,11 @@ export default function LeadsManagementPage() {
                               <span>Chi tiết</span>
                             </button>
 
-                            {currentUser.role !== 'counselor' && (
+                            {isManagerOrAdmin && (
                               <button
                                 onClick={() => handleDelete(lead.id, lead.fullName)}
                                 className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition cursor-pointer"
-                                title="Xóa thí sinh"
+                                title="Xóa thí sinh khỏi cơ sở dữ liệu"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>

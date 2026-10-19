@@ -47,7 +47,8 @@ import {
   Check,
   Trash2,
   Eye,
-  EyeOff
+  EyeOff,
+  ShieldAlert
 } from 'lucide-react';
 
 export default function SettingsPage() {
@@ -261,6 +262,22 @@ export default function SettingsPage() {
       a.recordId.toLowerCase().includes(s)
     );
   });
+
+  const isAdmin = currentUser?.role === 'ADMIN' || (currentUser as any)?.role === 'admin';
+
+  if (!isAdmin) {
+    return (
+      <div className="max-w-xl mx-auto my-12 p-8 bg-white rounded-3xl border border-rose-200 text-center space-y-4 shadow-lg">
+        <div className="w-14 h-14 mx-auto rounded-full bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
+          <ShieldAlert className="w-7 h-7" />
+        </div>
+        <h2 className="text-lg font-black text-slate-900">403 Forbidden - Quyền Truy Cập Bị Từ Chối</h2>
+        <p className="text-xs text-slate-600 leading-relaxed">
+          Phân hệ Cấu Hình Hệ Thống, CSDL & Audit Logs chỉ dành riêng cho <strong>Quản Trị Viên (ADMIN)</strong>.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

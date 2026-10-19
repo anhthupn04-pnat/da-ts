@@ -59,52 +59,52 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     router.push('/login');
   };
 
-  // Định nghĩa đầy đủ menu phân quyền cho 5 vai trò
+  // Định nghĩa menu phân quyền cho 4 vai trò cụ thể: ADMIN, MANAGER, STAFF_ADMISSIONS, STAFF_MARKETING
   const allNavigation = [
     {
       name: 'Bảng Điều Khiển & Nhắc Việc',
       href: '/admin',
       icon: LayoutDashboard,
-      roles: ['ADMIN', 'admin', 'STAFF', 'manager', 'counselor', 'marketer', 'verifier']
+      roles: ['ADMIN', 'MANAGER', 'STAFF_ADMISSIONS', 'STAFF_MARKETING', 'admin', 'manager', 'counselor', 'marketer', 'verifier', 'STAFF']
     },
     {
       name: 'Quản Lý Thí Sinh & Đường Ống',
       href: '/admin/leads',
       icon: Users,
-      roles: ['ADMIN', 'admin', 'STAFF', 'manager', 'counselor']
+      roles: ['ADMIN', 'MANAGER', 'STAFF_ADMISSIONS', 'admin', 'manager', 'counselor', 'STAFF']
     },
     {
       name: 'Hậu Kiểm & Thẩm Định Điểm',
       href: '/admin/verification',
       icon: FileCheck,
-      roles: ['ADMIN', 'admin', 'STAFF', 'manager', 'verifier']
+      roles: ['ADMIN', 'MANAGER', 'STAFF_ADMISSIONS', 'admin', 'manager', 'verifier', 'STAFF']
     },
     {
       name: 'Chương Trình & Chỉ Tiêu',
       href: '/admin/programs',
       icon: BookOpen,
-      roles: ['ADMIN', 'admin', 'STAFF', 'manager', 'counselor']
+      roles: ['ADMIN', 'MANAGER', 'STAFF_ADMISSIONS', 'STAFF_MARKETING', 'admin', 'manager', 'counselor', 'marketer', 'STAFF']
     },
     {
-      name: 'Marketing & Lịch Nội Dung',
+      name: 'Marketing & Nguồn Leads',
       href: '/admin/marketing',
       icon: Megaphone,
-      roles: ['ADMIN', 'admin', 'STAFF', 'manager', 'marketer']
+      roles: ['ADMIN', 'MANAGER', 'STAFF_MARKETING', 'admin', 'manager', 'marketer']
     },
     {
       name: 'Trợ Lý AI Tuyển Sinh',
       href: '/admin/ai-assistant',
       icon: Bot,
-      roles: ['ADMIN', 'admin', 'STAFF', 'manager', 'marketer', 'counselor']
+      roles: ['ADMIN', 'MANAGER', 'STAFF_ADMISSIONS', 'STAFF_MARKETING', 'admin', 'manager', 'marketer', 'counselor', 'STAFF']
     },
     {
       name: 'Báo Cáo Phễu & Hiệu Suất KPI',
       href: '/admin/reports',
       icon: BarChart3,
-      roles: ['ADMIN', 'admin', 'STAFF', 'manager', 'counselor', 'marketer', 'verifier']
+      roles: ['ADMIN', 'MANAGER', 'admin', 'manager']
     },
     {
-      name: 'Quản Lý Người Dùng (Admin)',
+      name: 'Quản Lý Người Dùng & Phân Quyền',
       href: '/admin/users',
       icon: Users,
       roles: ['ADMIN', 'admin']
@@ -113,7 +113,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       name: 'Cấu Hình RBAC & Audit Logs',
       href: '/admin/settings',
       icon: Settings,
-      roles: ['ADMIN', 'admin', 'manager']
+      roles: ['ADMIN', 'admin']
     }
   ];
 
@@ -133,17 +133,38 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     switch (role) {
       case 'ADMIN':
       case 'admin':
-        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-900/60 text-purple-300 border border-purple-700/50">Quản Trị Viên (Admin)</span>;
-      case 'STAFF':
-        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-900/60 text-blue-300 border border-blue-700/50">Chuyên Viên Tuyển Sinh</span>;
+        return (
+          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-900/80 text-purple-200 border border-purple-500/60 flex items-center gap-1 shadow-2xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+            Quản Trị Viên (Admin)
+          </span>
+        );
+      case 'MANAGER':
       case 'manager':
-        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-900/60 text-blue-300 border border-blue-700/50">Admissions Manager</span>;
+        return (
+          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-900/80 text-indigo-200 border border-indigo-500/60 flex items-center gap-1 shadow-2xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+            Quản Lý / Trưởng Phòng
+          </span>
+        );
+      case 'STAFF_ADMISSIONS':
       case 'counselor':
-        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-900/60 text-emerald-300 border border-emerald-700/50">Admissions Officer</span>;
       case 'verifier':
-        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-teal-900/60 text-teal-300 border border-teal-700/50">Verification Officer</span>;
+      case 'STAFF':
+        return (
+          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-900/80 text-emerald-200 border border-emerald-500/60 flex items-center gap-1 shadow-2xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            Chuyên Viên Tuyển Sinh
+          </span>
+        );
+      case 'STAFF_MARKETING':
       case 'marketer':
-        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-900/60 text-amber-300 border border-amber-700/50">Marketing Officer</span>;
+        return (
+          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-900/80 text-amber-200 border border-amber-500/60 flex items-center gap-1 shadow-2xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+            Chuyên Viên Marketing
+          </span>
+        );
       default:
         return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-300">{role || 'STAFF'}</span>;
     }

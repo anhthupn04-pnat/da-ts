@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { getCampaigns, getContentCalendar, addContentItem } from '@/data/storage';
-import { MarketingCampaign, ContentItem, ContentPlatform, ContentStatus } from '@/types';
+import { getCampaigns, getContentCalendar, addContentItem, getCurrentUser, getSafeCurrentUser } from '@/data/storage';
+import { MarketingCampaign, ContentItem, ContentPlatform, ContentStatus, UserProfile } from '@/types';
 import {
   Megaphone,
   Calendar,
@@ -16,10 +16,12 @@ import {
   DollarSign,
   TrendingUp,
   X,
-  FileText
+  FileText,
+  ShieldAlert
 } from 'lucide-react';
 
 export default function MarketingPage() {
+  const [currentUser, setCurrentUser] = useState<UserProfile>(getSafeCurrentUser());
   const [campaigns, setCampaigns] = useState<MarketingCampaign[]>([]);
   const [contentList, setContentList] = useState<ContentItem[]>([]);
   
@@ -35,6 +37,7 @@ export default function MarketingPage() {
   });
 
   const loadData = () => {
+    setCurrentUser(getCurrentUser() || getSafeCurrentUser());
     setCampaigns(getCampaigns());
     setContentList(getContentCalendar());
   };
@@ -42,6 +45,22 @@ export default function MarketingPage() {
   useEffect(() => {
     loadData();
   }, []);
+
+  const hasAccess = ['ADMIN', 'MANAGER', 'STAFF_MARKETING'].includes(currentUser?.role?.toUpperCase?.());
+
+  if (!hasAccess) {
+    return (
+      <div className="max-w-xl mx-auto my-12 p-8 bg-white rounded-3xl border border-rose-200 text-center space-y-4 shadow-lg">
+        <div className="w-14 h-14 mx-auto rounded-full bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
+          <ShieldAlert className="w-7 h-7" />
+        </div>
+        <h2 className="text-lg font-black text-slate-900">403 Forbidden - Quyền Truy Cập Bị Từ Chối</h2>
+        <p className="text-xs text-slate-600 leading-relaxed">
+          Phân hệ Quản Lý Chiến Dịch & Lịch Nội Dung Marketing chỉ dành riêng cho <strong>Chuyên Viên Marketing (STAFF_MARKETING)</strong>, <strong>Quản Lý (MANAGER)</strong> và <strong>Quản Trị Viên (ADMIN)</strong>.
+        </p>
+      </div>
+    );
+  }
 
   const handleCreateContent = (e: React.FormEvent) => {
     e.preventDefault();

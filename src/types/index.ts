@@ -1,4 +1,16 @@
-export type Role = 'ADMIN' | 'STAFF' | 'admin' | 'manager' | 'counselor' | 'marketer' | 'verifier';
+export type CanonicalRole = 'ADMIN' | 'MANAGER' | 'STAFF_ADMISSIONS' | 'STAFF_MARKETING';
+
+export type Role =
+  | 'ADMIN'
+  | 'MANAGER'
+  | 'STAFF_ADMISSIONS'
+  | 'STAFF_MARKETING'
+  | 'STAFF'
+  | 'admin'
+  | 'manager'
+  | 'counselor'
+  | 'marketer'
+  | 'verifier';
 
 export interface UserProfile {
   id: string;
@@ -25,7 +37,7 @@ export interface SystemUser {
   email: string;
   password?: string;
   passwordHash?: string;
-  role: 'ADMIN' | 'STAFF';
+  role: 'ADMIN' | 'MANAGER' | 'STAFF_ADMISSIONS' | 'STAFF_MARKETING' | 'STAFF';
   department?: string;
   phone?: string;
   status: 'ACTIVE' | 'INACTIVE';

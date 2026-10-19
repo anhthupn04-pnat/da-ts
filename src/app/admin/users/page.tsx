@@ -33,7 +33,10 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
-  UserCheck
+  UserCheck,
+  Award,
+  Megaphone,
+  Briefcase
 } from 'lucide-react';
 
 interface DbUserItem {
@@ -41,7 +44,7 @@ interface DbUserItem {
   full_name: string;
   username: string;
   email: string;
-  role: 'ADMIN' | 'STAFF';
+  role: 'ADMIN' | 'MANAGER' | 'STAFF_ADMISSIONS' | 'STAFF_MARKETING' | 'STAFF';
   status: 'ACTIVE' | 'INACTIVE' | 'DELETED';
   phone?: string | null;
   department?: string | null;
@@ -64,7 +67,7 @@ export default function AdminUsersPage() {
   // Filters & Pagination State
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [roleFilter, setRoleFilter] = useState<'ALL' | 'ADMIN' | 'STAFF'>('ALL');
+  const [roleFilter, setRoleFilter] = useState<'ALL' | 'ADMIN' | 'MANAGER' | 'STAFF_ADMISSIONS' | 'STAFF_MARKETING'>('ALL');
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'ACTIVE' | 'INACTIVE'>('ALL');
   const [pagination, setPagination] = useState<PaginationState>({
     page: 1,
@@ -88,7 +91,7 @@ export default function AdminUsersPage() {
   const [newUsername, setNewUsername] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const [newRole, setNewRole] = useState<'ADMIN' | 'STAFF'>('STAFF');
+  const [newRole, setNewRole] = useState<'ADMIN' | 'MANAGER' | 'STAFF_ADMISSIONS' | 'STAFF_MARKETING'>('STAFF_ADMISSIONS');
   const [newPhone, setNewPhone] = useState('');
   const [newDepartment, setNewDepartment] = useState('Tổ Tư Vấn Tuyển Sinh VN-US');
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -96,7 +99,7 @@ export default function AdminUsersPage() {
 
   // Form states for editing
   const [editFullName, setEditFullName] = useState('');
-  const [editRole, setEditRole] = useState<'ADMIN' | 'STAFF'>('STAFF');
+  const [editRole, setEditRole] = useState<'ADMIN' | 'MANAGER' | 'STAFF_ADMISSIONS' | 'STAFF_MARKETING'>('STAFF_ADMISSIONS');
   const [editPhone, setEditPhone] = useState('');
   const [editDepartment, setEditDepartment] = useState('');
   const [submittingEdit, setSubmittingEdit] = useState(false);
@@ -222,6 +225,57 @@ export default function AdminUsersPage() {
     setShowResetPassword(true);
   };
 
+  // Helper render role badge for 4-tier RBAC
+  const renderUserRoleBadge = (role: string) => {
+    switch (role) {
+      case 'ADMIN':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200 shadow-xs">
+            <Shield className="w-3 h-3 text-purple-600 shrink-0" />
+            Quản Trị Viên (ADMIN)
+          </span>
+        );
+      case 'MANAGER':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-xs">
+            <Award className="w-3 h-3 text-indigo-600 shrink-0" />
+            Quản Lý (MANAGER)
+          </span>
+        );
+      case 'STAFF_ADMISSIONS':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-xs">
+            <UserCheck className="w-3 h-3 text-emerald-600 shrink-0" />
+            Chuyên Viên Tuyển Sinh
+          </span>
+        );
+      case 'STAFF_MARKETING':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 shadow-xs">
+            <Megaphone className="w-3 h-3 text-amber-600 shrink-0" />
+            Chuyên Viên Marketing
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 shadow-xs">
+            <UserCheck className="w-3 h-3 text-blue-600 shrink-0" />
+            Chuyên Viên (STAFF)
+          </span>
+        );
+    }
+  };
+
+  const getAvatarBadgeColor = (role: string) => {
+    switch (role) {
+      case 'ADMIN': return 'bg-purple-100 text-purple-700 ring-2 ring-purple-200';
+      case 'MANAGER': return 'bg-indigo-100 text-indigo-700 ring-2 ring-indigo-200';
+      case 'STAFF_ADMISSIONS': return 'bg-emerald-100 text-emerald-700 ring-2 ring-emerald-200';
+      case 'STAFF_MARKETING': return 'bg-amber-100 text-amber-700 ring-2 ring-amber-200';
+      default: return 'bg-blue-100 text-blue-700 ring-2 ring-blue-200';
+    }
+  };
+
   // 1. Submit tạo tài khoản mới lưu trực tiếp vào CSDL
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -272,7 +326,7 @@ export default function AdminUsersPage() {
         setNewUsername('');
         setNewEmail('');
         setNewPassword('');
-        setNewRole('STAFF');
+        setNewRole('STAFF_ADMISSIONS');
         setNewPhone('');
         fetchUsersFromDb();
       } else {
@@ -289,7 +343,7 @@ export default function AdminUsersPage() {
   const openEditModal = (user: DbUserItem) => {
     setSelectedUser(user);
     setEditFullName(user.full_name);
-    setEditRole(user.role);
+    setEditRole(user.role === 'STAFF' ? 'STAFF_ADMISSIONS' : user.role);
     setEditPhone(user.phone || '');
     setEditDepartment(user.department || '');
     setEditModalOpen(true);
@@ -514,7 +568,7 @@ export default function AdminUsersPage() {
               setNewUsername('');
               setNewEmail('');
               setNewPassword('');
-              setNewRole('STAFF');
+              setNewRole('STAFF_ADMISSIONS');
               setNewPhone('');
               setCreateModalOpen(true);
             }}
@@ -523,6 +577,53 @@ export default function AdminUsersPage() {
             <UserPlus className="w-4 h-4" />
             <span>+ Thêm Tài Khoản Mới</span>
           </button>
+        </div>
+      </div>
+
+      {/* 4-Tier RBAC Role Matrix Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="bg-white p-4 rounded-2xl border border-purple-100/90 shadow-xs flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+            <Shield className="w-5 h-5" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Quản Trị Viên</p>
+            <p className="text-sm font-black text-slate-900">ADMIN</p>
+            <p className="text-[10px] text-slate-500 truncate">Hệ thống & Phân quyền</p>
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-2xl border border-indigo-100/90 shadow-xs flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+            <Award className="w-5 h-5" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Quản Lý Đội Ngũ</p>
+            <p className="text-sm font-black text-slate-900">MANAGER</p>
+            <p className="text-[10px] text-slate-500 truncate">Phân bổ & Duyệt trúng tuyển</p>
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-2xl border border-emerald-100/90 shadow-xs flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+            <UserCheck className="w-5 h-5" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tuyển Sinh</p>
+            <p className="text-sm font-black text-slate-900">ADMISSIONS</p>
+            <p className="text-[10px] text-slate-500 truncate">Hồ sơ phụ trách & Tư vấn</p>
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-2xl border border-amber-100/90 shadow-xs flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+            <Megaphone className="w-5 h-5" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Marketing</p>
+            <p className="text-sm font-black text-slate-900">MARKETING</p>
+            <p className="text-[10px] text-slate-500 truncate">Chiến dịch, UTM, Leads thô</p>
+          </div>
         </div>
       </div>
 
@@ -566,7 +667,9 @@ export default function AdminUsersPage() {
             >
               <option value="ALL">Tất cả vai trò</option>
               <option value="ADMIN">Quản trị viên (ADMIN)</option>
-              <option value="STAFF">Chuyên viên (STAFF)</option>
+              <option value="MANAGER">Quản lý (MANAGER)</option>
+              <option value="STAFF_ADMISSIONS">Chuyên viên Tuyển sinh</option>
+              <option value="STAFF_MARKETING">Chuyên viên Marketing</option>
             </select>
           </div>
 
@@ -678,11 +781,7 @@ export default function AdminUsersPage() {
                       <td className="py-3.5 px-4 sm:px-6">
                         <div className="flex items-center gap-3">
                           <div
-                            className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${
-                              isUserAdminRole
-                                ? 'bg-purple-100 text-purple-700 ring-2 ring-purple-200'
-                                : 'bg-blue-100 text-blue-700 ring-2 ring-blue-200'
-                            }`}
+                            className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${getAvatarBadgeColor(u.role)}`}
                           >
                             {u.full_name.charAt(0).toUpperCase()}
                           </div>
@@ -717,17 +816,7 @@ export default function AdminUsersPage() {
 
                       {/* Role Badge */}
                       <td className="py-3.5 px-4">
-                        {isUserAdminRole ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200 shadow-xs">
-                            <Shield className="w-3 h-3" />
-                            Quản Trị Viên (ADMIN)
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 shadow-xs">
-                            <UserCheck className="w-3 h-3" />
-                            Chuyên Viên (STAFF)
-                          </span>
-                        )}
+                        {renderUserRoleBadge(u.role)}
                       </td>
 
                       {/* Status Badge */}
@@ -944,35 +1033,91 @@ export default function AdminUsersPage() {
 
               {/* Role Select */}
               <div>
-                <label className="block font-bold text-slate-700 mb-1">
-                  Vai Trò Trong Hệ Thống <span className="text-rose-500">*</span>
+                <label className="block font-bold text-slate-700 mb-1.5">
+                  Vai Trò Trong Hệ Thống (RBAC) <span className="text-rose-500">*</span>
                 </label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  
+                  {/* STAFF_ADMISSIONS */}
                   <label
-                    className={`flex items-center gap-2 p-3 rounded-xl border cursor-pointer transition ${
-                      newRole === 'STAFF'
-                        ? 'border-blue-500 bg-blue-50/50 text-blue-900 font-bold'
+                    className={`flex items-start gap-2.5 p-3 rounded-2xl border cursor-pointer transition ${
+                      newRole === 'STAFF_ADMISSIONS'
+                        ? 'border-emerald-500 bg-emerald-50/50 text-emerald-950 ring-2 ring-emerald-200'
                         : 'border-slate-200 hover:bg-slate-50 text-slate-700'
                     }`}
                   >
                     <input
                       type="radio"
                       name="role"
-                      value="STAFF"
-                      checked={newRole === 'STAFF'}
-                      onChange={() => setNewRole('STAFF')}
-                      className="text-blue-600"
+                      value="STAFF_ADMISSIONS"
+                      checked={newRole === 'STAFF_ADMISSIONS'}
+                      onChange={() => setNewRole('STAFF_ADMISSIONS')}
+                      className="mt-0.5 text-emerald-600"
                     />
                     <div>
-                      <p className="text-xs">Chuyên Viên (STAFF)</p>
-                      <p className="text-[10px] text-slate-400 font-normal">Xử lý hồ sơ, tư vấn</p>
+                      <p className="font-bold text-xs flex items-center gap-1">
+                        <UserCheck className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>Chuyên Viên Tuyển Sinh</span>
+                      </p>
+                      <p className="text-[10px] text-slate-500 mt-0.5">Tiếp nhận hồ sơ, tư vấn & chăm sóc thí sinh</p>
                     </div>
                   </label>
 
+                  {/* STAFF_MARKETING */}
                   <label
-                    className={`flex items-center gap-2 p-3 rounded-xl border cursor-pointer transition ${
+                    className={`flex items-start gap-2.5 p-3 rounded-2xl border cursor-pointer transition ${
+                      newRole === 'STAFF_MARKETING'
+                        ? 'border-amber-500 bg-amber-50/50 text-amber-950 ring-2 ring-amber-200'
+                        : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="role"
+                      value="STAFF_MARKETING"
+                      checked={newRole === 'STAFF_MARKETING'}
+                      onChange={() => setNewRole('STAFF_MARKETING')}
+                      className="mt-0.5 text-amber-600"
+                    />
+                    <div>
+                      <p className="font-bold text-xs flex items-center gap-1">
+                        <Megaphone className="w-3.5 h-3.5 text-amber-600" />
+                        <span>Chuyên Viên Marketing</span>
+                      </p>
+                      <p className="text-[10px] text-slate-500 mt-0.5">Quản lý chiến dịch, UTM & import leads thô</p>
+                    </div>
+                  </label>
+
+                  {/* MANAGER */}
+                  <label
+                    className={`flex items-start gap-2.5 p-3 rounded-2xl border cursor-pointer transition ${
+                      newRole === 'MANAGER'
+                        ? 'border-indigo-500 bg-indigo-50/50 text-indigo-950 ring-2 ring-indigo-200'
+                        : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="role"
+                      value="MANAGER"
+                      checked={newRole === 'MANAGER'}
+                      onChange={() => setNewRole('MANAGER')}
+                      className="mt-0.5 text-indigo-600"
+                    />
+                    <div>
+                      <p className="font-bold text-xs flex items-center gap-1">
+                        <Award className="w-3.5 h-3.5 text-indigo-600" />
+                        <span>Quản Lý / Trưởng Phòng</span>
+                      </p>
+                      <p className="text-[10px] text-slate-500 mt-0.5">Phân bổ hồ sơ, duyệt trúng tuyển & báo cáo</p>
+                    </div>
+                  </label>
+
+                  {/* ADMIN */}
+                  <label
+                    className={`flex items-start gap-2.5 p-3 rounded-2xl border cursor-pointer transition ${
                       newRole === 'ADMIN'
-                        ? 'border-purple-500 bg-purple-50/50 text-purple-900 font-bold'
+                        ? 'border-purple-500 bg-purple-50/50 text-purple-950 ring-2 ring-purple-200'
                         : 'border-slate-200 hover:bg-slate-50 text-slate-700'
                     }`}
                   >
@@ -982,13 +1127,17 @@ export default function AdminUsersPage() {
                       value="ADMIN"
                       checked={newRole === 'ADMIN'}
                       onChange={() => setNewRole('ADMIN')}
-                      className="text-purple-600"
+                      className="mt-0.5 text-purple-600"
                     />
                     <div>
-                      <p className="text-xs">Quản Trị Viên (ADMIN)</p>
-                      <p className="text-[10px] text-slate-400 font-normal">Toàn quyền hệ thống</p>
+                      <p className="font-bold text-xs flex items-center gap-1">
+                        <Shield className="w-3.5 h-3.5 text-purple-600" />
+                        <span>Quản Trị Viên (ADMIN)</span>
+                      </p>
+                      <p className="text-[10px] text-slate-500 mt-0.5">Toàn quyền hệ thống, phân quyền & audit</p>
                     </div>
                   </label>
+
                 </div>
               </div>
 
@@ -1155,7 +1304,9 @@ export default function AdminUsersPage() {
                     onChange={e => setEditRole(e.target.value as any)}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-hidden focus:ring-2 focus:ring-blue-500 bg-slate-50/50 font-semibold"
                   >
-                    <option value="STAFF">Chuyên Viên Tuyển Sinh (STAFF)</option>
+                    <option value="STAFF_ADMISSIONS">Chuyên Viên Tuyển Sinh (STAFF_ADMISSIONS)</option>
+                    <option value="STAFF_MARKETING">Chuyên Viên Marketing (STAFF_MARKETING)</option>
+                    <option value="MANAGER">Quản Lý / Trưởng Phòng (MANAGER)</option>
                     <option value="ADMIN">Quản Trị Viên Hệ Thống (ADMIN)</option>
                   </select>
                 )}

@@ -13,7 +13,7 @@ export interface DbUser {
   username: string;
   email: string;
   password_hash: string;
-  role: 'ADMIN' | 'STAFF';
+  role: 'ADMIN' | 'MANAGER' | 'STAFF_ADMISSIONS' | 'STAFF_MARKETING' | 'STAFF';
   status: 'ACTIVE' | 'INACTIVE' | 'DELETED';
   phone?: string | null;
   department?: string | null;
@@ -44,7 +44,7 @@ export function getSqliteDb(): DatabaseSync {
   db.exec('PRAGMA journal_mode = WAL;');
   db.exec('PRAGMA foreign_keys = ON;');
 
-  // 1. Khởi tạo bảng users với các chỉ mục duy nhất (UNIQUE) và ràng buộc toàn vẹn
+  // 1. Khởi tạo bảng users với 4 vai trò cụ thể: ADMIN, MANAGER, STAFF_ADMISSIONS, STAFF_MARKETING
   db.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
@@ -52,7 +52,7 @@ export function getSqliteDb(): DatabaseSync {
       username TEXT NOT NULL UNIQUE,
       email TEXT NOT NULL UNIQUE,
       password_hash TEXT NOT NULL,
-      role TEXT NOT NULL DEFAULT 'STAFF' CHECK (role IN ('ADMIN', 'STAFF')),
+      role TEXT NOT NULL DEFAULT 'STAFF_ADMISSIONS' CHECK (role IN ('ADMIN', 'MANAGER', 'STAFF_ADMISSIONS', 'STAFF_MARKETING', 'STAFF')),
       status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'INACTIVE', 'DELETED')),
       phone TEXT,
       department TEXT,
@@ -67,46 +67,114 @@ export function getSqliteDb(): DatabaseSync {
     CREATE INDEX IF NOT EXISTS idx_users_status ON users(status);
   `);
 
-  // Seed tài khoản Quản trị viên và Chuyên viên mặc định nếu bảng chưa có dữ liệu
-  const countRow = db.prepare('SELECT COUNT(*) as cnt FROM users WHERE status != ?').get('DELETED') as { cnt: number };
-  if (!countRow || countRow.cnt === 0) {
-    const adminHash = bcrypt.hashSync('Admin@VNUS2026!', 10);
-    const staffHash = bcrypt.hashSync('Staff@VNUS2026!', 10);
-    const now = new Date().toISOString();
-
-    const insertStmt = db.prepare(`
-      INSERT OR IGNORE INTO users (id, full_name, username, email, password_hash, role, status, phone, department, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-
-    insertStmt.run(
-      '00000000-0000-0000-0000-000000000001',
-      'Quản Trị Viên Hệ Thống',
-      'admin',
-      'admin@vnus.edu.vn',
-      adminHash,
-      'ADMIN',
-      'ACTIVE',
-      '0905123456',
-      'Ban Quản Trị Hệ Thống & Tuyển Sinh',
-      now,
-      now
-    );
-
-    insertStmt.run(
-      '00000000-0000-0000-0000-000000000002',
-      'Chuyên Viên Tuyển Sinh',
-      'staff',
-      'staff@vnus.edu.vn',
-      staffHash,
-      'STAFF',
-      'ACTIVE',
-      '0905789101',
-      'Tổ Tư Vấn Tuyển Sinh VN-US',
-      now,
-      now
-    );
+  // Di chuyển tự động cấu trúc bảng nếu database cũ chưa hỗ trợ đủ 4 vai trò (Migration)
+  try {
+    const usersTableInfo = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='users'").get() as { sql: string } | undefined;
+    if (usersTableInfo && !usersTableInfo.sql.includes('STAFF_ADMISSIONS')) {
+      db.exec(`
+        PRAGMA foreign_keys = OFF;
+        CREATE TABLE users_migrated (
+          id TEXT PRIMARY KEY,
+          full_name TEXT NOT NULL,
+          username TEXT NOT NULL UNIQUE,
+          email TEXT NOT NULL UNIQUE,
+          password_hash TEXT NOT NULL,
+          role TEXT NOT NULL DEFAULT 'STAFF_ADMISSIONS' CHECK (role IN ('ADMIN', 'MANAGER', 'STAFF_ADMISSIONS', 'STAFF_MARKETING', 'STAFF')),
+          status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'INACTIVE', 'DELETED')),
+          phone TEXT,
+          department TEXT,
+          created_at TEXT NOT NULL,
+          updated_at TEXT NOT NULL,
+          deleted_at TEXT
+        );
+        INSERT OR IGNORE INTO users_migrated (id, full_name, username, email, password_hash, role, status, phone, department, created_at, updated_at, deleted_at)
+          SELECT id, full_name, username, email, password_hash,
+            CASE WHEN role = 'STAFF' THEN 'STAFF_ADMISSIONS' ELSE role END,
+            status, phone, department, created_at, updated_at, deleted_at FROM users;
+        DROP TABLE users;
+        ALTER TABLE users_migrated RENAME TO users;
+        CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+        CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+        CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
+        CREATE INDEX IF NOT EXISTS idx_users_status ON users(status);
+        PRAGMA foreign_keys = ON;
+      `);
+    }
+  } catch (err: any) {
+    console.error('Lỗi di chuyển schema users:', err.message);
   }
+
+  // Seed các tài khoản đại diện cho cả 4 vai trò nếu chưa tồn tại
+  const insertStmt = db.prepare(`
+    INSERT OR IGNORE INTO users (id, full_name, username, email, password_hash, role, status, phone, department, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+
+  const adminHash = bcrypt.hashSync('Admin@VNUS2026!', 10);
+  const managerHash = bcrypt.hashSync('Manager@VNUS2026!', 10);
+  const admissionsHash = bcrypt.hashSync('Staff@VNUS2026!', 10);
+  const marketingHash = bcrypt.hashSync('Marketing@VNUS2026!', 10);
+  const now = new Date().toISOString();
+
+  // 1. ADMIN - Quản trị viên hệ thống
+  insertStmt.run(
+    '00000000-0000-0000-0000-000000000001',
+    'Quản Trị Viên Hệ Thống',
+    'admin',
+    'admin@vnus.edu.vn',
+    adminHash,
+    'ADMIN',
+    'ACTIVE',
+    '0905123456',
+    'Ban Quản Trị Hệ Thống & Tuyển Sinh',
+    now,
+    now
+  );
+
+  // 2. MANAGER - Quản lý / Trưởng phòng Tuyển sinh
+  insertStmt.run(
+    '00000000-0000-0000-0000-000000000003',
+    'Trần Quản Lý (Trưởng Phòng Tuyển Sinh)',
+    'manager',
+    'manager@vnus.edu.vn',
+    managerHash,
+    'MANAGER',
+    'ACTIVE',
+    '0905666888',
+    'Phòng Tuyển Sinh & Đào Tạo Quốc Tế VN-US',
+    now,
+    now
+  );
+
+  // 3. STAFF_ADMISSIONS - Chuyên viên Tuyển sinh
+  insertStmt.run(
+    '00000000-0000-0000-0000-000000000002',
+    'Lê Tuyển Sinh (Chuyên Viên Tư Vấn)',
+    'admissions',
+    'admissions@vnus.edu.vn',
+    admissionsHash,
+    'STAFF_ADMISSIONS',
+    'ACTIVE',
+    '0905789101',
+    'Tổ Tư Vấn Tuyển Sinh VN-US',
+    now,
+    now
+  );
+
+  // 4. STAFF_MARKETING - Chuyên viên Marketing
+  insertStmt.run(
+    '00000000-0000-0000-0000-000000000004',
+    'Nguyễn Marketing (Chuyên Viên Leads & Ads)',
+    'marketing',
+    'marketing@vnus.edu.vn',
+    marketingHash,
+    'STAFF_MARKETING',
+    'ACTIVE',
+    '0905999222',
+    'Bộ Phận Marketing & Truyền Thông Số VN-US',
+    now,
+    now
+  );
 
   // 2. Khởi tạo bảng leads (Hồ sơ Thí sinh & Tiếp nhận tư vấn tuyển sinh)
   db.exec(`
@@ -357,7 +425,7 @@ export async function createUserInDb(data: {
   email: string;
   username?: string;
   password: string;
-  role?: 'ADMIN' | 'STAFF';
+  role?: 'ADMIN' | 'MANAGER' | 'STAFF_ADMISSIONS' | 'STAFF_MARKETING' | 'STAFF';
   phone?: string;
   department?: string;
 }): Promise<SafeDbUser> {
@@ -383,7 +451,13 @@ export async function createUserInDb(data: {
   const passwordHash = bcrypt.hashSync(data.password.trim(), 10);
   const now = new Date().toISOString();
   const newId = `user_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-  const role = data.role === 'ADMIN' ? 'ADMIN' : 'STAFF';
+
+  // Chuẩn hóa 4 vai trò cụ thể
+  let role: 'ADMIN' | 'MANAGER' | 'STAFF_ADMISSIONS' | 'STAFF_MARKETING' = 'STAFF_ADMISSIONS';
+  if (data.role === 'ADMIN') role = 'ADMIN';
+  else if (data.role === 'MANAGER') role = 'MANAGER';
+  else if (data.role === 'STAFF_MARKETING') role = 'STAFF_MARKETING';
+  else if (data.role === 'STAFF_ADMISSIONS' || data.role === 'STAFF') role = 'STAFF_ADMISSIONS';
 
   // Thực thi Database Transaction
   db.exec('BEGIN TRANSACTION;');
@@ -401,7 +475,7 @@ export async function createUserInDb(data: {
       passwordHash,
       role,
       data.phone?.trim() || null,
-      data.department?.trim() || 'Tổ Tư Vấn Tuyển Sinh VN-US',
+      data.department?.trim() || (role === 'STAFF_MARKETING' ? 'Phòng Marketing Tuyển Sinh' : role === 'MANAGER' ? 'Phòng Quản Lý Tuyển Sinh' : 'Tổ Tư Vấn Tuyển Sinh VN-US'),
       now,
       now
     );
@@ -424,7 +498,7 @@ export async function createUserInDb(data: {
         role,
         status: 'ACTIVE',
         phone: data.phone?.trim() || null,
-        department: data.department?.trim() || 'Tổ Tư Vấn Tuyển Sinh VN-US',
+        department: data.department?.trim() || (role === 'STAFF_MARKETING' ? 'Phòng Marketing Tuyển Sinh' : role === 'MANAGER' ? 'Phòng Quản Lý Tuyển Sinh' : 'Tổ Tư Vấn Tuyển Sinh VN-US'),
         created_at: now,
         updated_at: now
       });
@@ -441,7 +515,7 @@ export async function createUserInDb(data: {
     role,
     status: 'ACTIVE',
     phone: data.phone?.trim() || null,
-    department: data.department?.trim() || 'Tổ Tư Vấn Tuyển Sinh VN-US',
+    department: data.department?.trim() || (role === 'STAFF_MARKETING' ? 'Phòng Marketing Tuyển Sinh' : role === 'MANAGER' ? 'Phòng Quản Lý Tuyển Sinh' : 'Tổ Tư Vấn Tuyển Sinh VN-US'),
     created_at: now,
     updated_at: now
   };
@@ -454,7 +528,7 @@ export async function updateUserInDb(
   id: string,
   data: {
     full_name?: string;
-    role?: 'ADMIN' | 'STAFF';
+    role?: 'ADMIN' | 'MANAGER' | 'STAFF_ADMISSIONS' | 'STAFF_MARKETING' | 'STAFF';
     phone?: string;
     department?: string;
   }
@@ -467,7 +541,15 @@ export async function updateUserInDb(
 
   const now = new Date().toISOString();
   const fullName = data.full_name !== undefined ? data.full_name.trim() : existing.full_name;
-  const role = data.role !== undefined ? (data.role === 'ADMIN' ? 'ADMIN' : 'STAFF') : existing.role;
+
+  let role = existing.role;
+  if (data.role !== undefined) {
+    if (data.role === 'ADMIN') role = 'ADMIN';
+    else if (data.role === 'MANAGER') role = 'MANAGER';
+    else if (data.role === 'STAFF_MARKETING') role = 'STAFF_MARKETING';
+    else if (data.role === 'STAFF_ADMISSIONS' || data.role === 'STAFF') role = 'STAFF_ADMISSIONS';
+  }
+
   const phone = data.phone !== undefined ? data.phone.trim() : existing.phone;
   const department = data.department !== undefined ? data.department.trim() : existing.department;
 
@@ -717,9 +799,9 @@ export async function queryLeadsFromDb(params?: {
   const conditions: string[] = ['1=1'];
   const args: any[] = [];
 
-  // Phân quyền: Nếu là counselor thì chỉ xem hồ sơ được phân công
-  if (params?.role === 'counselor' && params?.userId) {
-    conditions.push('assigned_to = ?');
+  // Phân quyền: Nếu là Chuyên viên Tuyển sinh thì chỉ xem hồ sơ được phân công hoặc chưa gán
+  if ((params?.role === 'STAFF_ADMISSIONS' || params?.role === 'counselor') && params?.userId) {
+    conditions.push('(assigned_to = ? OR assigned_to IS NULL)');
     args.push(params.userId);
   }
 
@@ -836,7 +918,7 @@ export async function createLeadInDb(data: {
   let assignedToName = data.assignedToName;
 
   if (!assignedTo) {
-    const defaultStaff = db.prepare('SELECT id, full_name FROM users WHERE role = ? AND status = ? LIMIT 1').get('STAFF', 'ACTIVE') as { id: string; full_name: string } | undefined;
+    const defaultStaff = db.prepare("SELECT id, full_name FROM users WHERE (role = 'STAFF_ADMISSIONS' OR role = 'STAFF') AND status = 'ACTIVE' LIMIT 1").get() as { id: string; full_name: string } | undefined;
     if (defaultStaff) {
       assignedTo = defaultStaff.id;
       assignedToName = defaultStaff.full_name;
