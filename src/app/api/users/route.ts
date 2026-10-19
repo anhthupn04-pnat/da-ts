@@ -1,31 +1,40 @@
 import { NextResponse } from 'next/server';
-import { getStaffList, createStaffAccount, isUserAdmin, getSafeCurrentUser } from '@/data/storage';
+import { queryUsersFromDb, createUserInDb } from '@/lib/db';
+import { requireAdminAuth } from '@/lib/auth-middleware';
 
 export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const requesterId = searchParams.get('requesterId');
-
-    const staffList = getStaffList();
-    const requester = requesterId ? staffList.find(s => s.id === requesterId) : getSafeCurrentUser();
-
-    if (!isUserAdmin(requester)) {
-      return NextResponse.json(
-        { success: false, error: '403 Forbidden: Yêu cầu quyền Quản trị viên (Admin) để truy cập danh sách người dùng.' },
-        { status: 403 }
-      );
+    const authCheck = await requireAdminAuth(request);
+    if (!authCheck.authorized) {
+      return authCheck.response!;
     }
 
-    // Trả về danh sách người dùng an toàn (ẩn mật khẩu)
-    const sanitized = staffList.map(({ password, password_hash, ...rest }) => ({
-      ...rest,
-      hasPassword: !!(password || password_hash)
-    }));
+    const { searchParams } = new URL(request.url);
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
+    const limit = Math.max(1, Math.min(100, parseInt(searchParams.get('limit') || '10', 10)));
+    const search = searchParams.get('search') || searchParams.get('q') || '';
+    const role = searchParams.get('role') || 'ALL';
+    const status = searchParams.get('status') || 'ALL';
 
-    return NextResponse.json({ success: true, users: sanitized }, { status: 200 });
+    const result = await queryUsersFromDb({
+      page,
+      limit,
+      search,
+      role,
+      status
+    });
+
+    return NextResponse.json(
+      {
+        success: true,
+        users: result.users,
+        pagination: result.pagination
+      },
+      { status: 200 }
+    );
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: error?.message || 'Lỗi xử lý yêu cầu' },
+      { success: false, error: error?.message || 'Lỗi cơ sở dữ liệu khi truy vấn danh sách người dùng' },
       { status: 500 }
     );
   }
@@ -33,52 +42,67 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { requesterId, fullName, username, email, password, role = 'STAFF', phone, department } = body;
-
-    const staffList = getStaffList();
-    const requester = requesterId ? staffList.find(s => s.id === requesterId) : getSafeCurrentUser();
-
-    if (!requester || !isUserAdmin(requester)) {
-      return NextResponse.json(
-        { success: false, error: '403 Forbidden: Chỉ Quản trị viên (Admin) mới có quyền tạo tài khoản người dùng.' },
-        { status: 403 }
-      );
+    const body = await request.json().catch(() => ({}));
+    const authCheck = await requireAdminAuth(request, body.requesterId);
+    if (!authCheck.authorized) {
+      return authCheck.response!;
     }
 
-    if (!fullName || !email || !password) {
+    const fullName = (body.full_name || body.fullName || '').trim();
+    const email = (body.email || '').trim().toLowerCase();
+    const username = (body.username || '').trim().toLowerCase();
+    const password = (body.password || '').trim();
+    const role = (body.role || 'STAFF').toUpperCase() === 'ADMIN' ? 'ADMIN' : 'STAFF';
+    const phone = (body.phone || '').trim();
+    const department = (body.department || '').trim();
+
+    // Validate dữ liệu đầu vào
+    if (!fullName || fullName.length < 2) {
       return NextResponse.json(
-        { success: false, error: 'Vui lòng cung cấp đầy đủ: Họ tên, Email và Mật khẩu khởi tạo.' },
+        { success: false, error: 'Họ và tên người dùng phải có tối thiểu 2 ký tự.' },
         { status: 400 }
       );
     }
 
-    if (password.length < 8) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
       return NextResponse.json(
-        { success: false, error: 'Mật khẩu phải có độ dài tối thiểu 8 ký tự.' },
+        { success: false, error: 'Địa chỉ Email không đúng định dạng tiêu chuẩn.' },
         { status: 400 }
       );
     }
 
-    const res = createStaffAccount(requester, {
-      fullName,
-      username,
+    if (!password || password.length < 8) {
+      return NextResponse.json(
+        { success: false, error: 'Mật khẩu khởi tạo phải có độ dài tối thiểu 8 ký tự.' },
+        { status: 400 }
+      );
+    }
+
+    // Thực thi thêm bản ghi vào Database với Bcrypt Hash và DB Transaction
+    const newUser = await createUserInDb({
+      full_name: fullName,
       email,
+      username: username || email.split('@')[0],
       password,
-      role: role === 'ADMIN' || role === 'admin' ? 'ADMIN' : 'STAFF',
+      role,
       phone,
       department
     });
 
-    if (!res.success) {
-      return NextResponse.json({ success: false, error: res.message }, { status: 400 });
-    }
-
-    return NextResponse.json({ success: true, user: res.staff, message: res.message }, { status: 201 });
-  } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: error?.message || 'Lỗi máy chủ khi tạo tài khoản' },
-      { status: 500 }
+      {
+        success: true,
+        user: newUser,
+        message: 'Tạo tài khoản người dùng mới thành công và đã lưu bền vững vào CSDL.'
+      },
+      { status: 201 }
+    );
+  } catch (error: any) {
+    const isConflict = error?.message?.includes('đã tồn tại') || error?.message?.includes('đã được sử dụng');
+    return NextResponse.json(
+      { success: false, error: error?.message || 'Lỗi cơ sở dữ liệu khi tạo tài khoản' },
+      { status: isConflict ? 409 : 500 }
     );
   }
 }

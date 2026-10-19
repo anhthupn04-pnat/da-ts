@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { authenticateStaff } from '@/data/storage';
+import { authenticateStaff, setCurrentUser } from '@/data/storage';
+import { UserProfile } from '@/types';
 import {
   Shield,
   Lock,
@@ -45,7 +46,7 @@ export default function LoginPage() {
     }
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -62,9 +63,28 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = authenticateStaff(identifier, password);
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier: identifier.trim(), password: password.trim() })
+      });
 
-      if (res.success && res.user) {
+      const res = await response.json();
+
+      if (response.ok && res.success && res.user) {
+        const loggedUser: UserProfile = {
+          id: res.user.id,
+          fullName: res.user.full_name,
+          username: res.user.username,
+          email: res.user.email,
+          role: res.user.role,
+          status: res.user.status,
+          phone: res.user.phone || '',
+          department: res.user.department || 'Tổ Tư Vấn Tuyển Sinh VN-US'
+        };
+
+        setCurrentUser(loggedUser);
+
         // Xử lý Remember Me
         try {
           if (rememberMe) {
@@ -81,12 +101,19 @@ export default function LoginPage() {
           router.push('/admin');
         }, 500);
       } else {
-        setError(res.message || 'Tên đăng nhập hoặc mật khẩu không chính xác.');
+        setError(res.error || res.message || 'Tên đăng nhập hoặc mật khẩu không chính xác.');
         setLoading(false);
       }
-    } catch (err: any) {
-      setError(err?.message || 'Có lỗi xảy ra trong quá trình xác thực.');
-      setLoading(false);
+    } catch {
+      // Fallback authenticateStaff nếu mạng offline
+      const fallback = authenticateStaff(identifier, password);
+      if (fallback.success && fallback.user) {
+        setSuccess(true);
+        setTimeout(() => router.push('/admin'), 500);
+      } else {
+        setError(fallback.message || 'Lỗi kết nối máy chủ xác thực.');
+        setLoading(false);
+      }
     }
   };
 

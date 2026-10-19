@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getStaffList, resetUserPassword, isUserAdmin, getSafeCurrentUser } from '@/data/storage';
+import { resetUserPasswordInDb, getUserByIdFromDb } from '@/lib/db';
+import { requireAdminAuth } from '@/lib/auth-middleware';
 
 export async function POST(
   request: Request,
@@ -8,23 +9,28 @@ export async function POST(
   try {
     const { id } = await params;
     const body = await request.json().catch(() => ({}));
-    const { requesterId, newPassword } = body;
 
-    const staffList = getStaffList();
-    const requester = requesterId ? staffList.find(s => s.id === requesterId) : getSafeCurrentUser();
+    const authCheck = await requireAdminAuth(request, body.requesterId);
+    if (!authCheck.authorized) {
+      return authCheck.response!;
+    }
 
-    if (!requester || !isUserAdmin(requester)) {
+    const targetUser = await getUserByIdFromDb(id);
+    if (!targetUser) {
       return NextResponse.json(
-        { success: false, error: '403 Forbidden: Chỉ Quản trị viên (Admin) mới có quyền đặt lại mật khẩu.' },
-        { status: 403 }
+        { success: false, error: 'Không tìm thấy tài khoản để đặt lại mật khẩu.' },
+        { status: 404 }
       );
     }
 
-    const res = resetUserPassword(requester, id, newPassword);
-
-    if (!res.success) {
-      return NextResponse.json({ success: false, error: res.message }, { status: 400 });
+    if (body.newPassword && body.newPassword.trim().length < 8) {
+      return NextResponse.json(
+        { success: false, error: 'Mật khẩu mới phải có tối thiểu 8 ký tự.' },
+        { status: 400 }
+      );
     }
+
+    const res = await resetUserPasswordInDb(id, body.newPassword);
 
     return NextResponse.json(
       {
@@ -36,7 +42,7 @@ export async function POST(
     );
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: error?.message || 'Lỗi khi đặt lại mật khẩu' },
+      { success: false, error: error?.message || 'Lỗi khi đặt lại mật khẩu trong Database' },
       { status: 500 }
     );
   }
