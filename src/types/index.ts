@@ -7,6 +7,7 @@ export interface UserProfile {
   role: Role;
   department: string;
   phone: string;
+  password?: string;
   avatarUrl?: string;
   status?: 'active' | 'locked';
   assignedRegion?: string;

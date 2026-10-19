@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import RoleSwitcher from '@/components/RoleSwitcher';
+import UserProfileModal from '@/components/UserProfileModal';
 import { getCurrentUser, logoutUser } from '@/data/storage';
 import { UserProfile } from '@/types';
 import {
@@ -23,7 +23,10 @@ import {
   FileCheck,
   Search,
   CheckCircle2,
-  CalendarCheck
+  CalendarCheck,
+  User,
+  KeyRound,
+  Edit3
 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -32,6 +35,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [authChecking, setAuthChecking] = useState(true);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   useEffect(() => {
     const user = getCurrentUser();
@@ -209,6 +213,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <p className="text-[11px] text-blue-300 truncate mt-0.5">
                 {currentUser.department}
               </p>
+              
+              <button
+                onClick={() => setIsProfileModalOpen(true)}
+                className="mt-2.5 w-full py-1.5 px-2.5 rounded-xl bg-slate-700/60 hover:bg-slate-700 text-slate-200 hover:text-white text-[11px] font-semibold flex items-center justify-center gap-1.5 transition border border-slate-600/50 cursor-pointer"
+              >
+                <Edit3 className="w-3.5 h-3.5 text-amber-400" />
+                <span>Hồ Sơ Cá Nhân & Đổi Mật Khẩu</span>
+              </button>
+
               {currentUser.role === 'counselor' && (
                 <div className="mt-2 pt-2 border-t border-slate-700/50 flex items-center justify-between text-[10px] text-emerald-400 font-medium">
                   <span>Phạm vi: {currentUser.assignedRegion || 'Được phân công'}</span>
@@ -304,8 +317,35 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <RoleSwitcher />
+          <div className="flex items-center gap-2.5">
+            {currentUser && (
+              <>
+                <button
+                  onClick={() => setIsProfileModalOpen(true)}
+                  className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-slate-800 transition cursor-pointer border border-slate-200"
+                  title="Xem và chỉnh sửa thông tin cá nhân / Đổi mật khẩu"
+                >
+                  <div className="w-7 h-7 rounded-lg bg-blue-900 text-white font-bold text-xs flex items-center justify-center">
+                    {currentUser.fullName.charAt(0).toUpperCase() || 'U'}
+                  </div>
+                  <div className="text-left hidden md:block">
+                    <p className="text-xs font-bold text-slate-900 leading-tight flex items-center gap-1.5">
+                      <span>{currentUser.fullName}</span>
+                      <Edit3 className="w-3 h-3 text-slate-400" />
+                    </p>
+                    <p className="text-[10px] text-slate-500 font-semibold">{currentUser.role.toUpperCase()}</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={handleLogout}
+                  className="p-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
+                  title="Đăng xuất khỏi hệ thống"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </>
+            )}
           </div>
         </header>
 
@@ -336,6 +376,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </main>
 
       </div>
+
+      {/* Self-Profile Management Modal */}
+      {currentUser && (
+        <UserProfileModal
+          user={currentUser}
+          isOpen={isProfileModalOpen}
+          onClose={() => setIsProfileModalOpen(false)}
+          onUpdated={updated => setCurrentUser(updated)}
+        />
+      )}
 
     </div>
   );

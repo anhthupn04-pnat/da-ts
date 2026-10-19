@@ -13,7 +13,11 @@ import {
   saveStaffList,
   getCurrentUser,
   getSafeCurrentUser,
-  addAuditLog
+  addAuditLog,
+  createStaffAccount,
+  deleteStaffAccount,
+  toggleStaffStatus,
+  updateUserProfile
 } from '@/data/storage';
 import { isSupabaseConfigured } from '@/lib/supabase';
 import { UserProfile, Role, AuditLog } from '@/types';
@@ -40,7 +44,10 @@ import {
   Search,
   History,
   FileCode,
-  Check
+  Check,
+  Trash2,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 
 export default function SettingsPage() {
@@ -56,8 +63,9 @@ export default function SettingsPage() {
     fullName: '',
     email: '',
     phone: '',
+    password: 'Password@123',
     role: 'counselor' as Role,
-    department: 'Bộ phận Tư vấn Tuyển sinh',
+    department: 'Bộ phận Tư vấn Tuyển sinh (VN-US)',
     assignedRegion: 'Đà Nẵng & Quảng Nam',
     targetQuota: 80
   });
@@ -82,25 +90,39 @@ export default function SettingsPage() {
 
   // Khóa / Mở khóa tài khoản cán bộ
   const handleToggleLockUser = (userId: string) => {
-    const list = [...staffList];
-    const idx = list.findIndex(u => u.id === userId);
-    if (idx === -1) return;
-
-    const user = list[idx];
-    const newStatus = user.status === 'locked' ? 'active' : 'locked';
-    list[idx] = { ...user, status: newStatus };
-    saveStaffList(list);
-    setStaffList(list);
-
-    addAuditLog('UPDATE', 'users', user.id, { status: user.status }, { status: newStatus }, currentUser);
-    showToast(`Đã ${newStatus === 'locked' ? 'khóa' : 'mở khóa'} tài khoản: ${user.fullName}!`);
+    const res = toggleStaffStatus(currentUser, userId);
+    if (res.success) {
+      loadData();
+      showToast(res.message || 'Cập nhật trạng thái tài khoản thành công!');
+    } else {
+      showToast(`Lỗi: ${res.message}`);
+    }
   };
 
-  // Reset mật khẩu cán bộ
+  // Xóa tài khoản nhân sự
+  const handleDeleteStaff = (userId: string, name: string) => {
+    if (confirm(`Bạn có chắc chắn muốn xóa tài khoản của cán bộ "${name}"? Thao tác này không thể hoàn tác.`)) {
+      const res = deleteStaffAccount(currentUser, userId);
+      if (res.success) {
+        loadData();
+        showToast(res.message || 'Đã xóa tài khoản cán bộ!');
+      } else {
+        showToast(`Lỗi: ${res.message}`);
+      }
+    }
+  };
+
+  // Reset mật khẩu cán bộ về mặc định
   const handleResetPassword = (userId: string, name: string) => {
-    if (confirm(`Đặt lại mật khẩu cho cán bộ "${name}" về mật khẩu mặc định (Dtu@2026)?`)) {
-      addAuditLog('UPDATE', 'users', userId, null, { action: 'RESET_PASSWORD' }, currentUser);
-      showToast(`Đã gửi mã đặt lại mật khẩu cho ${name}!`);
+    const defaultNewPass = 'Dtu@2026';
+    if (confirm(`Đặt lại mật khẩu cho cán bộ "${name}" về mật khẩu ban đầu (${defaultNewPass})?`)) {
+      const res = updateUserProfile(userId, { password: defaultNewPass });
+      if (res.success) {
+        loadData();
+        showToast(`Đã đặt lại mật khẩu cho "${name}" thành công! Mật khẩu mới: ${defaultNewPass}`);
+      } else {
+        showToast(`Lỗi: ${res.message}`);
+      }
     }
   };
 
@@ -111,37 +133,39 @@ export default function SettingsPage() {
       showToast('Từ chối: Chỉ Quản trị viên (Super Admin) mới có quyền cấp tài khoản cán bộ!');
       return;
     }
-    if (!newStaff.fullName || !newStaff.email) return;
+    if (!newStaff.fullName || !newStaff.email || !newStaff.password) {
+      showToast('Vui lòng điền đầy đủ họ tên, email và mật khẩu khởi tạo!');
+      return;
+    }
 
-    const id = `usr-${newStaff.role}-${Date.now().toString().slice(-4)}`;
-    const user: UserProfile = {
-      id,
-      email: newStaff.email.trim().toLowerCase(),
+    const res = createStaffAccount(currentUser, {
       fullName: newStaff.fullName.trim(),
-      role: newStaff.role,
-      department: newStaff.department,
+      email: newStaff.email.trim(),
       phone: newStaff.phone.trim(),
-      assignedRegion: newStaff.assignedRegion,
-      targetQuota: Number(newStaff.targetQuota) || 80,
-      status: 'active'
-    };
-
-    const updated = [...staffList, user];
-    saveStaffList(updated);
-    setStaffList(updated);
-    addAuditLog('CREATE', 'users', id, null, user, currentUser);
-
-    setAddStaffOpen(false);
-    setNewStaff({
-      fullName: '',
-      email: '',
-      phone: '',
-      role: 'counselor',
-      department: 'Bộ phận Tư vấn Tuyển sinh',
-      assignedRegion: 'Đà Nẵng & Quảng Nam',
-      targetQuota: 80
+      password: newStaff.password.trim(),
+      role: newStaff.role,
+      department: newStaff.department.trim(),
+      assignedRegion: newStaff.assignedRegion.trim(),
+      targetQuota: Number(newStaff.targetQuota) || 80
     });
-    showToast(`Đã cấp tài khoản thành công cho cán bộ: ${user.fullName}!`);
+
+    if (res.success) {
+      loadData();
+      setAddStaffOpen(false);
+      setNewStaff({
+        fullName: '',
+        email: '',
+        phone: '',
+        password: 'Password@123',
+        role: 'counselor',
+        department: 'Bộ phận Tư vấn Tuyển sinh (VN-US)',
+        assignedRegion: 'Đà Nẵng & Quảng Nam',
+        targetQuota: 80
+      });
+      showToast(`Đã cấp tài khoản thành công cho cán bộ: ${res.staff?.fullName}!`);
+    } else {
+      showToast(`Lỗi: ${res.message}`);
+    }
   };
 
   // Khôi phục dữ liệu ban đầu
@@ -386,17 +410,30 @@ export default function SettingsPage() {
                           <button
                             onClick={() => handleResetPassword(staff.id, staff.fullName)}
                             className="p-1.5 text-slate-400 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition cursor-pointer"
-                            title="Reset mật khẩu"
+                            title="Reset mật khẩu về mặc định (Dtu@2026)"
                           >
                             <Key className="w-4 h-4" />
                           </button>
-                          <button
-                            onClick={() => handleToggleLockUser(staff.id)}
-                            className="p-1.5 text-slate-400 hover:text-amber-600 rounded-lg hover:bg-amber-50 transition cursor-pointer"
-                            title={staff.status === 'locked' ? 'Mở khóa tài khoản' : 'Khóa tài khoản'}
-                          >
-                            {staff.status === 'locked' ? <Unlock className="w-4 h-4 text-emerald-600" /> : <Lock className="w-4 h-4" />}
-                          </button>
+                          
+                          {staff.email.toLowerCase() !== 'anhthuphan0102@gmail.com' && (
+                            <>
+                              <button
+                                onClick={() => handleToggleLockUser(staff.id)}
+                                className="p-1.5 text-slate-400 hover:text-amber-600 rounded-lg hover:bg-amber-50 transition cursor-pointer"
+                                title={staff.status === 'locked' ? 'Mở khóa tài khoản' : 'Tạm khóa tài khoản'}
+                              >
+                                {staff.status === 'locked' ? <Unlock className="w-4 h-4 text-emerald-600" /> : <Lock className="w-4 h-4" />}
+                              </button>
+                              
+                              <button
+                                onClick={() => handleDeleteStaff(staff.id, staff.fullName)}
+                                className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition cursor-pointer"
+                                title="Xóa tài khoản nhân sự"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -605,6 +642,23 @@ export default function SettingsPage() {
                     className="w-full p-2 border border-slate-300 rounded-xl"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">
+                  Mật Khẩu Đăng Nhập Khởi Tạo <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newStaff.password}
+                  onChange={e => setNewStaff({ ...newStaff, password: e.target.value })}
+                  placeholder="Mật khẩu cấp cho cán bộ..."
+                  className="w-full p-2 border border-slate-300 rounded-xl font-mono text-blue-900 font-bold"
+                />
+                <p className="text-[10px] text-slate-400 mt-1">
+                  Cán bộ sau khi đăng nhập bằng mật khẩu này có thể tự đổi mật khẩu mới trong mục Hồ sơ cá nhân.
+                </p>
               </div>
 
               <div className="grid grid-cols-2 gap-3">

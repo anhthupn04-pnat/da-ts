@@ -9,73 +9,19 @@ import {
   ZnsSmsLog
 } from '@/types';
 
-// Danh sách cán bộ & chuyên viên đại diện 5 nhóm quyền cốt lõi
+// Danh sách cán bộ nhân sự nội bộ (Mặc định khởi tạo chỉ có duy nhất Quản trị viên tối cao)
 export const INITIAL_STAFF: UserProfile[] = [
   {
-    id: 'usr-admin-1',
-    email: 'admin.tuyensinh@dtu.edu.vn',
-    fullName: 'ThS. Nguyễn Văn Hải',
+    id: 'usr-admin-anhthu',
+    email: 'anhthuphan0102@gmail.com',
+    fullName: 'Anh Thư',
     role: 'admin',
-    department: 'Ban Giám đốc & Quản trị Hệ thống',
+    password: '0102024',
+    department: 'Ban Giám đốc & Quản trị Hệ thống Tuyển sinh Quốc tế VN-US',
     phone: '0905123456',
     status: 'active',
     assignedRegion: 'Toàn quốc',
     targetQuota: 200
-  },
-  {
-    id: 'usr-manager-1',
-    email: 'manager.tuyensinh@dtu.edu.vn',
-    fullName: 'TS. Đặng Thanh Bình',
-    role: 'manager',
-    department: 'Ban Lãnh đạo Tuyển sinh (Trưởng Ban)',
-    phone: '0905999888',
-    status: 'active',
-    assignedRegion: 'Toàn quốc',
-    targetQuota: 150
-  },
-  {
-    id: 'usr-counselor-1',
-    email: 'lan.tuyensinh@dtu.edu.vn',
-    fullName: 'Trần Thị Mai Lan',
-    role: 'counselor',
-    department: 'Bộ phận Tư vấn Tuyển sinh & Hotline',
-    phone: '0979407340',
-    status: 'active',
-    assignedRegion: 'Đà Nẵng & Quảng Nam',
-    targetQuota: 80
-  },
-  {
-    id: 'usr-counselor-2',
-    email: 'tuan.cmu@dtu.edu.vn',
-    fullName: 'Lê Hoàng Anh Tuấn',
-    role: 'counselor',
-    department: 'Bộ phận Tư vấn Khối Công nghệ CMU',
-    phone: '0888414141',
-    status: 'active',
-    assignedRegion: 'Thừa Thiên Huế & Bắc Trung Bộ',
-    targetQuota: 80
-  },
-  {
-    id: 'usr-marketer-1',
-    email: 'phuong.mkt@dtu.edu.vn',
-    fullName: 'Phạm Minh Phương',
-    role: 'marketer',
-    department: 'Phòng Truyền thông & Tuyển sinh Số',
-    phone: '0912345678',
-    status: 'active',
-    assignedRegion: 'Toàn quốc',
-    targetQuota: 0
-  },
-  {
-    id: 'usr-verifier-1',
-    email: 'ngoc.verify@dtu.edu.vn',
-    fullName: 'ThS. Hoàng Thị Bích Ngọc',
-    role: 'verifier',
-    department: 'Tổ Hậu kiểm & Thẩm định Hồ sơ Xét tuyển',
-    phone: '0935112233',
-    status: 'active',
-    assignedRegion: 'Toàn quốc',
-    targetQuota: 0
   }
 ];
 

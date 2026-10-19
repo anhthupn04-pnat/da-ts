@@ -3,318 +3,223 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { setCurrentUser, getAllStaff } from '@/data/storage';
-import { UserProfile, Role } from '@/types';
+import { authenticateStaff } from '@/data/storage';
 import {
-  GraduationCap,
   Shield,
-  UserCheck,
-  Megaphone,
-  Users,
   Lock,
   Mail,
   ArrowRight,
   ArrowLeft,
   CheckCircle2,
+  AlertCircle,
+  Eye,
+  EyeOff,
   Sparkles,
-  Building2,
-  FileCheck
+  KeyRound,
+  UserCheck
 } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
-  const staffList = getAllStaff();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [selectedRole, setSelectedRole] = useState<Role>('counselor');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
-  const departments = [
-    {
-      role: 'counselor' as Role,
-      staffEmail: 'lan.tuyensinh@dtu.edu.vn',
-      title: 'Chuyên Viên Tư Vấn Tuyển Sinh',
-      department: 'Bộ phận Tư vấn Tuyển sinh & Hotline',
-      name: 'Trần Thị Mai Lan',
-      icon: <UserCheck className="w-5 h-5 text-emerald-600" />,
-      bg: 'bg-emerald-50 hover:bg-emerald-100/70 border-emerald-200',
-      badge: 'bg-emerald-100 text-emerald-800',
-      description: 'Chăm sóc lead, gọi điện/Zalo tư vấn chương trình đào tạo & học bổng quốc tế, tiếp nhận hồ sơ, nhập dữ liệu Excel.'
-    },
-    {
-      role: 'marketer' as Role,
-      staffEmail: 'phuong.mkt@dtu.edu.vn',
-      title: 'Chuyên Viên Marketing Tuyển Sinh',
-      department: 'Phòng Truyền thông & Tuyển sinh Số',
-      name: 'Phạm Minh Phương',
-      icon: <Megaphone className="w-5 h-5 text-amber-600" />,
-      bg: 'bg-amber-50 hover:bg-amber-100/70 border-amber-200',
-      badge: 'bg-amber-100 text-amber-800',
-      description: 'Quản trị chiến dịch đa kênh (TikTok, Facebook, Web), lập lịch bài đăng, sử dụng Trợ lý AI sáng tạo.'
-    },
-    {
-      role: 'verifier' as Role,
-      staffEmail: 'ngoc.verify@dtu.edu.vn',
-      title: 'Cán Bộ Hậu Kiểm & Xét Tuyển',
-      department: 'Tổ Hậu kiểm & Thẩm định Hồ sơ Xét tuyển',
-      name: 'ThS. Hoàng Thị Bích Ngọc',
-      icon: <FileCheck className="w-5 h-5 text-teal-600" />,
-      bg: 'bg-teal-50 hover:bg-teal-100/70 border-teal-200',
-      badge: 'bg-teal-100 text-teal-800',
-      description: 'Tiếp nhận hồ sơ số hóa (học bạ, bằng tốt nghiệp, CCCD), đối chiếu minh chứng 2 màn hình và thẩm định điểm trong 30 giây.'
-    },
-    {
-      role: 'manager' as Role,
-      staffEmail: 'manager.tuyensinh@dtu.edu.vn',
-      title: 'Trưởng Ban Tuyển Sinh (Quản Lý)',
-      department: 'Ban Lãnh đạo Tuyển sinh',
-      name: 'TS. Đặng Thanh Bình',
-      icon: <Users className="w-5 h-5 text-blue-600" />,
-      bg: 'bg-blue-50 hover:bg-blue-100/70 border-blue-200',
-      badge: 'bg-blue-100 text-blue-800',
-      description: 'Giám sát toàn bộ tiến độ, phân bổ Round-Robin, theo dõi KPI chuyên viên, phê duyệt các trường hợp đặc biệt.'
-    },
-    {
-      role: 'admin' as Role,
-      staffEmail: 'admin.tuyensinh@dtu.edu.vn',
-      title: 'Super Admin (Quản Trị Tối Cao)',
-      department: 'Ban Giám đốc & Quản trị Hệ thống',
-      name: 'ThS. Nguyễn Văn Hải',
-      icon: <Shield className="w-5 h-5 text-purple-600" />,
-      bg: 'bg-purple-50 hover:bg-purple-100/70 border-purple-200',
-      badge: 'bg-purple-100 text-purple-800',
-      description: 'Toàn quyền cấu hình hệ thống, quản lý tài khoản nhân sự, phân bổ chỉ tiêu, xem nhật ký kiểm toán vĩnh viễn (Audit Logs).'
-    }
-  ];
-
-  const handleQuickLogin = (role: Role) => {
-    setLoading(true);
-    const staff = staffList.find(s => s.role === role) || staffList[0];
-    setCurrentUser(staff);
-    setTimeout(() => {
-      router.push('/admin');
-    }, 400);
-  };
-
-  const handleFormLogin = (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
     if (!email.trim()) {
-      setError('Vui lòng nhập địa chỉ email cơ quan.');
+      setError('Vui lòng nhập địa chỉ email công vụ của bạn.');
+      return;
+    }
+
+    if (!password.trim()) {
+      setError('Vui lòng nhập mật khẩu tài khoản.');
       return;
     }
 
     setLoading(true);
-    // Find matching staff or create a session
-    const matched = staffList.find(s => s.email.toLowerCase() === email.trim().toLowerCase());
 
-    if (matched) {
-      setCurrentUser(matched);
-      router.push('/admin');
-    } else {
-      // Default to chosen role with custom email
-      const fallbackStaff: UserProfile = {
-        id: 'usr-custom-' + Date.now(),
-        email: email.trim(),
-        fullName: email.split('@')[0],
-        role: selectedRole,
-        department: departments.find(d => d.role === selectedRole)?.department || 'Bộ phận Tuyển sinh',
-        phone: '0979407340'
-      };
-      setCurrentUser(fallbackStaff);
-      router.push('/admin');
+    try {
+      const res = authenticateStaff(email, password);
+
+      if (res.success && res.user) {
+        setSuccess(true);
+        setTimeout(() => {
+          router.push('/admin');
+        }, 600);
+      } else {
+        setError(res.message || 'Email hoặc mật khẩu không chính xác.');
+        setLoading(false);
+      }
+    } catch (err: any) {
+      setError(err?.message || 'Có lỗi xảy ra khi xác thực.');
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 flex flex-col justify-between py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 flex flex-col justify-between py-10 px-4 sm:px-6 lg:px-8">
       
-      {/* Top Bar */}
-      <div className="max-w-5xl mx-auto w-full flex items-center justify-between text-xs">
+      {/* Top Header Navigation */}
+      <div className="max-w-4xl mx-auto w-full flex items-center justify-between text-xs">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-slate-300 hover:text-white transition"
+          className="inline-flex items-center gap-2 text-slate-300 hover:text-white transition px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Về Cổng Thông Tin Tuyển Sinh Công Khai</span>
         </Link>
 
-        <span className="text-amber-400 font-bold tracking-wider uppercase text-[11px] bg-white/10 px-3 py-1 rounded-full border border-amber-400/20">
-          Cổng Nghiệp Vụ Cán Bộ Tuyển Sinh
+        <span className="text-amber-400 font-bold tracking-wider uppercase text-[11px] bg-white/10 px-3.5 py-1.5 rounded-full border border-amber-400/30 flex items-center gap-1.5">
+          <Shield className="w-3.5 h-3.5 text-amber-400" />
+          <span>Cổng Nội Bộ Cán Bộ Tuyển Sinh</span>
         </span>
       </div>
 
-      {/* Main Container */}
-      <div className="max-w-4xl mx-auto w-full my-8">
+      {/* Main Login Card */}
+      <div className="max-w-md mx-auto w-full my-6">
         
-        {/* Title Header with VN-US Logo */}
-        <div className="text-center space-y-3 mb-8">
-          <div className="inline-flex items-center justify-center p-3 bg-white rounded-2xl shadow-xl shadow-blue-900/30 border border-slate-200">
+        {/* Logo and Brand Header */}
+        <div className="text-center space-y-3 mb-6">
+          <div className="inline-flex items-center justify-center p-3 bg-white rounded-2xl shadow-2xl shadow-blue-950/50 border border-slate-200">
             <img
               src="/logo.png"
               alt="VN-US Duy Tan University"
               className="h-14 sm:h-16 w-auto object-contain"
             />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Cổng Đăng Nhập Cán Bộ & Chuyên Viên Tuyển Sinh
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
-            Hệ thống CRM số hóa quản trị tuyển sinh & đào tạo quốc tế – Viện Đào tạo Quốc tế (VN-US) • Đại học Duy Tân.
-            Bảo mật phân quyền theo vai trò nghiệp vụ (RBAC).
-          </p>
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-400/20 rounded-full text-[11px] text-amber-300">
-            <span>Chỉ dành cho Cán bộ & Chuyên viên nội bộ • Không áp dụng tự đăng ký tài khoản</span>
+          <div>
+            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+              Đăng Nhập Cán Bộ Tuyển Sinh
+            </h1>
+            <p className="text-xs text-slate-300 font-medium mt-1">
+              Hệ Thống Quản Trị Tuyển Sinh & Chăm Sóc Thí Sinh (VN-US)
+            </p>
           </div>
         </div>
 
-        {/* Section 1: 1-Click Role Login for Departments */}
-        <div className="bg-white/10 backdrop-blur-xl border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
-          <div className="flex items-center justify-between border-b border-white/10 pb-4">
-            <div>
-              <span className="text-[11px] font-bold text-amber-300 uppercase tracking-wider block">
-                Truy Cập Nhanh Theo Bộ Phận
-              </span>
-              <h3 className="text-sm sm:text-base font-bold text-white mt-0.5">
-                Chọn vai trò bộ phận để đăng nhập vào đúng không gian làm việc
-              </h3>
-            </div>
-            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium text-emerald-300 bg-emerald-950/60 border border-emerald-500/30">
-              <Sparkles className="w-3.5 h-3.5" /> 1-Click Login
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {departments.map(dept => (
-              <div
-                key={dept.role}
-                className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-md hover:shadow-xl hover:border-blue-400 transition-all flex flex-col justify-between group"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="p-2 rounded-xl bg-slate-100 group-hover:scale-105 transition-transform">
-                      {dept.icon}
-                    </span>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${dept.badge}`}>
-                      {dept.title}
-                    </span>
-                  </div>
-
-                  <h4 className="text-sm font-bold text-slate-900 group-hover:text-blue-700 transition-colors">
-                    {dept.name}
-                  </h4>
-                  <p className="text-xs font-semibold text-slate-500 mt-0.5">
-                    {dept.department}
-                  </p>
-                  <p className="text-xs text-slate-600 mt-2 line-clamp-2 leading-relaxed">
-                    {dept.description}
-                  </p>
-                </div>
-
-                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-[11px] text-slate-400 font-mono">
-                    {dept.staffEmail}
-                  </span>
-                  <button
-                    type="button"
-                    disabled={loading}
-                    onClick={() => handleQuickLogin(dept.role)}
-                    className="inline-flex items-center gap-1 px-3.5 py-1.5 bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold rounded-xl shadow-xs transition group-hover:scale-105 cursor-pointer"
-                  >
-                    <span>Vào Làm Việc</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+        {/* Login Form Box */}
+        <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200/80">
+          
+          {error && (
+            <div className="mb-5 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 shrink-0 text-rose-600 mt-0.5" />
+              <div className="space-y-0.5">
+                <p className="font-bold">Đăng nhập không thành công</p>
+                <p className="leading-relaxed">{error}</p>
               </div>
-            ))}
-          </div>
+            </div>
+          )}
 
-          {/* Section 2: Custom Credentials Form */}
-          <div className="pt-6 border-t border-white/10">
-            <details className="group">
-              <summary className="text-xs font-bold text-slate-300 hover:text-white cursor-pointer select-none flex items-center justify-between">
-                <span>Hoặc đăng nhập thủ công bằng email & mật khẩu riêng</span>
-                <span className="text-[11px] text-blue-300 group-open:rotate-180 transition-transform">▼</span>
-              </summary>
+          {success && (
+            <div className="mb-5 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2.5">
+              <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-600" />
+              <span className="font-bold">Xác thực thành công! Đang chuyển hướng vào bảng điều khiển...</span>
+            </div>
+          )}
 
-              <form onSubmit={handleFormLogin} className="mt-4 space-y-4 pt-2">
-                {error && (
-                  <div className="p-3 rounded-xl bg-rose-500/20 border border-rose-500/40 text-xs text-rose-200">
-                    {error}
-                  </div>
-                )}
+          <form onSubmit={handleLogin} className="space-y-5">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                Tài khoản Email công vụ <span className="text-rose-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="anhthuphan0102@gmail.com"
+                  className="w-full pl-10 pr-4 py-3 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-transparent font-medium"
+                  required
+                />
+                <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+              </div>
+            </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                  <div>
-                    <label className="block text-slate-300 font-semibold mb-1">
-                      Email Chuyên Viên:
-                    </label>
-                    <div className="relative">
-                      <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-                      <input
-                        type="email"
-                        placeholder="lan.tuyensinh@dtu.edu.vn"
-                        value={email}
-                        onChange={e => setEmail(e.target.value)}
-                        className="w-full pl-9 pr-3 py-2 bg-slate-900/60 border border-white/20 rounded-xl text-white placeholder-slate-500 focus:outline-hidden focus:border-blue-400"
-                      />
-                    </div>
-                  </div>
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-bold text-slate-700">
+                  Mật khẩu đăng nhập <span className="text-rose-500">*</span>
+                </label>
+              </div>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="Nhập mật khẩu..."
+                  className="w-full pl-10 pr-11 py-3 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-transparent font-medium"
+                  required
+                />
+                <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600 transition"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
 
-                  <div>
-                    <label className="block text-slate-300 font-semibold mb-1">
-                      Mật Khẩu Cơ Quan:
-                    </label>
-                    <div className="relative">
-                      <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-                      <input
-                        type="password"
-                        placeholder="••••••••"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        className="w-full pl-9 pr-3 py-2 bg-slate-900/60 border border-white/20 rounded-xl text-white placeholder-slate-500 focus:outline-hidden focus:border-blue-400"
-                      />
-                    </div>
-                  </div>
-                </div>
+            <button
+              type="submit"
+              disabled={loading || success}
+              className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-950 hover:from-blue-950 hover:to-slate-900 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-900/25 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50"
+            >
+              {loading ? (
+                <span>Đang xác thực thông tin...</span>
+              ) : (
+                <>
+                  <span>Đăng Nhập Hệ Thống</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+          </form>
 
-                <div className="flex items-center justify-between pt-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-slate-400">Chọn vai trò:</span>
-                    <select
-                      value={selectedRole}
-                      onChange={e => setSelectedRole(e.target.value as Role)}
-                      className="px-2 py-1 bg-slate-900/60 border border-white/20 rounded-lg text-white text-xs"
-                    >
-                      <option value="counselor" className="bg-slate-900">Chuyên viên Tư vấn</option>
-                      <option value="marketer" className="bg-slate-900">Chuyên viên Marketing</option>
-                      <option value="manager" className="bg-slate-900">Trưởng Ban Tuyển sinh</option>
-                      <option value="admin" className="bg-slate-900">Quản trị viên (Admin)</option>
-                    </select>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="px-5 py-2 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-bold text-xs rounded-xl shadow-md transition cursor-pointer"
-                  >
-                    Xác Nhận Đăng Nhập
-                  </button>
-                </div>
-              </form>
-            </details>
+          {/* Security & Access Guidelines */}
+          <div className="mt-6 pt-5 border-t border-slate-100 space-y-3">
+            <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1.5 text-slate-600">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900">
+                <KeyRound className="w-4 h-4 text-blue-900" />
+                <span>Quy định phân quyền & Tạo tài khoản:</span>
+              </div>
+              <ul className="text-[11px] space-y-1 list-disc list-inside text-slate-600 leading-relaxed">
+                <li>
+                  Tài khoản Quản trị tối cao: <strong>anhthuphan0102@gmail.com</strong>
+                </li>
+                <li>
+                  Hệ thống <strong>không cho phép tự đăng ký</strong> công khai.
+                </li>
+                <li>
+                  Các tài khoản Chuyên viên/Cán bộ khác do <strong>Admin tự tạo và gán vai trò</strong> trong Dashboard.
+                </li>
+                <li>
+                  Cán bộ sau khi được cấp tài khoản có thể <strong>tự chỉnh sửa thông tin & đổi mật khẩu</strong> tại mục Hồ sơ cá nhân.
+                </li>
+              </ul>
+            </div>
           </div>
 
         </div>
 
       </div>
 
-      {/* Footer Notice */}
-      <div className="max-w-5xl mx-auto w-full text-center text-slate-500 text-[11px] pt-4">
-        © 2026 Trung tâm Tư vấn & Hỗ trợ Sinh viên – Trường Đào tạo Quốc tế (VN-US) • Đại học Duy Tân
+      {/* Footer Credentials Info */}
+      <div className="max-w-4xl mx-auto w-full text-center text-xs text-slate-400 space-y-1">
+        <p className="font-semibold text-slate-300">
+          Viện Đào tạo Quốc tế (VN-US) • Đại học Duy Tân
+        </p>
+        <p className="text-[11px] text-slate-500">
+          Bảo mật cấp độ Database RBAC & Audit Trail • Tất cả phiên làm việc đều được mã hóa và giám sát.
+        </p>
       </div>
 
     </div>
