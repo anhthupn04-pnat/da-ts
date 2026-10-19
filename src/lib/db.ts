@@ -32,16 +32,37 @@ let sqliteDbInstance: DatabaseSync | null = null;
 export function getSqliteDb(): DatabaseSync {
   if (sqliteDbInstance) return sqliteDbInstance;
 
-  const dbDir = path.join(process.cwd(), 'database');
-  if (!fs.existsSync(dbDir)) {
-    fs.mkdirSync(dbDir, { recursive: true });
+  let dbPath: string;
+  if (process.env.VERCEL) {
+    const tmpDir = path.join('/tmp', 'database');
+    if (!fs.existsSync(tmpDir)) {
+      fs.mkdirSync(tmpDir, { recursive: true });
+    }
+    dbPath = path.join(tmpDir, 'vnus_admissions.db');
+    const bundledDbPath = path.join(process.cwd(), 'database', 'vnus_admissions.db');
+    if (!fs.existsSync(dbPath) && fs.existsSync(bundledDbPath)) {
+      try {
+        fs.copyFileSync(bundledDbPath, dbPath);
+      } catch {
+        // ignore copy error
+      }
+    }
+  } else {
+    const dbDir = path.join(process.cwd(), 'database');
+    if (!fs.existsSync(dbDir)) {
+      fs.mkdirSync(dbDir, { recursive: true });
+    }
+    dbPath = path.join(dbDir, 'vnus_admissions.db');
   }
 
-  const dbPath = path.join(dbDir, 'vnus_admissions.db');
   const db = new DatabaseSync(dbPath);
 
-  // Kích hoạt WAL mode và Foreign Keys để đảm bảo tính toàn vẹn và hiệu năng
-  db.exec('PRAGMA journal_mode = WAL;');
+  // Kích hoạt journal mode và Foreign Keys để đảm bảo tính toàn vẹn và hiệu năng
+  try {
+    db.exec('PRAGMA journal_mode = WAL;');
+  } catch {
+    db.exec('PRAGMA journal_mode = DELETE;');
+  }
   db.exec('PRAGMA foreign_keys = ON;');
 
   // 1. Khởi tạo bảng users với 4 vai trò cụ thể: ADMIN, MANAGER, STAFF_ADMISSIONS, STAFF_MARKETING
