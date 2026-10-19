@@ -68,11 +68,11 @@ export default function PublicLookupPortal() {
     { title: 'Tư vấn hướng nghiệp', desc: 'Chuyên viên trao đổi lộ trình & học bổng', active: candidate?.status !== 'new' && candidate?.status !== 'unreachable' },
     { title: 'Hậu kiểm minh chứng', desc: 'Thẩm định điểm học bạ THPT & CCCD', active: candidate?.status === 'submitted_app' || candidate?.status === 'conditional_admit' || candidate?.status === 'confirmed_enroll' || candidate?.status === 'tuition_paid' },
     { title: 'Trúng tuyển có điều kiện', desc: 'Cấp Giấy báo trúng tuyển điện tử kèm QR', active: candidate?.status === 'conditional_admit' || candidate?.status === 'confirmed_enroll' || candidate?.status === 'tuition_paid' },
-    { title: 'Hoàn tất học phí K32', desc: 'Đã hoàn thành nghĩa vụ tài chính nhập học', active: candidate?.status === 'tuition_paid' || candidate?.paymentStatus === 'tuition_paid' }
+    { title: 'Xác nhận nhập học', desc: 'Hoàn tất thủ tục hồ sơ nhập học chính thức', active: candidate?.status === 'confirmed_enroll' || candidate?.status === 'tuition_paid' || candidate?.paymentStatus === 'tuition_paid' }
   ];
 
-  const feeAmount = selectedFee === 'app_fee' ? 50000 : 5000000;
-  const qrTransferContent = candidate ? `TS2026_${candidate.idCardNumber || candidate.phone}` : 'TS2026';
+  const feeAmount = 50000;
+  const qrTransferContent = candidate ? `TS_${candidate.idCardNumber || candidate.phone}` : 'TS_VNUS';
   // Chuẩn VietQR API link động
   const vietQrImageUrl = `https://img.vietqr.io/image/970415-110000123456-compact2.png?amount=${feeAmount}&addInfo=${encodeURIComponent(qrTransferContent)}&accountName=TRUONG%20DAI%20HOC%20DUY%20TAN%20VNUS`;
 
@@ -90,10 +90,10 @@ export default function PublicLookupPortal() {
               Cổng Tra Cứu Trực Tuyến Chính Thức
             </span>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
-              Tra Cứu Hồ Sơ & Kết Quả Xét Tuyển K32
+              Tra Cứu Hồ Sơ & Kết Quả Xét Tuyển
             </h1>
             <p className="text-xs sm:text-sm text-slate-600">
-              Trường Đào tạo Quốc tế (VN-US) - Đại học Duy Tân. Nhập số Căn cước công dân (CCCD), Số điện thoại hoặc Mã hồ sơ để kiểm tra tiến độ, nhận Giấy báo trúng tuyển và thanh toán lệ phí.
+              Trường Đào tạo Quốc tế (VN-US) - Đại học Duy Tân. Nhập số Căn cước công dân (CCCD), Số điện thoại hoặc Mã hồ sơ để kiểm tra tiến độ, nhận Giấy báo trúng tuyển và hoàn tất thủ tục.
             </p>
           </div>
 
@@ -173,9 +173,9 @@ export default function PublicLookupPortal() {
                           <span className="font-bold text-amber-300 text-sm">{candidate.programName}</span>
                         </div>
                         <div className="p-3 bg-white/5 rounded-2xl">
-                          <span className="text-slate-400 block text-[11px]">Tình Trạng Học Phí / Lệ Phí</span>
+                          <span className="text-slate-400 block text-[11px]">Tình Trạng Lệ Phí Xét Tuyển</span>
                           <span className="font-bold text-emerald-400 text-sm">
-                            {candidate.paymentStatus === 'tuition_paid' ? 'Đã hoàn tất học phí K32' : candidate.paymentStatus === 'deposit_paid' ? 'Đã đóng lệ phí hồ sơ' : 'Chưa hoàn tất thanh toán'}
+                            {candidate.paymentStatus === 'tuition_paid' || candidate.status === 'confirmed_enroll' ? 'Đã hoàn tất thủ tục nhập học' : candidate.paymentStatus === 'deposit_paid' ? 'Đã nộp lệ phí xét tuyển' : 'Chưa nộp lệ phí'}
                           </span>
                         </div>
                       </div>
@@ -187,7 +187,7 @@ export default function PublicLookupPortal() {
                           className="px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs shadow-md transition flex items-center gap-2 cursor-pointer"
                         >
                           <CreditCard className="w-4 h-4 text-slate-950" />
-                          <span>Đóng Lệ Phí / Tạm Ứng Học Phí (VietQR)</span>
+                          <span>Nộp Lệ Phí Xét Tuyển Hồ Sơ (VietQR)</span>
                         </button>
 
                         <button
@@ -240,7 +240,7 @@ export default function PublicLookupPortal() {
                         <h2 className="text-xl sm:text-2xl font-bold text-blue-950 mt-4 uppercase">
                           GIẤY BÁO TRÚNG TUYỂN ĐIỆN TỬ CÓ ĐIỀU KIỆN
                         </h2>
-                        <span className="text-xs text-slate-500 font-sans block mt-1">Khóa tuyển sinh K32 - Niên khóa 2026 - 2030</span>
+                        <span className="text-xs text-slate-500 font-sans block mt-1">Chương trình Tuyển sinh Đại học Quốc tế VN-US</span>
                       </div>
 
                       <div className="space-y-3 text-xs leading-relaxed font-sans">
@@ -329,31 +329,15 @@ export default function PublicLookupPortal() {
             </div>
 
             <div className="p-6 space-y-5">
-              {/* Fee type selector */}
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setSelectedFee('app_fee')}
-                  className={`p-3 rounded-2xl border text-left transition cursor-pointer ${
-                    selectedFee === 'app_fee' ? 'bg-blue-50 border-blue-600 text-blue-900 font-bold shadow-xs' : 'border-slate-200 text-slate-600'
-                  }`}
-                >
-                  <span className="block text-[10px] uppercase font-bold text-slate-400">Gói 1</span>
-                  <span className="block text-xs font-bold mt-0.5">Lệ Phí Xét Tuyển</span>
-                  <span className="text-sm font-extrabold text-blue-700 block mt-1">50.000 VNĐ</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setSelectedFee('tuition_deposit')}
-                  className={`p-3 rounded-2xl border text-left transition cursor-pointer ${
-                    selectedFee === 'tuition_deposit' ? 'bg-blue-50 border-blue-600 text-blue-900 font-bold shadow-xs' : 'border-slate-200 text-slate-600'
-                  }`}
-                >
-                  <span className="block text-[10px] uppercase font-bold text-slate-400">Gói 2</span>
-                  <span className="block text-xs font-bold mt-0.5">Tạm Ứng Học Phí K32</span>
-                  <span className="text-sm font-extrabold text-emerald-700 block mt-1">5.000.000 VNĐ</span>
-                </button>
+              {/* Fee Information - Pure application fee, zero tuition fee */}
+              <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-blue-950 flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-blue-600 block">Dịch Vụ Xét Tuyển</span>
+                  <span className="text-sm font-extrabold text-blue-900 block mt-0.5">Lệ Phí Xét Tuyển Hồ Sơ Trực Tuyến</span>
+                </div>
+                <div className="text-right">
+                  <span className="text-base font-black text-blue-700">50.000 VNĐ</span>
+                </div>
               </div>
 
               {/* VietQR Dynamic Code Display */}
@@ -373,14 +357,14 @@ export default function PublicLookupPortal() {
                 <div className="space-y-1 text-left bg-white p-3 rounded-xl border border-slate-200 font-mono text-[11px]">
                   <div>Tài khoản thụ hưởng: <strong>110000123456</strong> (VietinBank)</div>
                   <div>Tên người nhận: <strong>TRUONG DAI HOC DUY TAN - VNUS</strong></div>
-                  <div>Số tiền: <strong className="text-blue-700">{feeAmount.toLocaleString('vi-VN')} VNĐ</strong></div>
+                  <div>Số tiền: <strong className="text-blue-700">50.000 VNĐ</strong></div>
                   <div>Nội dung chuyển khoản: <strong className="text-rose-600">{qrTransferContent}</strong></div>
                 </div>
               </div>
 
               <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-[11px] flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span>Hệ thống tích hợp cổng Webhook đối soát: Khi tiền vào tài khoản nhà trường, hệ thống sẽ tự động gạch nợ tức thì và chuyển trạng thái hồ sơ sang "Đã đóng học phí".</span>
+                <span>Hệ thống đối soát tự động: Khi nhận chuyển khoản hợp lệ, hồ sơ sẽ được cập nhật trạng thái "Đã nộp lệ phí xét tuyển".</span>
               </div>
 
               <div className="pt-2 flex items-center justify-between">

@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import * as XLSX from 'xlsx';
-import { batchAddLeadsWithTransaction, getCurrentUser } from '@/data/storage';
+import { batchAddLeadsWithTransaction, getSafeCurrentUser } from '@/data/storage';
 import { STUDY_PROGRAMS } from '@/data/programsData';
 import { DeduplicationMode } from '@/types';
 import {
@@ -149,7 +149,7 @@ export default function ExcelImportModal({ isOpen, onClose, onSuccess }: ExcelIm
     ];
 
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Thi_Sinh_Thu_Thap_K32');
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Thi_Sinh_Thu_Thap');
     XLSX.writeFile(workbook, 'Mau_Thu_Thap_Thi_Sinh_Chuan_Bo_GDDT.xlsx');
   };
 
@@ -297,7 +297,7 @@ export default function ExcelImportModal({ isOpen, onClose, onSuccess }: ExcelIm
       const result = batchAddLeadsWithTransaction(candidatesToProcess, {
         fileName: file?.name || 'import_file.xlsx',
         deduplicationMode: dedupMode,
-        user: getCurrentUser()
+        user: getSafeCurrentUser()
       });
 
       setImportResult(result);
@@ -337,7 +337,7 @@ export default function ExcelImportModal({ isOpen, onClose, onSuccess }: ExcelIm
 
     const ws = XLSX.utils.json_to_sheet(reportRows);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Ket_Qua_Import_K32');
+    XLSX.utils.book_append_sheet(wb, ws, 'Ket_Qua_Import');
     XLSX.writeFile(wb, `Bao_Cao_Ket_Qua_Import_${new Date().toISOString().slice(0, 10)}.xlsx`);
   };
 

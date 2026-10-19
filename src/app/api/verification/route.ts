@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { verifyCandidateDocuments, getCurrentUser } from '@/data/storage';
+import { verifyCandidateDocuments, getSafeCurrentUser } from '@/data/storage';
 
 export async function POST(request: Request) {
   try {
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const currentVerifier = verifier || getCurrentUser();
+    const currentVerifier = verifier || getSafeCurrentUser();
 
     const result = verifyCandidateDocuments(candidateId, {
       status,

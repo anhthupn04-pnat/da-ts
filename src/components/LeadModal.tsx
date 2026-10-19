@@ -13,7 +13,7 @@ import {
   updateLead,
   addConsultationLog,
   getConsultationLogs,
-  getCurrentUser,
+  getSafeCurrentUser,
   maskPhone,
   maskIdCard,
   addAuditLog,
@@ -57,7 +57,7 @@ interface LeadModalProps {
 export default function LeadModal({ lead, onClose, onLeadUpdated }: LeadModalProps) {
   if (!lead) return null;
 
-  const currentUser = getCurrentUser();
+  const currentUser = getSafeCurrentUser();
   const staffList = getStaffList();
   const [currentLead, setCurrentLead] = useState<Lead>(lead);
   const [logs, setLogs] = useState<ConsultationHistory[]>(getConsultationLogs(lead.id));
@@ -174,7 +174,7 @@ export default function LeadModal({ lead, onClose, onLeadUpdated }: LeadModalPro
   // Mô phỏng gửi tin nhắn ZNS/SMS
   const handleSendOmnichannel = () => {
     const templateName = msgChannel === 'zalo_zns'
-      ? 'ZNS_FOLLOW_UP_GUIDE: Hướng dẫn nộp học bạ và cẩm nang tân sinh viên K32'
+      ? 'ZNS_FOLLOW_UP_GUIDE: Hướng dẫn nộp học bạ và cẩm nang tân sinh viên quốc tế'
       : 'SMS_APPOINTMENT_REMIND: Nhắc lịch hẹn tham quan trải nghiệm Tòa G 120 Hoàng Minh Thảo';
 
     sendOmnichannelMessage(
@@ -677,7 +677,7 @@ export default function LeadModal({ lead, onClose, onLeadUpdated }: LeadModalPro
                 <h3 className="text-lg font-bold text-blue-900 mt-2 uppercase">
                   GIẤY BÁO TRÚNG TUYỂN ĐIỆN TỬ CÓ ĐIỀU KIỆN
                 </h3>
-                <span className="text-xs text-slate-500 font-sans">Khóa K32 - Năm học 2026</span>
+                <span className="text-xs text-slate-500 font-sans">Chương trình Đào tạo Quốc tế VN-US</span>
               </div>
 
               <div className="space-y-2 text-xs leading-relaxed font-sans">

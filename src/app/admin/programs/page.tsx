@@ -39,10 +39,10 @@ export default function AdminProgramsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-            Quản Lý Chương Trình Đào Tạo Quốc Tế (K32)
+            Quản Lý Chương Trình Đào Tạo Quốc Tế
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Dữ liệu bóc tách chính thức từ Cẩm nang Tư vấn Nhập học K32 – Viện Đào tạo Quốc tế (VN-US)
+            Dữ liệu bóc tách chính thức từ Cẩm nang Tư vấn Đào tạo – Viện Đào tạo Quốc tế (VN-US)
           </p>
         </div>
 
@@ -133,7 +133,7 @@ export default function AdminProgramsPage() {
                 Thời gian đào tạo: <strong className="text-slate-900">{p.duration}</strong>
               </span>
               <span className="px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 font-bold border border-blue-200">
-                Chỉ tiêu K32
+                Chỉ tiêu Tuyển sinh
               </span>
             </div>
           </div>

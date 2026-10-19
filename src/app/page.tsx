@@ -50,7 +50,7 @@ export default function HomePage() {
             
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-amber-300 border border-amber-400/30 backdrop-blur-md shadow-xs">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>Cổng Thông Tin Tuyển Sinh & Tư Vấn Hướng Nghiệp K32 (2026)</span>
+              <span>Cổng Thông Tin Tuyển Sinh & Tư Vấn Hướng Nghiệp Quốc Tế</span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
@@ -76,7 +76,7 @@ export default function HomePage() {
                 href="/tra-cuu"
                 className="w-full sm:w-auto px-5 py-3.5 rounded-xl font-semibold text-xs sm:text-sm text-white bg-blue-600/60 hover:bg-blue-600/90 border border-blue-400/30 backdrop-blur-md transition-all flex items-center justify-center gap-2"
               >
-                <span>Tra Cứu Tiến Độ & Giấy Báo QR</span>
+                <span>Tra Cứu Hồ Sơ & Giấy Báo QR</span>
               </Link>
 
               <a
@@ -88,11 +88,12 @@ export default function HomePage() {
               </a>
 
               <Link
-                href="/admin"
+                href="/login"
                 className="w-full sm:w-auto px-4 py-3.5 rounded-xl font-semibold text-xs text-blue-200 hover:text-white bg-slate-800/80 hover:bg-slate-800 border border-slate-700 transition-all flex items-center justify-center gap-1.5"
+                title="Dành riêng cho cán bộ tuyển sinh và quản trị viên"
               >
                 <ShieldCheck className="w-4 h-4 text-blue-400" />
-                <span>Cổng Quản Trị CRM</span>
+                <span>Đăng Nhập Cán Bộ CRM</span>
               </Link>
             </div>
 
@@ -166,10 +167,10 @@ export default function HomePage() {
           
           <div className="text-center max-w-3xl mx-auto mb-12">
             <span className="text-xs font-bold text-blue-700 uppercase tracking-wider">
-              Danh Mục Đào Tạo K32
+              Danh Mục Đào Tạo Quốc Tế
             </span>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 mt-1.5 tracking-tight">
-              14 Chương Trình Quốc Tế Xuất Sắc
+              14 Chương Trình Đào Tạo Chuẩn Hoa Kỳ
             </h2>
             <p className="text-sm text-slate-600 mt-2">
               Chương trình đào tạo chuyển giao nguyên bản từ các trường Đại học Hoa Kỳ, nhận chứng nhận hoàn tất quốc tế và bằng cấp được công nhận toàn cầu.
@@ -254,7 +255,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-14">
             <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
-              Chính Sách Khuyến Học K32 (2026)
+              Chính Sách Học Bổng & Khuyến Học Quốc Tế
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-1.5 tracking-tight">
               Quỹ Học Bổng Hơn 13 Tỷ Đồng
@@ -304,7 +305,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-14">
             <span className="text-xs font-bold text-blue-700 uppercase tracking-wider">
-              Phương Thức Tuyển Sinh K32
+              Phương Thức Tuyển Sinh Đại Học
             </span>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 mt-1.5 tracking-tight">
               05 Phương Thức Xét Tuyển Linh Hoạt
@@ -418,7 +419,7 @@ export default function HomePage() {
               Giải Đáp Thắc Mắc
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">
-              Câu Hỏi Thường Gặp Về Tuyển Sinh K32
+              Câu Hỏi Thường Gặp Về Tuyển Sinh & Đào Tạo
             </h2>
           </div>
 

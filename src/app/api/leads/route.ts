@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getLeads, addLead, getCurrentUser } from '@/data/storage';
+import { getLeads, addLead, getSafeCurrentUser } from '@/data/storage';
 
 export async function GET(request: Request) {
   try {
@@ -7,7 +7,7 @@ export async function GET(request: Request) {
     const role = searchParams.get('role');
     const userId = searchParams.get('userId');
 
-    let user = getCurrentUser();
+    let user = getSafeCurrentUser();
     if (role && userId) {
       user = { ...user, role: role as any, id: userId };
     }

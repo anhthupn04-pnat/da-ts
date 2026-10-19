@@ -31,21 +31,29 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
-
-  const loadUser = () => {
-    setCurrentUser(getCurrentUser());
-  };
+  const [authChecking, setAuthChecking] = useState(true);
 
   useEffect(() => {
-    loadUser();
+    const user = getCurrentUser();
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    setCurrentUser(user);
+    setAuthChecking(false);
 
     const handleAuthChange = () => {
-      loadUser();
+      const updated = getCurrentUser();
+      if (!updated) {
+        router.push('/login');
+      } else {
+        setCurrentUser(updated);
+      }
     };
 
     window.addEventListener('auth-changed', handleAuthChange);
     return () => window.removeEventListener('auth-changed', handleAuthChange);
-  }, []);
+  }, [router]);
 
   const handleLogout = () => {
     logoutUser();
@@ -108,6 +116,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const userRole = currentUser?.role || 'admin';
   const navigation = allNavigation.filter(item => item.roles.includes(userRole));
 
+  // Kiểm tra phân quyền trang hiện tại (Route Guard)
+  const currentNavRule = allNavigation.find(item => item.href === pathname);
+  const isAuthorized = !currentNavRule || (currentUser && currentNavRule.roles.includes(currentUser.role));
+
   const getRoleBadge = (role?: string) => {
     switch (role) {
       case 'admin':
@@ -124,6 +136,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         return null;
     }
   };
+
+  if (authChecking) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white space-y-4">
+        <div className="p-3 bg-white rounded-2xl shadow-xl">
+          <img src="/logo.png" alt="VN-US Logo" className="h-12 w-auto object-contain animate-pulse" />
+        </div>
+        <p className="text-xs text-slate-400 font-medium tracking-wide">Đang xác thực phiên làm việc nội bộ...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-100 flex">
@@ -146,15 +169,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {/* Logo & Brand Header */}
           <div className="h-20 px-6 border-b border-slate-800 flex items-center justify-between">
             <Link href="/admin" className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold">
-                <GraduationCap className="w-5 h-5 text-amber-400" />
+              <div className="p-1 bg-white rounded-xl shadow-xs flex items-center justify-center">
+                <img
+                  src="/logo.png"
+                  alt="VN-US Duy Tan"
+                  className="h-9 w-auto object-contain"
+                />
               </div>
               <div className="flex flex-col">
-                <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
-                  Admissions CRM & Portal
+                <span className="text-[11px] font-extrabold text-amber-400 uppercase tracking-wider">
+                  Cổng CRM Tuyển Sinh
                 </span>
-                <span className="text-sm font-extrabold text-white">
-                  VN-US Duy Tân
+                <span className="text-xs font-bold text-slate-200">
+                  VN-US • ĐH Duy Tân
                 </span>
               </div>
             </Link>
@@ -246,7 +273,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Shield className="w-3 h-3 text-emerald-500" />
               RBAC & Database v2.0
             </span>
-            <span className="font-mono text-slate-400">VNUS-K32</span>
+            <span className="font-mono text-slate-400">VNUS-CRM</span>
           </div>
         </div>
       </aside>
@@ -284,7 +311,28 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* Page Content Viewport */}
         <main className="flex-1 p-4 sm:p-8">
-          {children}
+          {!isAuthorized ? (
+            <div className="max-w-xl mx-auto my-12 p-8 bg-white rounded-3xl border border-rose-200 shadow-xl text-center space-y-4">
+              <div className="w-14 h-14 mx-auto rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                <Shield className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900">Quyền Truy Cập Bị Giới Hạn</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Tài khoản của bạn thuộc vai trò <strong>{currentUser?.role}</strong> và không có thẩm quyền truy cập phân hệ <strong>{currentNavRule?.name}</strong> theo chính sách bảo mật RBAC.
+              </p>
+              <div className="pt-2">
+                <Link
+                  href="/admin"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-900 text-white font-bold text-xs rounded-xl hover:bg-blue-950 transition"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Quay Lại Bảng Điều Khiển Của Bạn</span>
+                </Link>
+              </div>
+            </div>
+          ) : (
+            children
+          )}
         </main>
 
       </div>

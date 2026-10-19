@@ -211,7 +211,7 @@ export default function ReportsPage() {
           </span>
           <div className="mt-2 flex items-baseline gap-2">
             <span className="text-3xl font-black text-emerald-600">{stats.tuitionPaidLeads + stats.enrolledLeads}</span>
-            <span className="text-xs text-emerald-700 font-bold">Tân sinh viên K32</span>
+            <span className="text-xs text-emerald-700 font-bold">Tân sinh viên nhập học</span>
           </div>
           <p className="mt-2 text-[11px] text-slate-500">Đã gạch nợ tự động trên hệ thống</p>
         </div>
@@ -381,7 +381,7 @@ export default function ReportsPage() {
       <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
         <div className="p-6 border-b border-slate-200">
           <h3 className="text-base font-extrabold text-slate-900">
-            Bảng Thống Kê Tiến Độ Đạt Chỉ Tiêu Theo Ngành Học (K32)
+            Bảng Thống Kê Tiến Độ Đạt Chỉ Tiêu Theo Ngành Học
           </h3>
           <p className="text-xs text-slate-500 mt-0.5">
             So sánh giữa số lượng quan tâm và số lượng đã nhập học thực tế với chỉ tiêu ban hành

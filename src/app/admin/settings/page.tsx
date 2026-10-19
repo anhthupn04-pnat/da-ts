@@ -12,6 +12,7 @@ import {
   getStaffList,
   saveStaffList,
   getCurrentUser,
+  getSafeCurrentUser,
   addAuditLog
 } from '@/data/storage';
 import { isSupabaseConfigured } from '@/lib/supabase';
@@ -44,7 +45,7 @@ import {
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<'rbac' | 'audit' | 'database'>('rbac');
-  const [currentUser, setCurrentUser] = useState<UserProfile>(getCurrentUser());
+  const [currentUser, setCurrentUser] = useState<UserProfile>(getSafeCurrentUser());
   const [staffList, setStaffList] = useState<UserProfile[]>([]);
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
   const [auditSearch, setAuditSearch] = useState('');
@@ -65,7 +66,7 @@ export default function SettingsPage() {
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   const loadData = () => {
-    setCurrentUser(getCurrentUser());
+    setCurrentUser(getCurrentUser() || getSafeCurrentUser());
     setStaffList(getStaffList());
     setAuditLogs(getAuditLogs());
   };
@@ -103,9 +104,13 @@ export default function SettingsPage() {
     }
   };
 
-  // Tạo tài khoản cán bộ mới
+  // Tạo tài khoản cán bộ mới (Chỉ Admin mới có thẩm quyền)
   const handleCreateStaff = (e: React.FormEvent) => {
     e.preventDefault();
+    if (currentUser?.role !== 'admin') {
+      showToast('Từ chối: Chỉ Quản trị viên (Super Admin) mới có quyền cấp tài khoản cán bộ!');
+      return;
+    }
     if (!newStaff.fullName || !newStaff.email) return;
 
     const id = `usr-${newStaff.role}-${Date.now().toString().slice(-4)}`;
@@ -179,7 +184,7 @@ export default function SettingsPage() {
       'Ngày Tiếp Nhận': l.createdAt
     }));
     const wsLeads = XLSX.utils.json_to_sheet(leadsData);
-    XLSX.utils.book_append_sheet(wb, wsLeads, 'Candidates_K32');
+    XLSX.utils.book_append_sheet(wb, wsLeads, 'Candidates_VNUS');
 
     // Sheet 2: Consultation History
     const logsData = logs.map(log => ({
@@ -313,13 +318,19 @@ export default function SettingsPage() {
                 </p>
               </div>
 
-              <button
-                onClick={() => setAddStaffOpen(true)}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Cấp Tài Khoản Mới</span>
-              </button>
+              {currentUser?.role === 'admin' ? (
+                <button
+                  onClick={() => setAddStaffOpen(true)}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Cấp Tài Khoản Mới</span>
+                </button>
+              ) : (
+                <span className="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-500 text-xs font-semibold border border-slate-200">
+                  Chỉ Super Admin mới có quyền tạo tài khoản
+                </span>
+              )}
             </div>
 
             <div className="border border-slate-200 rounded-xl overflow-hidden">

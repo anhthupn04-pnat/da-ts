@@ -11,8 +11,12 @@ export default function Footer() {
           {/* Col 1: Brand & Introduction */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold">
-                <GraduationCap className="w-6 h-6 text-amber-400" />
+              <div className="p-1.5 bg-white rounded-xl shadow-xs inline-flex items-center justify-center">
+                <img
+                  src="/logo.png"
+                  alt="VN-US Duy Tan University"
+                  className="h-10 w-auto object-contain"
+                />
               </div>
               <div>
                 <h3 className="text-white font-bold text-base leading-tight">
@@ -106,7 +110,7 @@ export default function Footer() {
             <ul className="space-y-2 text-xs">
               <li>
                 <Link href="/programs" className="text-slate-300 hover:text-amber-400 transition-colors">
-                  • 14 Ngành Đào tạo Quốc tế K32
+                  • 14 Ngành Đào tạo Quốc tế (CMU, PSU, CSU, TROY)
                 </Link>
               </li>
               <li>
@@ -116,7 +120,7 @@ export default function Footer() {
               </li>
               <li>
                 <a href="#admission-methods" className="text-slate-300 hover:text-amber-400 transition-colors">
-                  • 5 Phương thức xét tuyển 2026
+                  • 5 Phương thức xét tuyển đại học
                 </a>
               </li>
               <li>
@@ -131,11 +135,11 @@ export default function Footer() {
               </li>
               <li className="pt-2">
                 <Link
-                  href="/admin"
+                  href="/login"
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-900/40 text-blue-300 hover:text-white rounded-lg border border-blue-700/50 text-xs font-medium"
                 >
                   <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
-                  Đăng nhập Hệ thống Quản trị CRM
+                  Cổng Đăng Nhập Cán Bộ CRM
                 </Link>
               </li>
             </ul>

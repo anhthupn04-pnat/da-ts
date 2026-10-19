@@ -142,7 +142,7 @@ export default function OnlineAdmissionsPortal() {
         res.lead!.id,
         'zalo_zns',
         'ZNS_APP_RECEIVED',
-        'Xác nhận đã tiếp nhận hồ sơ xét tuyển trực tuyến K32',
+        'Xác nhận đã tiếp nhận hồ sơ xét tuyển trực tuyến VN-US',
         `Chào bạn ${res.lead!.fullName}, Hội đồng Tuyển sinh VN-US Đại học Duy Tân xác nhận đã tiếp nhận hồ sơ xét tuyển ${res.lead!.id} ngành ${res.lead!.programName}. Cán bộ hậu kiểm sẽ thẩm định minh chứng học bạ trong thời gian sớm nhất!`
       );
     } catch (err: any) {
@@ -166,7 +166,7 @@ export default function OnlineAdmissionsPortal() {
               Cổng Nộp Hồ Sơ Số Hóa (Paperless Admissions)
             </span>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
-              Đăng Ký & Nộp Hồ Sơ Xét Tuyển K32 Trực Tuyến
+              Đăng Ký & Nộp Hồ Sơ Xét Tuyển Trực Tuyến
             </h1>
             <p className="text-xs sm:text-sm text-slate-600">
               Trường Đào tạo Quốc tế (VN-US) – Đại học Duy Tân. Nộp hồ sơ xét tuyển học bổng trực tiếp tại nhà, tải ảnh minh chứng học bạ & CCCD mà không cần phải đến trường.

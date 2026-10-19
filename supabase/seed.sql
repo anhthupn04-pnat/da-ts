@@ -1,6 +1,6 @@
 -- ==============================================================================
 -- TRUNG TÂM TƯ VẤN & HỖ TRỢ SINH VIÊN - ĐẠI HỌC DUY TÂN (VN-US)
--- Seed: 14 Chương trình đào tạo quốc tế K32 (Thông số chuẩn theo tài liệu K32)
+-- Seed: 14 Chương trình đào tạo quốc tế VN-US Đại học Duy Tân
 -- ==============================================================================
 
 INSERT INTO public.study_programs (id, code, name, faculty, partner, degree, accreditation, duration, tuition_per_year, description, career_prospects, admission_criteria, is_active)

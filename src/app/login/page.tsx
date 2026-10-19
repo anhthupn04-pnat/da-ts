@@ -41,7 +41,7 @@ export default function LoginPage() {
       icon: <UserCheck className="w-5 h-5 text-emerald-600" />,
       bg: 'bg-emerald-50 hover:bg-emerald-100/70 border-emerald-200',
       badge: 'bg-emerald-100 text-emerald-800',
-      description: 'Chăm sóc lead, gọi điện/Zalo tư vấn chương trình đào tạo & học bổng K32, tiếp nhận hồ sơ, nhập dữ liệu Excel.'
+      description: 'Chăm sóc lead, gọi điện/Zalo tư vấn chương trình đào tạo & học bổng quốc tế, tiếp nhận hồ sơ, nhập dữ liệu Excel.'
     },
     {
       role: 'marketer' as Role,
@@ -139,29 +139,36 @@ export default function LoginPage() {
           className="inline-flex items-center gap-2 text-slate-300 hover:text-white transition"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>Về Cổng Thông Tin Công Khai</span>
+          <span>Về Cổng Thông Tin Tuyển Sinh Công Khai</span>
         </Link>
 
         <span className="text-amber-400 font-bold tracking-wider uppercase text-[11px] bg-white/10 px-3 py-1 rounded-full border border-amber-400/20">
-          Cổng Nội Bộ K32 (2026)
+          Cổng Nghiệp Vụ Cán Bộ Tuyển Sinh
         </span>
       </div>
 
       {/* Main Container */}
       <div className="max-w-4xl mx-auto w-full my-8">
         
-        {/* Title Header */}
+        {/* Title Header with VN-US Logo */}
         <div className="text-center space-y-3 mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600 text-white shadow-xl shadow-blue-600/30">
-            <GraduationCap className="w-8 h-8 text-amber-400" />
+          <div className="inline-flex items-center justify-center p-3 bg-white rounded-2xl shadow-xl shadow-blue-900/30 border border-slate-200">
+            <img
+              src="/logo.png"
+              alt="VN-US Duy Tan University"
+              className="h-14 sm:h-16 w-auto object-contain"
+            />
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
             Cổng Đăng Nhập Cán Bộ & Chuyên Viên Tuyển Sinh
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
-            Hệ thống CRM số hóa tuyển sinh & marketing K32 – Viện Đào tạo Quốc tế (VN-US) • Đại học Duy Tân.
-            Được phân quyền riêng biệt cho từng bộ phận nghiệp vụ.
+            Hệ thống CRM số hóa quản trị tuyển sinh & đào tạo quốc tế – Viện Đào tạo Quốc tế (VN-US) • Đại học Duy Tân.
+            Bảo mật phân quyền theo vai trò nghiệp vụ (RBAC).
           </p>
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-400/20 rounded-full text-[11px] text-amber-300">
+            <span>Chỉ dành cho Cán bộ & Chuyên viên nội bộ • Không áp dụng tự đăng ký tài khoản</span>
+          </div>
         </div>
 
         {/* Section 1: 1-Click Role Login for Departments */}

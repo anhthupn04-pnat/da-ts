@@ -126,7 +126,7 @@ export default function LeadRegistrationForm() {
           result.lead!.id,
           'zalo_zns',
           'ZNS_WELCOME',
-          'Chào mừng bạn đến với Cổng Tuyển sinh Quốc tế K32',
+          'Chào mừng bạn đến với Cổng Tuyển sinh Quốc tế VN-US',
           `Chào ${result.lead!.fullName}, cảm ơn bạn đã đăng ký tư vấn ngành ${result.lead!.programName}. Mã hồ sơ của bạn là ${result.lead!.id}. Bạn có thể tra cứu tiến độ bất kỳ lúc nào tại tra-cuu.`
         );
 
@@ -169,13 +169,13 @@ export default function LeadRegistrationForm() {
           <div>
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 mb-2">
               <Sparkles className="w-3 h-3 text-amber-300" />
-              Đăng Ký Tuyển Sinh K32 - 2026
+              Đăng Ký Tư Vấn & Tuyển Sinh Quốc Tế
             </span>
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
               Đăng Ký Tư Vấn & Xét Tuyển Học Bổng 13 Tỷ
             </h3>
             <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl">
-              Nhận bộ tài liệu PDF hướng dẫn nhập học K32, thông tin học bổng toàn phần CMU/PSU/CSU/Troy và được chuyên viên tư vấn 1-1 miễn phí.
+              Nhận bộ tài liệu PDF hướng dẫn nhập học, thông tin học bổng toàn phần CMU/PSU/CSU/Troy và được chuyên viên tư vấn 1-1 miễn phí.
             </p>
           </div>
         </div>
@@ -400,7 +400,7 @@ export default function LeadRegistrationForm() {
                 className="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
               />
               <span>
-                Tôi đồng ý nhận tài liệu cẩm nang tuyển sinh K32, thông báo xét duyệt học bổng và cuộc gọi tư vấn 1-1 từ Ban Tuyển sinh VN-US Đại học Duy Tân.
+                Tôi đồng ý nhận tài liệu cẩm nang tuyển sinh, thông báo xét duyệt học bổng và cuộc gọi tư vấn 1-1 từ Ban Tuyển sinh VN-US Đại học Duy Tân.
               </span>
             </label>
           </div>
@@ -416,7 +416,7 @@ export default function LeadRegistrationForm() {
                 <span>Đang Gửi Đăng Ký Lên Hệ Thống...</span>
               ) : (
                 <>
-                  <span>Gửi Đăng Ký Tư Vấn & Nhận Cẩm Nang K32 Ngay</span>
+                  <span>Gửi Đăng Ký Tư Vấn & Nhận Cẩm Nang Ngay</span>
                   <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </>
               )}

@@ -106,7 +106,7 @@ export default function MarketingPage() {
             Quản Lý Marketing & Lịch Nội Dung (Content Calendar)
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Lập kế hoạch truyền thông tuyển sinh K32 trên Facebook, TikTok, Website và Báo chí
+            Lập kế hoạch truyền thông tuyển sinh quốc tế trên Facebook, TikTok, Website và Báo chí
           </p>
         </div>
 
@@ -122,7 +122,7 @@ export default function MarketingPage() {
       {/* Campaigns Overview */}
       <div className="space-y-4">
         <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">
-          Chiến Dịch Truyền Thông K32 Đang Triển Khai ({campaigns.length})
+          Chiến Dịch Truyền Thông Đang Triển Khai ({campaigns.length})
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">

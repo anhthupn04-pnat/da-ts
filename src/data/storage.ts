@@ -103,7 +103,7 @@ export function addAuditLog(
   user?: UserProfile,
   ipAddress: string = '127.0.0.1'
 ): AuditLog {
-  const currentUser = user || getCurrentUser();
+  const currentUser = user || getSafeCurrentUser();
   const log: AuditLog = {
     id: `audit-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
     userId: currentUser.id,
@@ -159,7 +159,7 @@ export function saveLeads(leads: Lead[]) {
  */
 export function getLeads(user?: UserProfile): Lead[] {
   const allLeads = getAllRawLeads();
-  const currentUser = user || getCurrentUser();
+  const currentUser = user || getSafeCurrentUser();
 
   if (currentUser.role === 'admin' || currentUser.role === 'manager') {
     return allLeads;
@@ -227,7 +227,7 @@ export function addLead(
     ? STUDY_PROGRAMS.find(p => p.id === newLeadData.secondaryProgramId)
     : undefined;
 
-  const currentUser = user || getCurrentUser();
+  const currentUser = user || getSafeCurrentUser();
   const assignedTo = newLeadData.assignedTo || (currentUser.role === 'counselor' ? currentUser.id : undefined);
   const assignedStaff = assignedTo ? getStaffList().find(s => s.id === assignedTo) : undefined;
 
@@ -270,7 +270,7 @@ export function updateLead(
   }
 
   const oldRecord = { ...leads[index] };
-  const currentUser = user || getCurrentUser();
+  const currentUser = user || getSafeCurrentUser();
 
   // Khớp tên ngành nếu có đổi
   let progName = updates.programName;
@@ -307,7 +307,7 @@ export function updateLead(
 }
 
 export function deleteLead(id: string, user?: UserProfile): { success: boolean; error?: string } {
-  const currentUser = user || getCurrentUser();
+  const currentUser = user || getSafeCurrentUser();
   if (currentUser.role === 'counselor') {
     return { success: false, error: 'Chuyên viên tư vấn không có quyền xóa hồ sơ thí sinh. Vui lòng liên hệ Trưởng ban Tuyển sinh.' };
   }
@@ -350,7 +350,7 @@ export function batchAddLeadsWithTransaction(
   options: BatchImportOptions
 ): BatchAddResult {
   const currentLeads = [...getAllRawLeads()];
-  const currentUser = options.user || getCurrentUser();
+  const currentUser = options.user || getSafeCurrentUser();
   const batchId = `batch-${Date.now()}`;
 
   const phoneMap = new Map<string, number>();
@@ -676,7 +676,7 @@ export function addConsultationLog(
   user?: UserProfile
 ): ConsultationHistory {
   const logs = getConsultationLogs();
-  const currentUser = user || getCurrentUser();
+  const currentUser = user || getSafeCurrentUser();
 
   const log: ConsultationHistory = {
     ...newLogData,
@@ -698,7 +698,7 @@ export function addConsultationLog(
  * Trả về danh sách thí sinh có nextFollowUpDate <= ngày hôm nay
  */
 export function getTodayFollowUpReminders(user?: UserProfile): { lead: Lead; log: ConsultationHistory }[] {
-  const currentUser = user || getCurrentUser();
+  const currentUser = user || getSafeCurrentUser();
   const leads = getLeads(currentUser);
   const logs = getConsultationLogs();
   const today = new Date().toISOString().split('T')[0];
@@ -734,7 +734,7 @@ export function verifyCandidateDocuments(
   },
   verifier?: UserProfile
 ): { success: boolean; lead?: Lead; error?: string } {
-  const currentVerifier = verifier || getCurrentUser();
+  const currentVerifier = verifier || getSafeCurrentUser();
   const lead = getLeadById(candidateId);
   if (!lead) return { success: false, error: 'Không tìm thấy thí sinh.' };
 
@@ -768,7 +768,7 @@ export function verifyCandidateDocuments(
         candidateId,
         'zalo_zns',
         'ZNS_ADMISSION_OFFER',
-        'Chúc mừng trúng tuyển có điều kiện K32 VN-US Đại học Duy Tân',
+        'Chúc mừng trúng tuyển có điều kiện VN-US Đại học Duy Tân',
         `Chào bạn ${lead.fullName}, Hội đồng Tuyển sinh VN-US Đại học Duy Tân xin chúc mừng hồ sơ ${lead.id} ngành ${lead.programName} đã được HẬU KIỂM HỢP LỆ và TRÚNG TUYỂN CÓ ĐIỀU KIỆN! Bạn có thể xem Giấy báo trúng tuyển điện tử kèm mã QR tại website.`
       );
     } else if (verificationData.status === 'need_supplement') {
@@ -904,17 +904,30 @@ export function saveStaffList(staff: UserProfile[]) {
   }
 }
 
-export function getCurrentUser(): UserProfile {
+export function getCurrentUser(): UserProfile | null {
   if (isBrowser) {
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
       if (stored) return JSON.parse(stored);
-      localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(INITIAL_STAFF[0]));
+      return null;
     } catch {
-      // ignore
+      return null;
     }
   }
-  return INITIAL_STAFF[0];
+  return null;
+}
+
+export function isAuthenticated(): boolean {
+  if (!isBrowser) return false;
+  try {
+    return !!localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+  } catch {
+    return false;
+  }
+}
+
+export function getSafeCurrentUser(): UserProfile {
+  return getCurrentUser() || INITIAL_STAFF[0];
 }
 
 export function switchRole(role: Role): UserProfile {

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Lead, UserProfile } from '@/types';
-import { getLeads, getCurrentUser, verifyCandidateDocuments } from '@/data/storage';
+import { getLeads, getCurrentUser, getSafeCurrentUser, verifyCandidateDocuments } from '@/data/storage';
 import {
   FileCheck,
   CheckCircle2,
@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 
 export default function DocumentVerificationPage() {
-  const [currentUser, setCurrentUser] = useState<UserProfile>(getCurrentUser());
+  const [currentUser, setCurrentUser] = useState<UserProfile>(getSafeCurrentUser());
   const [leads, setLeads] = useState<Lead[]>([]);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
@@ -42,7 +42,7 @@ export default function DocumentVerificationPage() {
   const [successToast, setSuccessToast] = useState<string | null>(null);
 
   const loadData = () => {
-    const user = getCurrentUser();
+    const user = getCurrentUser() || getSafeCurrentUser();
     setCurrentUser(user);
     const all = getLeads(user);
     // Lọc các hồ sơ có minh chứng cần duyệt hoặc đã nộp hồ sơ

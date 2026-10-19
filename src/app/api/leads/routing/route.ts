@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { autoAssignRoundRobin, autoAssignByRegion, batchReassignLeads, getCurrentUser } from '@/data/storage';
+import { autoAssignRoundRobin, autoAssignByRegion, batchReassignLeads, getSafeCurrentUser } from '@/data/storage';
 
 export async function POST(request: Request) {
   try {
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const currentUser = user || getCurrentUser();
+    const currentUser = user || getSafeCurrentUser();
 
     if (action === 'round_robin') {
       const res = autoAssignRoundRobin(leadIds, currentUser);

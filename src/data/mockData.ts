@@ -96,7 +96,7 @@ export const INITIAL_LEADS: Lead[] = [
     examBlock: 'A00',
     estimatedScore: 26.5,
     source: 'website',
-    utmCampaign: 'CAMP_K32_DIGITAL',
+    utmCampaign: 'CAMP_VNUS_DIGITAL',
     status: 'consulted_1',
     priority: 'high',
     assignedTo: 'usr-counselor-2',
@@ -221,7 +221,7 @@ export const INITIAL_LEADS: Lead[] = [
     assignedToName: 'Trần Thị Mai Lan',
     paymentStatus: 'tuition_paid',
     feePaidAmount: 5000000,
-    paymentTransactionId: 'VIETQR_K32_040206',
+    paymentTransactionId: 'VIETQR_VNUS_040206',
     paymentDate: '2026-10-14T09:00:00Z',
     documents: {
       transcriptPhotos: [
@@ -238,7 +238,7 @@ export const INITIAL_LEADS: Lead[] = [
       verifiedBy: 'usr-verifier-1',
       verifiedByName: 'ThS. Hoàng Thị Bích Ngọc'
     },
-    notes: 'Anh trai là cựu sinh viên K26 CSU Kiến trúc giới thiệu. Đã nộp tạm ứng học phí và giữ chỗ K32.',
+    notes: 'Anh trai là cựu sinh viên K26 CSU Kiến trúc giới thiệu. Đã nộp tạm ứng giữ chỗ chuyên ngành.',
     createdAt: '2026-10-05T14:10:00Z',
     updatedAt: '2026-10-14T09:00:00Z'
   },
@@ -444,7 +444,7 @@ export const INITIAL_ZNS_SMS_LOGS: ZnsSmsLog[] = [
     phone: '0918765432',
     channel: 'zalo_zns',
     templateId: 'ZNS_CONFIRM_APP_SUBMITTED',
-    templateName: 'Xác nhận nộp hồ sơ xét tuyển trực tuyến K32 thành công',
+    templateName: 'Xác nhận nộp hồ sơ xét tuyển trực tuyến thành công',
     status: 'delivered',
     sentAt: '2026-10-13T10:16:00Z',
     payloadPreview: 'Chào bạn Trần Bảo Ngọc, Hội đồng Tuyển sinh VN-US Đại học Duy Tân xác nhận đã nhận hồ sơ TS-2026-1002 ngành Quản trị Kinh doanh Troy. Vui lòng theo dõi tiến độ xét tuyển tại tra-cuu.'
@@ -459,7 +459,7 @@ export const INITIAL_ZNS_SMS_LOGS: ZnsSmsLog[] = [
     templateName: 'Thông báo xác nhận đã đóng học phí & hoàn tất nhập học',
     status: 'delivered',
     sentAt: '2026-10-14T09:02:00Z',
-    payloadPreview: 'CHUC MUNG: Thi sinh Do Hoang Nam da hoan tat nop hoc phi K32 nganh Kien truc CSU. Ma SV du kien se duoc gui qua Email. Hotline: 0236.3650403.'
+    payloadPreview: 'CHUC MUNG: Thi sinh Do Hoang Nam da hoan tat nop ho so va xac nhan nhap hoc nganh Kien truc CSU. Ma SV du kien se duoc gui qua Email. Hotline: 0236.3650403.'
   }
 ];
 
@@ -468,7 +468,7 @@ export const INITIAL_CAMPAIGNS: MarketingCampaign[] = [
     id: 'camp-1',
     title: 'Chiến dịch Tuyển sinh Quốc tế: Nắm Bắt Tương Lai Chuẩn Mỹ',
     channel: 'facebook',
-    utmTag: 'CAMP_K32_DIGITAL',
+    utmTag: 'CAMP_VNUS_DIGITAL',
     targetAudience: 'Học sinh lớp 12 & Phụ huynh tại Đà Nẵng, Quảng Nam, Thừa Thiên Huế, Quảng Ngãi',
     budget: 35000000,
     spent: 18500000,

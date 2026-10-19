@@ -1,4 +1,4 @@
-# TRUNG TÂM TƯ VẤN & HỖ TRỢ SINH VIÊN (K32)
+# TRUNG TÂM TƯ VẤN & HỖ TRỢ SINH VIÊN
 ### Trường Đào tạo Quốc tế (VN-US) — Đại học Duy Tân
 > **Hệ Thống Số Hóa Tuyển Sinh & Tiếp Nhận Hồ Sơ Trực Tuyến**
 > Phát triển trên nền tảng **Next.js 16 (App Router) + TypeScript + Tailwind CSS** và tối ưu hóa sẵn sàng triển khai 1-click lên **Vercel**.
@@ -7,14 +7,14 @@
 
 ## 🌟 TỔNG QUAN HỆ THỐNG
 
-Phần mềm được xây dựng dựa trên toàn bộ dữ liệu bóc tách từ **Cẩm nang Tư vấn Nhập học K32 (Tổng hợp - Gửi in)** của Trường Đào tạo Quốc tế (VN-US), Đại học Duy Tân:
+Phần mềm được xây dựng phục vụ công tác số hóa tuyển sinh đại học quốc tế của Trường Đào tạo Quốc tế (VN-US), Đại học Duy Tân:
 - **14 Chương trình đào tạo quốc tế tinh hoa:**
   - **Troy University (Mỹ):** Quản trị Kinh doanh (400 TROY), Quản trị Du lịch & Khách sạn (407 TROY), Khoa học Máy tính (102 TROY) - Nhận bằng Cử nhân chính quy của Đại học Troy (Mỹ).
   - **Carnegie Mellon University (Mỹ):** Công nghệ Phần mềm (102 CMU), An ninh Mạng (116 CMU), Hệ thống Thông tin Quản lý (410 CMU), Thương mại Điện tử (422 CMU) - Đạt chuẩn kiểm định quốc tế **ABET**.
   - **Penn State University (Mỹ):** Quản trị Kinh doanh (400 PSU), Kế toán - Kiểm toán (405 PSU), Tài chính Ngân hàng (404 PSU), FinTech (435 PSU), Kinh doanh Quốc tế (411 PSU) - Chuẩn kiểm định **AACSB**.
   - **California State University (Mỹ):** Kiến trúc Công trình (107 CSU), Xây dựng Dân dụng & Công nghiệp (115 CSU) - Chuẩn Cal Poly.
-- **Quỹ Học bổng 13 Tỷ Đồng:** 55 suất học bổng toàn phần CMU/PSU/CSU, 20 suất học bổng toàn phần Kiến trúc, và học bổng Troy lên đến 100% học phí.
-- **05 Phương thức xét tuyển 2026:** Tuyển thẳng, Điểm thi THPT từ 15đ, Học bạ từ 18đ, ĐGNL ĐHQG TP.HCM từ 600đ, V-SAT từ 225đ.
+- **Quỹ Học bổng 13 Tỷ Đồng:** 55 suất học bổng toàn phần CMU/PSU/CSU, 20 suất học bổng toàn phần Kiến trúc, và học bổng Troy giá trị cao.
+- **05 Phương thức xét tuyển:** Tuyển thẳng, Điểm thi THPT, Học bạ THPT, ĐGNL ĐHQG TP.HCM, V-SAT.
 - **Không gian học tập Tòa G hiện đại:** 120 Hoàng Minh Thảo với thang máy kính trong suốt, 184 phòng học, 1.300 máy tính.
 
 ---
@@ -106,7 +106,7 @@ Nếu bạn muốn kết nối ứng dụng trực tiếp với cơ sở dữ li
 | **6. Chuyển đổi vai trò** | Bấm menu góc phải trên thanh Topbar, đổi vai trò sang Chuyên viên Tư vấn / Marketing | Quyền và góc nhìn quản trị thay đổi linh hoạt |
 | **7. Trợ lý AI Tuyển sinh** | Vào `/admin/ai-assistant`, chọn "Soạn kịch bản gọi điện", bấm "Tạo Nội Dung" | AI tự động sinh kịch bản gọi điện chi tiết theo chuẩn ABET/Troy |
 | **8. Xuất file Excel / CSV** | Vào `/admin/leads`, bấm "Xuất Excel / CSV" | Tải về file `.csv` chuẩn UTF-8 có dấu tiếng Việt không lỗi font |
-| **9. Reset dữ liệu mẫu** | Vào `/admin/settings`, bấm "Khôi phục dữ liệu mẫu ban đầu" | Toàn bộ dữ liệu được hoàn nguyên về chuẩn tuyển sinh K32 |
+| **9. Reset dữ liệu mẫu** | Vào `/admin/settings`, bấm "Khôi phục dữ liệu mẫu ban đầu" | Toàn bộ dữ liệu được hoàn nguyên về chuẩn dữ liệu hệ thống |
 
 ---
 
@@ -114,5 +114,5 @@ Nếu bạn muốn kết nối ứng dụng trực tiếp với cơ sở dữ li
 - **Đơn vị:** Trường Đào tạo Quốc tế (VN-US) – Đại học Duy Tân
 - **Cơ sở đào tạo:** Tòa G, 120 Hoàng Minh Thảo, P. Hòa Khánh Nam, Q. Liên Chiểu, TP. Đà Nẵng
 - **Văn phòng Tuyển sinh:** 254 Nguyễn Văn Linh, P. Thạc Gián, Q. Thanh Khê, TP. Đà Nẵng
-- **Hotline Tuyển sinh K32:** `0979 407 340` | `0888 414141`
+- **Hotline Tuyển sinh:** `0979 407 340` | `0888 414141`
 - **Website chính thức:** [https://troy.edu.vn](https://troy.edu.vn) | [https://duytan.edu.vn](https://duytan.edu.vn)

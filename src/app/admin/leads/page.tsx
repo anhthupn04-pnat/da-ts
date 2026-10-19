@@ -8,6 +8,7 @@ import {
   addLead,
   deleteLead,
   getCurrentUser,
+  getSafeCurrentUser,
   maskPhone,
   autoAssignRoundRobin,
   autoAssignByRegion,
@@ -49,7 +50,7 @@ import {
 } from 'lucide-react';
 
 export default function LeadsManagementPage() {
-  const [currentUser, setCurrentUser] = useState<UserProfile>(getCurrentUser());
+  const [currentUser, setCurrentUser] = useState<UserProfile>(getSafeCurrentUser());
   const [leads, setLeads] = useState<Lead[]>([]);
   const [viewMode, setViewMode] = useState<'table' | 'pipeline'>('table');
   const [search, setSearch] = useState('');
@@ -87,7 +88,7 @@ export default function LeadsManagementPage() {
   const [todayReminders, setTodayReminders] = useState<any[]>([]);
 
   const loadData = () => {
-    const user = getCurrentUser();
+    const user = getCurrentUser() || getSafeCurrentUser();
     setCurrentUser(user);
     setLeads(getLeads(user));
     setTodayReminders(getTodayFollowUpReminders(user));
@@ -263,7 +264,7 @@ export default function LeadsManagementPage() {
 
     const ws = XLSX.utils.json_to_sheet(dataToExport);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Danh_Sach_Thi_Sinh_K32');
+    XLSX.utils.book_append_sheet(wb, ws, 'Danh_Sach_Thi_Sinh_VNUS');
     XLSX.writeFile(wb, `DS_Thi_Sinh_VNUS_${new Date().toISOString().slice(0, 10)}.xlsx`);
   };
 

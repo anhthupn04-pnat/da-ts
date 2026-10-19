@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { batchAddLeadsWithTransaction, getCurrentUser } from '@/data/storage';
+import { batchAddLeadsWithTransaction, getSafeCurrentUser } from '@/data/storage';
 
 export async function POST(request: Request) {
   try {
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const currentUser = user || getCurrentUser();
+    const currentUser = user || getSafeCurrentUser();
 
     const result = batchAddLeadsWithTransaction(newLeadsList, {
       fileName,
