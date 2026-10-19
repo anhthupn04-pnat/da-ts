@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserProfile } from '@/types';
 import { updateUserProfile } from '@/data/storage';
 import {
@@ -16,7 +16,11 @@ import {
   EyeOff,
   Save,
   Building2,
-  Sparkles
+  Sparkles,
+  Lock,
+  Award,
+  UserCheck,
+  Megaphone
 } from 'lucide-react';
 
 interface UserProfileModalProps {
@@ -39,33 +43,40 @@ export default function UserProfileModal({ user, isOpen, onClose, onUpdated }: U
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  useEffect(() => {
+    if (isOpen) {
+      setFullName(user.fullName || '');
+      setPhone(user.phone || '');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      setError(null);
+      setSuccessMsg(null);
+    }
+  }, [isOpen, user]);
+
   if (!isOpen) return null;
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccessMsg(null);
 
-    if (!fullName.trim()) {
-      setError('Họ và tên không được để trống.');
+    if (!fullName.trim() || fullName.trim().length < 2) {
+      setError('Họ và tên hiển thị phải có tối thiểu 2 ký tự.');
       return;
     }
 
-    if (!phone.trim()) {
-      setError('Số điện thoại liên lạc không được để trống.');
+    if (!phone.trim() || phone.trim().length < 9) {
+      setError('Số điện thoại liên lạc phải có tối thiểu 9 số.');
       return;
     }
 
-    // Nếu người dùng muốn đổi mật khẩu
-    if (newPassword || currentPassword || confirmPassword) {
+    const isChangingPassword = Boolean(newPassword || currentPassword || confirmPassword);
+
+    if (isChangingPassword) {
       if (!currentPassword) {
         setError('Vui lòng nhập mật khẩu hiện tại để xác thực đổi mật khẩu.');
-        return;
-      }
-
-      const activePass = user.password || user.password_hash || '';
-      if (currentPassword.trim() !== activePass) {
-        setError('Mật khẩu hiện tại không chính xác!');
         return;
       }
 
@@ -78,52 +89,125 @@ export default function UserProfileModal({ user, isOpen, onClose, onUpdated }: U
         setError('Mật khẩu mới và xác nhận mật khẩu không trùng khớp.');
         return;
       }
+
+      if (newPassword.trim() === currentPassword.trim()) {
+        setError('Mật khẩu mới không được trùng với mật khẩu hiện tại.');
+        return;
+      }
     }
 
     setIsSubmitting(true);
 
     try {
-      const res = updateUserProfile(user.id, {
-        fullName: fullName.trim(),
-        phone: phone.trim(),
-        password: newPassword ? newPassword.trim() : undefined
+      // 1. Nếu có đổi mật khẩu, gửi request đến API đổi mật khẩu và lưu vào CSDL
+      if (isChangingPassword) {
+        const passRes = await fetch(`/api/users/${user.id}/change-password`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            requesterId: user.id,
+            currentPassword: currentPassword.trim(),
+            newPassword: newPassword.trim()
+          })
+        });
+
+        const passData = await passRes.json();
+        if (!passRes.ok || !passData.success) {
+          setError(passData.error || 'Đổi mật khẩu thất bại. Vui lòng kiểm tra lại mật khẩu cũ.');
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
+      // 2. Cập nhật họ tên và số điện thoại vào Database CSDL
+      const profileRes = await fetch(`/api/users/${user.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          requesterId: user.id,
+          full_name: fullName.trim(),
+          phone: phone.trim()
+        })
       });
 
-      if (res.success && res.user) {
-        setSuccessMsg(res.message || 'Cập nhật thông tin cá nhân thành công!');
-        onUpdated(res.user);
-        setCurrentPassword('');
-        setNewPassword('');
-        setConfirmPassword('');
-        setTimeout(() => {
-          onClose();
-        }, 1200);
-      } else {
-        setError(res.message || 'Có lỗi xảy ra khi cập nhật.');
+      const profileData = await profileRes.json();
+      if (!profileRes.ok || !profileData.success) {
+        setError(profileData.error || 'Cập nhật thông tin tài khoản thất bại.');
+        setIsSubmitting(false);
+        return;
       }
+
+      // 3. Cập nhật state cục bộ và localStorage
+      const updatedUser: UserProfile = {
+        ...user,
+        fullName: fullName.trim(),
+        phone: phone.trim(),
+        updated_at: new Date().toISOString()
+      };
+
+      updateUserProfile(user.id, {
+        fullName: fullName.trim(),
+        phone: phone.trim()
+      });
+
+      onUpdated(updatedUser);
+
+      setSuccessMsg(
+        isChangingPassword
+          ? 'Đã cập nhật thông tin và đổi mật khẩu thành công vào CSDL!'
+          : 'Cập nhật thông tin cá nhân vào CSDL thành công!'
+      );
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+
+      setTimeout(() => {
+        onClose();
+      }, 1300);
     } catch (err: any) {
-      setError(err?.message || 'Có lỗi xảy ra khi cập nhật hồ sơ.');
+      setError(err?.message || 'Có lỗi xảy ra khi cập nhật hồ sơ cá nhân.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const getRoleTitle = (role: string) => {
-    switch (role) {
-      case 'admin':
-        return 'Quản trị viên tối cao (Super Admin)';
-      case 'manager':
-        return 'Trưởng Ban Tuyển Sinh (Admissions Manager)';
-      case 'counselor':
-        return 'Chuyên Viên Tư Vấn Tuyển Sinh (Counselor)';
-      case 'verifier':
-        return 'Cán Bộ Hậu Kiểm & Xét Tuyển (Verifier)';
-      case 'marketer':
-        return 'Chuyên Viên Marketing & Truyền Thông (Marketer)';
+    const r = (role || '').toUpperCase();
+    switch (r) {
+      case 'ADMIN':
+        return 'Quản trị viên hệ thống (Super Admin)';
+      case 'MANAGER':
+        return 'Trưởng Ban / Quản Lý Tuyển Sinh (Manager)';
+      case 'STAFF_ADMISSIONS':
+      case 'COUNSELOR':
+      case 'VERIFIER':
+      case 'STAFF':
+        return 'Chuyên Viên Tư Vấn Tuyển Sinh (Admissions Staff)';
+      case 'STAFF_MARKETING':
+      case 'MARKETER':
+        return 'Chuyên Viên Marketing & Truyền Thông (Marketing Staff)';
       default:
         return role;
     }
   };
+
+  const getRoleBadge = (role: string) => {
+    const r = (role || '').toUpperCase();
+    switch (r) {
+      case 'ADMIN':
+        return { label: 'ADMIN', color: 'bg-purple-500/30 text-purple-200 border-purple-400/30' };
+      case 'MANAGER':
+        return { label: 'MANAGER', color: 'bg-indigo-500/30 text-indigo-200 border-indigo-400/30' };
+      case 'STAFF_ADMISSIONS':
+        return { label: 'TUYỂN SINH', color: 'bg-emerald-500/30 text-emerald-200 border-emerald-400/30' };
+      case 'STAFF_MARKETING':
+        return { label: 'MARKETING', color: 'bg-amber-500/30 text-amber-200 border-amber-400/30' };
+      default:
+        return { label: role.toUpperCase(), color: 'bg-blue-500/30 text-blue-200 border-blue-400/30' };
+    }
+  };
+
+  const badge = getRoleBadge(user.role);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in">
@@ -133,7 +217,7 @@ export default function UserProfileModal({ user, isOpen, onClose, onUpdated }: U
         <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 p-6 text-white relative">
           <button
             onClick={onClose}
-            className="absolute top-5 right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition"
+            className="absolute top-5 right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -144,10 +228,10 @@ export default function UserProfileModal({ user, isOpen, onClose, onUpdated }: U
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs uppercase font-extrabold tracking-wider px-2 py-0.5 rounded-full bg-blue-500/30 text-blue-200 border border-blue-400/30">
-                  {user.role.toUpperCase()}
+                <span className={`text-xs uppercase font-extrabold tracking-wider px-2 py-0.5 rounded-full border ${badge.color}`}>
+                  {badge.label}
                 </span>
-                <span className="text-[11px] text-slate-300">Hồ sơ cá nhân</span>
+                <span className="text-[11px] text-slate-300">Hồ sơ cá nhân & Bảo mật</span>
               </div>
               <h3 className="text-xl font-bold tracking-tight mt-1">{fullName || user.email}</h3>
               <p className="text-xs text-slate-300 flex items-center gap-1 mt-0.5">
@@ -182,11 +266,11 @@ export default function UserProfileModal({ user, isOpen, onClose, onUpdated }: U
             </div>
             <div className="flex justify-between items-center">
               <span className="text-slate-500">Đơn vị công tác:</span>
-              <span className="font-semibold text-slate-800 text-right">{user.department}</span>
+              <span className="font-semibold text-slate-800 text-right">{user.department || 'Đại học Duy Tân - VN-US'}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-slate-500">Khu vực phụ trách:</span>
-              <span className="font-semibold text-slate-800">{user.assignedRegion || 'Toàn quốc'}</span>
+              <span className="text-slate-500">Tên đăng nhập / Email:</span>
+              <span className="font-semibold text-slate-800 font-mono">{user.email}</span>
             </div>
           </div>
 
@@ -236,8 +320,8 @@ export default function UserProfileModal({ user, isOpen, onClose, onUpdated }: U
               <Key className="w-4 h-4 text-amber-600" />
               <span>Đổi Mật Khẩu Đăng Nhập (Tùy chọn)</span>
             </h4>
-            <p className="text-[11px] text-slate-500">
-              Để bảo mật tài khoản cá nhân, vui lòng nhập mật khẩu hiện tại nếu muốn thiết lập mật khẩu mới.
+            <p className="text-[11px] text-slate-500 leading-relaxed">
+              Để bảo mật tài khoản cá nhân, vui lòng nhập mật khẩu hiện tại để xác thực khi thiết lập mật khẩu mới.
             </p>
 
             <div>
@@ -255,7 +339,7 @@ export default function UserProfileModal({ user, isOpen, onClose, onUpdated }: U
                 <button
                   type="button"
                   onClick={() => setShowCurrentPass(!showCurrentPass)}
-                  className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600"
+                  className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
                 >
                   {showCurrentPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -278,7 +362,7 @@ export default function UserProfileModal({ user, isOpen, onClose, onUpdated }: U
                   <button
                     type="button"
                     onClick={() => setShowNewPass(!showNewPass)}
-                    className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600"
+                    className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
                   >
                     {showNewPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -305,17 +389,17 @@ export default function UserProfileModal({ user, isOpen, onClose, onUpdated }: U
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition"
+              className="px-4 py-2.5 text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition cursor-pointer"
             >
               Hủy bỏ
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-2.5 bg-blue-900 hover:bg-blue-950 text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2 transition disabled:opacity-50"
+              className="px-6 py-2.5 bg-blue-900 hover:bg-blue-950 text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2 transition disabled:opacity-50 cursor-pointer"
             >
               <Save className="w-4 h-4" />
-              <span>{isSubmitting ? 'Đang lưu...' : 'Lưu Thay Đổi'}</span>
+              <span>{isSubmitting ? 'Đang lưu vào CSDL...' : 'Lưu Thay Đổi'}</span>
             </button>
           </div>
         </form>

@@ -10,15 +10,27 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json().catch(() => ({}));
 
-    const authCheck = await requireAdminAuth(request, body.requesterId);
-    if (!authCheck.authorized) {
-      return authCheck.response!;
+    const isSelf = Boolean(body.requesterId && body.requesterId === id);
+    let currentUser;
+
+    if (isSelf) {
+      currentUser = await getUserByIdFromDb(body.requesterId);
+      if (!currentUser || currentUser.status !== 'ACTIVE') {
+        return NextResponse.json(
+          { success: false, error: '403 Forbidden: Tài khoản không hợp lệ hoặc đã bị khóa.' },
+          { status: 403 }
+        );
+      }
+    } else {
+      const authCheck = await requireAdminAuth(request, body.requesterId);
+      if (!authCheck.authorized) {
+        return authCheck.response!;
+      }
+      currentUser = authCheck.user!;
     }
 
-    const currentAdmin = authCheck.user!;
-
     // Chặn Admin tự hạ quyền của chính mình
-    if (id === currentAdmin.id && body.role && body.role !== 'ADMIN') {
+    if (id === currentUser.id && currentUser.role === 'ADMIN' && body.role && body.role !== 'ADMIN') {
       return NextResponse.json(
         { success: false, error: 'Bảo mật: Bạn không thể tự hạ quyền Quản trị viên (ADMIN) của chính mình.' },
         { status: 403 }
@@ -33,9 +45,12 @@ export async function PUT(
       );
     }
 
+    // Nếu là self-update của nhân sự thường, không cho phép đổi vai trò hệ thống
+    const targetRole = currentUser.role === 'ADMIN' ? body.role : undefined;
+
     const updatedUser = await updateUserInDb(id, {
       full_name: fullName,
-      role: body.role,
+      role: targetRole,
       phone: body.phone,
       department: body.department
     });

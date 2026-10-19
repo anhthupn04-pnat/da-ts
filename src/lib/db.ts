@@ -40,7 +40,7 @@ export function getSqliteDb(): DatabaseSync {
     }
     dbPath = path.join(tmpDir, 'vnus_admissions.db');
     const bundledDbPath = path.join(process.cwd(), 'database', 'vnus_admissions.db');
-    if (!fs.existsSync(dbPath) && fs.existsSync(bundledDbPath)) {
+    if (!fs.existsSync(/*turbopackIgnore: true*/ dbPath) && fs.existsSync(bundledDbPath)) {
       try {
         fs.copyFileSync(bundledDbPath, dbPath);
       } catch {
@@ -697,6 +697,80 @@ export async function resetUserPasswordInDb(id: string, newPassword?: string): P
   return {
     newPassword: pass,
     message: `Đã cập nhật mật khẩu mới thành công vào cơ sở dữ liệu.`
+  };
+}
+
+/**
+ * 7.1. Đổi mật khẩu người dùng (xác thực mật khẩu cũ và mã hóa Bcrypt mật khẩu mới)
+ */
+export async function changeUserPasswordInDb(
+  id: string,
+  currentPassword: string,
+  newPassword: string,
+  requesterId?: string
+): Promise<{ success: boolean; message: string }> {
+  const db = getSqliteDb();
+  const existing = await getUserByIdFromDb(id);
+  if (!existing) {
+    throw new Error('Không tìm thấy tài khoản người dùng.');
+  }
+
+  // Kiểm tra quyền: nếu không phải Admin thì bắt buộc khớp mật khẩu cũ
+  let isAdmin = false;
+  if (requesterId) {
+    const requester = await getUserByIdFromDb(requesterId);
+    if (requester && requester.role === 'ADMIN') {
+      isAdmin = true;
+    }
+  }
+
+  if (!isAdmin) {
+    if (!currentPassword) {
+      throw new Error('Vui lòng nhập mật khẩu hiện tại để xác thực.');
+    }
+
+    let isMatch = false;
+    if (existing.password_hash) {
+      try {
+        isMatch = bcrypt.compareSync(currentPassword.trim(), existing.password_hash);
+      } catch {
+        isMatch = false;
+      }
+    }
+    // Fallback mật khẩu khẩn cấp cho tài khoản admin
+    if (!isMatch && existing.role === 'ADMIN' && (currentPassword.trim() === '01022004' || currentPassword.trim() === '0102024')) {
+      isMatch = true;
+    }
+
+    if (!isMatch) {
+      throw new Error('Mật khẩu hiện tại không chính xác! Vui lòng kiểm tra lại.');
+    }
+  }
+
+  if (!newPassword || newPassword.trim().length < 6) {
+    throw new Error('Mật khẩu mới phải có tối thiểu 6 ký tự.');
+  }
+
+  if (currentPassword && newPassword.trim() === currentPassword.trim()) {
+    throw new Error('Mật khẩu mới không được trùng với mật khẩu hiện tại.');
+  }
+
+  const passwordHash = bcrypt.hashSync(newPassword.trim(), 10);
+  const now = new Date().toISOString();
+
+  db.prepare('UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?').run(passwordHash, now, id);
+
+  if (isSupabaseConfigured && supabase) {
+    try {
+      await supabase.from('users').update({ password_hash: passwordHash, updated_at: now }).eq('id', id);
+    } catch {
+      // ignore
+    }
+  }
+
+  return {
+    success: true,
+    message: 'Đổi mật khẩu thành công!'
   };
 }
 
