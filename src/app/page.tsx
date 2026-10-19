@@ -23,7 +23,7 @@ export default function HomePage() {
     },
     {
       q: 'Điều kiện nhận Học bổng toàn phần VN-US và Quỹ học bổng Troy 13 Tỷ là gì?',
-      a: 'Thí sinh đạt tổng điểm 3 môn từ 25 điểm trở lên trong kỳ thi Tốt nghiệp THPT 2026 sẽ được xét nhận học bổng toàn phần các ngành CMU, PSU, CSU. Với Quỹ học bổng Troy 13 Tỷ, thí sinh có điểm THPT từ 23-26đ hoặc có chứng chỉ IELTS từ 5.5+ sẽ nhận các mức học bổng giá trị toàn khóa.'
+      a: 'Thí sinh đạt tổng điểm 3 môn từ 25 điểm trở lên trong kỳ thi Tốt nghiệp THPT sẽ được xét nhận học bổng toàn phần các ngành CMU, PSU, CSU. Với Quỹ học bổng Troy 13 Tỷ, thí sinh có điểm THPT từ 23-26đ hoặc có chứng chỉ IELTS từ 5.5+ sẽ nhận các mức học bổng giá trị toàn khóa.'
     },
     {
       q: 'Kiểm định ABET và AACSB có ý nghĩa gì đối với sinh viên?',
@@ -50,7 +50,7 @@ export default function HomePage() {
             
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-amber-300 border border-amber-400/30 backdrop-blur-md shadow-xs">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>Cổng Thông Tin Tuyển Sinh & Tư Vấn Hướng Nghiệp K32 (2026)</span>
+              <span>Cổng Thông Tin Tuyển Sinh & Tư Vấn Hướng Nghiệp Đại Học Quốc Tế</span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
@@ -159,7 +159,7 @@ export default function HomePage() {
           
           <div className="text-center max-w-3xl mx-auto mb-12">
             <span className="text-xs font-bold text-blue-700 uppercase tracking-wider">
-              Danh Mục Đào Tạo K32
+              Danh Mục Đào Tạo Đại Học Quốc Tế
             </span>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 mt-1.5 tracking-tight">
               14 Chương Trình Quốc Tế Xuất Sắc
@@ -247,7 +247,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-14">
             <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
-              Chính Sách Khuyến Học K32 (2026)
+              Chính Sách Học Bổng & Khuyến Học
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-1.5 tracking-tight">
               Quỹ Học Bổng Hơn 13 Tỷ Đồng
@@ -297,7 +297,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-14">
             <span className="text-xs font-bold text-blue-700 uppercase tracking-wider">
-              Phương Thức Tuyển Sinh K32
+              Phương Thức Tuyển Sinh Đại Học Chính Quy
             </span>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 mt-1.5 tracking-tight">
               05 Phương Thức Xét Tuyển Linh Hoạt
@@ -411,7 +411,7 @@ export default function HomePage() {
               Giải Đáp Thắc Mắc
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">
-              Câu Hỏi Thường Gặp Về Tuyển Sinh K32
+              Câu Hỏi Thường Gặp Về Tuyển Sinh Đại Học Quốc Tế
             </h2>
           </div>
 

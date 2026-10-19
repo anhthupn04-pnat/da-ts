@@ -74,7 +74,7 @@ export default function ReportsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-            Báo Cáo Phân Tích & Hiệu Quả Tuyển Sinh (K32)
+            Báo Cáo Phân Tích & Hiệu Quả Tuyển Sinh
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
             Thống kê chuyển đổi, khối lượng công việc chuyên viên và độ quan tâm của thí sinh theo ngành học
@@ -107,7 +107,7 @@ export default function ReportsPage() {
 
         <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs">
           <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">
-            Hồ Sơ Đã Nhập Học K32 Chính Thức
+            Hồ Sơ Đã Nhập Học Chính Thức
           </span>
           <div className="mt-2 flex items-baseline gap-2">
             <span className="text-3xl font-extrabold text-emerald-600">{stats.enrolledLeads}</span>

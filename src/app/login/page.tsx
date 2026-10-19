@@ -40,7 +40,7 @@ export default function LoginPage() {
       icon: <UserCheck className="w-5 h-5 text-emerald-600" />,
       bg: 'bg-emerald-50 hover:bg-emerald-100/70 border-emerald-200',
       badge: 'bg-emerald-100 text-emerald-800',
-      description: 'Chăm sóc lead, gọi điện/Zalo tư vấn chương trình đào tạo & học bổng K32, tiếp nhận hồ sơ, nhập dữ liệu Excel.'
+      description: 'Chăm sóc lead, gọi điện/Zalo tư vấn chương trình đào tạo & học bổng, tiếp nhận hồ sơ, nhập dữ liệu Excel.'
     },
     {
       role: 'marketer' as Role,
@@ -131,7 +131,7 @@ export default function LoginPage() {
         </Link>
 
         <span className="text-amber-400 font-bold tracking-wider uppercase text-[11px] bg-white/10 px-3 py-1 rounded-full border border-amber-400/20">
-          Cổng Nội Bộ K32 (2026)
+          Cổng Quản Trị Tuyển Sinh Nội Bộ
         </span>
       </div>
 
@@ -147,7 +147,7 @@ export default function LoginPage() {
             Cổng Đăng Nhập Cán Bộ & Chuyên Viên Tuyển Sinh
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
-            Hệ thống CRM số hóa tuyển sinh & marketing K32 – Viện Đào tạo Quốc tế (VN-US) • Đại học Duy Tân.
+            Hệ thống CRM số hóa tuyển sinh & marketing – Viện Đào tạo Quốc tế (VN-US) • Đại học Duy Tân.
             Được phân quyền riêng biệt cho từng bộ phận nghiệp vụ.
           </p>
         </div>

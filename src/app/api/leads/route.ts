@@ -39,7 +39,7 @@ export async function POST(request: Request) {
       email: (body.email || '').trim().toLowerCase(),
       province: body.province || 'Đà Nẵng',
       highSchool: body.highSchool || 'Chưa cập nhật',
-      graduationYear: Number(body.graduationYear) || 2026,
+      graduationYear: Number(body.graduationYear) || new Date().getFullYear(),
       programId: body.programId,
       source: body.source || 'website',
       status: 'new',

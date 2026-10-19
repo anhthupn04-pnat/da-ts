@@ -34,7 +34,7 @@ export default function Navbar() {
             </Link>
             <Link href="/programs" className="hover:text-blue-700 transition-colors flex items-center gap-1.5">
               <span>14 Ngành Quốc Tế</span>
-              <span className="px-1.5 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-800 rounded-md">K32</span>
+              <span className="px-1.5 py-0.5 text-[10px] font-bold bg-blue-100 text-blue-800 rounded-md">QUỐC TẾ</span>
             </Link>
             <a href="#scholarships" className="hover:text-blue-700 transition-colors">
               Học Bổng 13 Tỷ
@@ -96,14 +96,14 @@ export default function Navbar() {
             onClick={() => setMobileMenuOpen(false)}
             className="block px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 rounded-md"
           >
-            14 Ngành Quốc Tế K32 (CMU, PSU, CSU, TROY)
+            14 Ngành Đào Tạo Quốc Tế (CMU, PSU, CSU, TROY)
           </Link>
           <a
             href="#scholarships"
             onClick={() => setMobileMenuOpen(false)}
             className="block px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 rounded-md"
           >
-            Học Bổng Tuyển Sinh 2026
+            Học Bổng Tuyển Sinh 13 Tỷ
           </a>
           <a
             href="#admission-methods"

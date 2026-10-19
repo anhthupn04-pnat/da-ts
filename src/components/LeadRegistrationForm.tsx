@@ -3,16 +3,22 @@
 import React, { useState } from 'react';
 import { STUDY_PROGRAMS } from '@/data/programsData';
 import { addLead } from '@/data/storage';
-import { CheckCircle2, AlertCircle, Send, Sparkles, Shield, User, Phone, Mail, MapPin, School, BookOpen } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Send, Sparkles, Shield, User, Phone, Mail, MapPin, School, BookOpen, Calendar } from 'lucide-react';
 
 export default function LeadRegistrationForm() {
+  const [currentYear, setCurrentYear] = useState<number>(2026);
+
+  React.useEffect(() => {
+    setCurrentYear(new Date().getFullYear());
+  }, []);
+
   const [formData, setFormData] = useState({
     fullName: '',
     phone: '',
     email: '',
     province: 'Đà Nẵng',
     highSchool: '',
-    graduationYear: 2026,
+    graduationYear: currentYear,
     programId: STUDY_PROGRAMS[0].id,
     source: 'website' as const,
     notes: '',
@@ -69,7 +75,7 @@ export default function LeadRegistrationForm() {
         email: formData.email.trim(),
         province: formData.province,
         highSchool: formData.highSchool.trim() || 'Chưa cập nhật',
-        graduationYear: Number(formData.graduationYear) || 2026,
+        graduationYear: Number(formData.graduationYear) || currentYear,
         programId: formData.programId,
         source: 'website',
         status: 'new',
@@ -96,7 +102,7 @@ export default function LeadRegistrationForm() {
           email: '',
           province: 'Đà Nẵng',
           highSchool: '',
-          graduationYear: 2026,
+          graduationYear: currentYear,
           programId: STUDY_PROGRAMS[0].id,
           source: 'website',
           notes: '',
@@ -124,13 +130,13 @@ export default function LeadRegistrationForm() {
           <div>
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 mb-2">
               <Sparkles className="w-3 h-3 text-amber-300" />
-              Đăng Ký Tuyển Sinh K32 - 2026
+              Đăng Ký Tư Vấn Tuyển Sinh Trực Tuyến
             </span>
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
               Đăng Ký Tư Vấn & Xét Tuyển Học Bổng
             </h3>
             <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl">
-              Nhận bộ tài liệu PDF hướng dẫn nhập học K32, thông tin xét học bổng 13 Tỷ và được chuyên viên tư vấn 1-1 miễn phí.
+              Nhận bộ tài liệu hướng dẫn nhập học, thông tin xét học bổng 13 Tỷ và được chuyên viên tư vấn 1-1 miễn phí.
             </p>
           </div>
         </div>
@@ -266,7 +272,7 @@ export default function LeadRegistrationForm() {
             {/* Trường THPT */}
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                Trường THPT đang học
+                Trường THPT
               </label>
               <div className="relative">
                 <School className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
@@ -277,6 +283,27 @@ export default function LeadRegistrationForm() {
                   onChange={e => setFormData({ ...formData, highSchool: e.target.value })}
                   className="w-full pl-10 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600 focus:border-transparent transition"
                 />
+              </div>
+            </div>
+
+            {/* Năm tốt nghiệp THPT / Năm dự kiến xét tuyển */}
+            <div>
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                Năm tốt nghiệp THPT / Xét tuyển <span className="text-rose-500">*</span>
+              </label>
+              <div className="relative">
+                <Calendar className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                <select
+                  value={formData.graduationYear}
+                  onChange={e => setFormData({ ...formData, graduationYear: Number(e.target.value) })}
+                  className="w-full pl-10 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600 focus:border-transparent transition font-medium"
+                >
+                  <option value={currentYear + 1}>Năm {currentYear + 1} (Học sinh Lớp 11)</option>
+                  <option value={currentYear}>Năm {currentYear} (Học sinh Lớp 12 / Năm nay)</option>
+                  <option value={currentYear - 1}>Năm {currentYear - 1} (Đã tốt nghiệp THPT)</option>
+                  <option value={currentYear - 2}>Năm {currentYear - 2} (Đã tốt nghiệp THPT)</option>
+                  <option value={currentYear - 3}>Năm {currentYear - 3} trở về trước</option>
+                </select>
               </div>
             </div>
 
@@ -366,7 +393,7 @@ export default function LeadRegistrationForm() {
               </span>
             ) : (
               <>
-                <span>Gửi Đăng Ký Tư Vấn & Nhận Cẩm Nang K32 Ngay</span>
+                <span>Gửi Đăng Ký Tư Vấn & Nhận Hướng Dẫn Tuyển Sinh</span>
                 <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </>
             )}

@@ -124,7 +124,7 @@ export default function RoleSwitcher({ onRoleChanged }: RoleSwitcherProps) {
             >
               <span>Cổng Đăng Nhập Cán Bộ</span>
             </a>
-            <span className="text-[10px] text-slate-400">K32 VN-US</span>
+            <span className="text-[10px] text-slate-400">VN-US Portal</span>
           </div>
         </div>
       )}

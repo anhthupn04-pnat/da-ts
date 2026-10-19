@@ -56,7 +56,7 @@ export default function AdminDashboardPage() {
           <div className="space-y-1.5">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30">
               <Sparkles className="w-3.5 h-3.5" />
-              Chiến dịch Tuyển sinh Khóa 32 (K32 - 2026)
+              Hệ Thống Quản Trị Tuyển Sinh & CRM Số Hóa
             </span>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
               Xin chào, {currentUser?.fullName || 'Chuyên viên Tuyển sinh'}!
@@ -116,7 +116,7 @@ export default function AdminDashboardPage() {
         />
 
         <StatCard
-          title="Nhập Học Thành Công (K32)"
+          title="Nhập Học Thành Công"
           value={stats.enrolledLeads}
           subtitle={`Tỷ lệ chuyển đổi: ${stats.conversionRate}%`}
           icon={<Award className="w-5 h-5 text-emerald-600" />}

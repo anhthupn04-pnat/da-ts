@@ -47,7 +47,7 @@ Mục tiêu cuộc gọi: Khảo sát nguyện vọng, giới thiệu ưu thế 
 
 [GIAI ĐOẠN 1: MỞ ĐẦU THÂN THIỆN]
 "Dạ alo, em chào ${studentName}! Em có phải là ${studentName} vừa đăng ký tìm hiểu chương trình ${prog.name} tại Cổng Tư vấn Tuyển sinh Trường Quốc tế - Đại học Duy Tân đúng không ạ?
-Em là [Tên chuyên viên], chuyên viên tư vấn của Viện VN-US. Em nhận được thông tin ${studentName} đang quan tâm đến lộ trình học tập K32 nên gọi điện để hỗ trợ em nhanh nhất."
+Em là [Tên chuyên viên], chuyên viên tư vấn của Viện VN-US. Em nhận được thông tin ${studentName} đang quan tâm đến lộ trình học tập chuẩn quốc tế nên gọi điện để hỗ trợ em nhanh nhất."
 
 [GIAI ĐOẠN 2: TƯ VẤN ĐIỂM SÁNG CHƯƠNG TRÌNH & HỌC BỔNG]
 "Thầy/Cô thấy điểm xét tuyển của em hiện tại tầm ${studentScore} điểm. Với mức điểm này, em hoàn toàn nằm trong ngưỡng xét tuyển ưu tiên và có cơ hội nhận các suất học bổng giá trị từ Quỹ học bổng Quốc tế:
@@ -57,10 +57,10 @@ Em là [Tên chuyên viên], chuyên viên tư vấn của Viện VN-US. Em nh�
 4. Cơ sở vật chất: Em sẽ học tại Tòa G - 120 Hoàng Minh Thảo với hệ thống phòng Lab hiện đại bậc nhất Đà Nẵng."
 
 [GIAI ĐOẠN 3: LỜI KÊU GỌI HÀNH ĐỘNG (CTA) & HẸN GẶP]
-"Thầy/Cô sẽ kết bạn Zalo với em qua số điện thoại này để gửi Cẩm nang PDF nhập học K32 kèm bảng chi tiết môn học nhé!
+"Thầy/Cô sẽ kết bạn Zalo với em qua số điện thoại này để gửi Cẩm nang PDF hướng dẫn tuyển sinh & nhập học kèm bảng chi tiết môn học nhé!
 Cuối tuần này, Viện có buổi trải nghiệm tham quan Tòa G và tư vấn hồ sơ trực tiếp, em có thể rủ bố mẹ cùng ghé 120 Hoàng Minh Thảo để thầy cô hướng dẫn làm thủ tục giữ chỉ tiêu sớm nha!"`;
       } else if (taskType === 'zalo_message') {
-        output = `💬 MẪU TIN NHẮN ZALO CHÀO MỪNG & GỬI CẨM NANG K32
+        output = `💬 MẪU TIN NHẮN ZALO CHÀO MỪNG & GỬI CẨM NANG TUYỂN SINH
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Chào ${studentName}! ✨
 Thầy/Cô là chuyên viên tư vấn tuyển sinh Viện Đào tạo Quốc tế (VN-US) – Đại học Duy Tân.
@@ -74,7 +74,7 @@ Rất vui vì ${studentName} đã quan tâm đến chương trình ${prog.name} 
 • Thời gian đào tạo: ${prog.duration}
 • Điểm chuẩn xét tuyển: Đang nhận hồ sơ học bạ từ 18 điểm hoặc điểm thi THPT từ 15 điểm.
 
-🎁 Thầy/Cô gửi tặng em file Cẩm nang Tuyển sinh K32 (Tổng hợp thông tin học bổng 13 Tỷ và hướng dẫn nhập học). Em xem qua nếu có câu hỏi nào về chương trình, ký túc xá hay thủ tục xét tuyển thì nhắn lại cho Thầy/Cô ngay tại đây nhé!
+🎁 Thầy/Cô gửi tặng em file Cẩm nang Tuyển sinh (Tổng hợp thông tin học bổng 13 Tỷ và hướng dẫn nhập học). Em xem qua nếu có câu hỏi nào về chương trình, ký túc xá hay thủ tục xét tuyển thì nhắn lại cho Thầy/Cô ngay tại đây nhé!
 
 🏢 Địa chỉ văn phòng: Tòa G, 120 Hoàng Minh Thảo, Đà Nẵng
 📞 Hotline hỗ trợ 24/7: 0979 407 340 | 0888 414141`;
@@ -82,10 +82,10 @@ Rất vui vì ${studentName} đã quan tâm đến chương trình ${prog.name} 
         output = `🚀 BÀI ĐĂNG TUYỂN SINH FACEBOOK / TIKTOK VIRAL
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 TIÊU ĐỀ GỢI Ý 1: "TẠI SAO BẰNG CỦA ${prog.partner.split(' - ')[0].toUpperCase()} LẠI ĐƯỢC CÁC TẬP ĐOÀN CÔNG NGHỆ & ĐA QUỐC GIA SĂN ĐÓN?"
-TIÊU ĐỀ GỢI Ý 2: "HỌC TẠI ĐÀ NẴNG - NHẬN VĂN BẰNG CHUẨN HOA KỲ: BẬT MÍ LỘ TRÌNH K32 NGÀNH ${prog.name.toUpperCase()}!"
+TIÊU ĐỀ GỢI Ý 2: "HỌC TẠI ĐÀ NẴNG - NHẬN VĂN BẰNG CHUẨN HOA KỲ: BẬT MÍ LỘ TRÌNH NGÀNH ${prog.name.toUpperCase()}!"
 
 [NỘI DUNG BÀI ĐĂNG]
-Bạn có biết? Không cần phải bay sang nửa vòng trái đất với chi phí đắt đỏ, ngay tại Đà Nẵng, tân sinh viên K32 đã có thể thụ hưởng trọn vẹn chương trình đào tạo chuẩn quốc tế tại Viện Đào tạo Quốc tế (VN-US) – Đại học Duy Tân! 🌟
+Bạn có biết? Không cần phải bay sang nửa vòng trái đất với chi phí đắt đỏ, ngay tại Đà Nẵng, tân sinh viên đã có thể thụ hưởng trọn vẹn chương trình đào tạo chuẩn quốc tế tại Viện Đào tạo Quốc tế (VN-US) – Đại học Duy Tân! 🌟
 
 ✨ 3 ĐẶC QUYỀN DUY NHẤT DÀNH CHO BẠN:
 1️⃣ ${prog.accreditation} - Chuẩn kiểm định danh giá được công nhận trên toàn cầu.
@@ -99,7 +99,7 @@ Bạn có biết? Không cần phải bay sang nửa vòng trái đất với ch
 📍 Cơ sở đào tạo: 120 Hoàng Minh Thảo, Liên Chiểu, TP. Đà Nẵng
 ☎ Hotline: 0979 407 340 | 0888 414141
 
-#DaiHocDuyTan #VNUS #TuyenSinh2026 #K32 #${prog.code.replace(/[^a-zA-Z0-9]/g, '')}`;
+#DaiHocDuyTan #VNUS #TuyenSinh #${prog.code.replace(/[^a-zA-Z0-9]/g, '')}`;
       } else if (taskType === 'major_summary') {
         output = `📑 BẢN TÓM TẮT THÔNG TIN NGÀNH HỌC DÀNH CHO TƯ VẤN VIÊN
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -125,7 +125,7 @@ ${prog.admissionCriteria}
       } else {
         output = `❓ PHÂN LOẠI & GỢI Ý CÂU TRẢ LỜI CHO THẮC MẮC PHỔ BIẾN
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Nhóm câu hỏi: CHÍNH SÁCH HỌC BỔNG & HỒ SƠ TUYỂN SINH K32
+Nhóm câu hỏi: CHÍNH SÁCH HỌC BỔNG & HỒ SƠ TUYỂN SINH
 
 Q1: "Học bổng 13 tỷ của Troy có cần thi tuyển riêng không?"
 A: Không cần thi riêng! Xét trực tiếp dựa trên điểm thi tốt nghiệp THPT từ 23-26 điểm hoặc IELTS từ 5.5 trở lên.
@@ -163,7 +163,7 @@ A: Trường có khu ký túc xá khang trang ngay gần cơ sở 120 Hoàng Min
             </h1>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            Hỗ trợ chuyên viên tư vấn tạo nhanh kịch bản gọi điện, tin nhắn Zalo, bài viết mạng xã hội và tóm tắt ngành học từ dữ liệu chuẩn K32
+            Hỗ trợ chuyên viên tư vấn tạo nhanh kịch bản gọi điện, tin nhắn Zalo, bài viết mạng xã hội và tóm tắt ngành học từ dữ liệu tuyển sinh chính thức
           </p>
         </div>
 
@@ -328,7 +328,7 @@ A: Trường có khu ký túc xá khang trang ngay gần cơ sở 120 Hoàng Min
             </div>
 
             <div className="p-4 bg-slate-50 border-t border-slate-200 rounded-b-2xl flex items-center justify-between text-[11px] text-slate-500">
-              <span>Được tối ưu theo đề án tuyển sinh K32 Viện VN-US ĐH Duy Tân</span>
+              <span>Được tối ưu theo đề án tuyển sinh Viện VN-US ĐH Duy Tân</span>
               <span>Người dùng có thể chỉnh sửa trực tiếp văn bản trên</span>
             </div>
           </div>

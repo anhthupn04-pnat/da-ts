@@ -32,10 +32,12 @@ export default function LeadsManagementPage() {
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [programFilter, setProgramFilter] = useState<string>('ALL');
   const [sourceFilter, setSourceFilter] = useState<string>('ALL');
+  const [yearFilter, setYearFilter] = useState<string>('ALL');
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [excelModalOpen, setExcelModalOpen] = useState(false);
   const [importSuccessMsg, setImportSuccessMsg] = useState<string | null>(null);
-  
+  const [currentYear, setCurrentYear] = useState<number>(2026);
+
   // Add Lead Modal State
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [newLeadForm, setNewLeadForm] = useState({
@@ -44,7 +46,7 @@ export default function LeadsManagementPage() {
     email: '',
     highSchool: '',
     province: 'Đà Nẵng',
-    graduationYear: 2026,
+    graduationYear: currentYear,
     programId: STUDY_PROGRAMS[0].id,
     source: 'website' as LeadSource,
     priority: 'medium' as LeadPriority,
@@ -58,6 +60,7 @@ export default function LeadsManagementPage() {
 
   useEffect(() => {
     loadData();
+    setCurrentYear(new Date().getFullYear());
   }, []);
 
   // Filtered Leads
@@ -73,8 +76,9 @@ export default function LeadsManagementPage() {
     const matchesStatus = statusFilter === 'ALL' || l.status === statusFilter;
     const matchesProgram = programFilter === 'ALL' || l.programId === programFilter;
     const matchesSource = sourceFilter === 'ALL' || l.source === sourceFilter;
+    const matchesYear = yearFilter === 'ALL' || (l.graduationYear && l.graduationYear.toString() === yearFilter);
 
-    return matchesSearch && matchesStatus && matchesProgram && matchesSource;
+    return matchesSearch && matchesStatus && matchesProgram && matchesSource && matchesYear;
   });
 
   const handleDelete = (id: string, name: string) => {
@@ -94,7 +98,7 @@ export default function LeadsManagementPage() {
       email: newLeadForm.email.trim(),
       highSchool: newLeadForm.highSchool.trim(),
       province: newLeadForm.province,
-      graduationYear: Number(newLeadForm.graduationYear) || 2026,
+      graduationYear: Number(newLeadForm.graduationYear) || currentYear,
       programId: newLeadForm.programId,
       source: newLeadForm.source,
       status: 'new',
@@ -114,7 +118,7 @@ export default function LeadsManagementPage() {
       email: '',
       highSchool: '',
       province: 'Đà Nẵng',
-      graduationYear: 2026,
+      graduationYear: currentYear,
       programId: STUDY_PROGRAMS[0].id,
       source: 'website',
       priority: 'medium',
@@ -149,7 +153,7 @@ export default function LeadsManagementPage() {
       `"${l.email}"`,
       `"${(l.highSchool || '').replace(/"/g, '""')}"`,
       `"${l.province || ''}"`,
-      l.graduationYear || 2026,
+      l.graduationYear || currentYear,
       l.programId,
       `"${(l.programName || '').replace(/"/g, '""')}"`,
       l.source,
@@ -164,7 +168,7 @@ export default function LeadsManagementPage() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.setAttribute('href', url);
-    link.setAttribute('download', `danh_sach_thi_sinh_k32_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute('download', `danh_sach_thi_sinh_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -181,7 +185,7 @@ export default function LeadsManagementPage() {
       case 'registered':
         return <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-100 text-amber-800">Đã nộp đăng ký</span>;
       case 'enrolled':
-        return <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-100 text-emerald-800">Nhập học K32</span>;
+        return <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-100 text-emerald-800">Đã nhập học</span>;
       case 'cancelled':
         return <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-100 text-slate-600">Đã hủy / Không nhu cầu</span>;
     }
@@ -208,7 +212,7 @@ export default function LeadsManagementPage() {
             Quản Lý Thí Sinh & Lead Tuyển Sinh (CRM)
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Theo dõi, phân công tư vấn và cập nhật hành trình hồ sơ thí sinh K32
+            Theo dõi, phân công tư vấn và cập nhật hành trình hồ sơ thí sinh các khóa tuyển sinh
           </p>
         </div>
 
@@ -251,18 +255,36 @@ export default function LeadsManagementPage() {
 
       {/* Filter and Search Bar */}
       <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-xs space-y-3">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
           
           {/* Search Input */}
           <div className="relative">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
             <input
               type="text"
-              placeholder="Tìm theo tên, SĐT, email, trường THPT..."
+              placeholder="Tìm tên, SĐT, trường THPT..."
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600 transition"
             />
+          </div>
+
+          {/* Graduation Year Filter */}
+          <div>
+            <select
+              value={yearFilter}
+              onChange={e => setYearFilter(e.target.value)}
+              className="w-full py-2 px-3 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden font-medium text-slate-700"
+            >
+              <option value="ALL">Tất cả năm tốt nghiệp</option>
+              {Array.from(new Set(leads.map(l => l.graduationYear).filter((y): y is number => Boolean(y))))
+                .sort((a, b) => b - a)
+                .map(yr => (
+                  <option key={yr} value={yr.toString()}>
+                    Năm tốt nghiệp {yr}
+                  </option>
+                ))}
+            </select>
           </div>
 
           {/* Status Filter */}
@@ -289,7 +311,7 @@ export default function LeadsManagementPage() {
               onChange={e => setProgramFilter(e.target.value)}
               className="w-full py-2 px-3 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden font-medium text-slate-700 truncate"
             >
-              <option value="ALL">Tất cả chuyên ngành (14)</option>
+              <option value="ALL">Tất cả ngành (14)</option>
               {STUDY_PROGRAMS.map(p => (
                 <option key={p.id} value={p.id}>
                   {p.code} - {p.name}
@@ -305,12 +327,12 @@ export default function LeadsManagementPage() {
               onChange={e => setSourceFilter(e.target.value)}
               className="w-full py-2 px-3 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden font-medium text-slate-700"
             >
-              <option value="ALL">Tất cả nguồn tiếp cận</option>
+              <option value="ALL">Tất cả nguồn</option>
               <option value="website">Website TTTV</option>
               <option value="facebook">Facebook Ads / Page</option>
               <option value="tiktok">TikTok</option>
               <option value="event">Sự kiện THPT</option>
-              <option value="referral">Cựu sinh viên / Giới thiệu</option>
+              <option value="referral">Cựu SV / Giới thiệu</option>
               <option value="hotline">Hotline</option>
             </select>
           </div>
@@ -321,15 +343,16 @@ export default function LeadsManagementPage() {
           <span>
             Tìm thấy <strong>{filtered.length}</strong> thí sinh phù hợp
           </span>
-          {(search || statusFilter !== 'ALL' || programFilter !== 'ALL' || sourceFilter !== 'ALL') && (
+          {(search || statusFilter !== 'ALL' || programFilter !== 'ALL' || sourceFilter !== 'ALL' || yearFilter !== 'ALL') && (
             <button
               onClick={() => {
                 setSearch('');
                 setStatusFilter('ALL');
                 setProgramFilter('ALL');
                 setSourceFilter('ALL');
+                setYearFilter('ALL');
               }}
-              className="text-blue-700 hover:underline font-semibold cursor-pointer"
+              className="text-blue-600 hover:text-blue-800 font-bold transition cursor-pointer"
             >
               Xóa bộ lọc
             </button>
@@ -393,7 +416,7 @@ export default function LeadsManagementPage() {
                         {lead.highSchool || 'Chưa cập nhật'}
                       </div>
                       <div className="text-[11px] text-slate-500">
-                        {lead.province || 'Đà Nẵng'} (TN {lead.graduationYear || 2026})
+                        {lead.province || 'Đà Nẵng'} {lead.graduationYear ? `(TN ${lead.graduationYear})` : ''}
                       </div>
                     </td>
 
@@ -519,7 +542,7 @@ export default function LeadsManagementPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">Trường THPT</label>
                   <input
@@ -529,6 +552,20 @@ export default function LeadsManagementPage() {
                     onChange={e => setNewLeadForm({ ...newLeadForm, highSchool: e.target.value })}
                     className="w-full p-2 border border-slate-300 rounded-lg"
                   />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Năm tốt nghiệp</label>
+                  <select
+                    value={newLeadForm.graduationYear}
+                    onChange={e => setNewLeadForm({ ...newLeadForm, graduationYear: Number(e.target.value) })}
+                    className="w-full p-2 border border-slate-300 rounded-lg bg-white"
+                  >
+                    <option value={currentYear + 1}>Năm {currentYear + 1}</option>
+                    <option value={currentYear}>Năm {currentYear}</option>
+                    <option value={currentYear - 1}>Năm {currentYear - 1}</option>
+                    <option value={currentYear - 2}>Năm {currentYear - 2}</option>
+                    <option value={currentYear - 3}>Năm {currentYear - 3}</option>
+                  </select>
                 </div>
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">Nguồn tiếp nhận</label>

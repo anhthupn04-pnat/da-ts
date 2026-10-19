@@ -47,7 +47,7 @@ export default function SettingsPage() {
   }, []);
 
   const handleResetData = () => {
-    if (confirm('Bạn có chắc chắn muốn khôi phục dữ liệu mẫu chuẩn K32 ban đầu? Tất cả dữ liệu thử nghiệm sẽ được đưa về mặc định.')) {
+    if (confirm('Bạn có chắc chắn muốn khôi phục dữ liệu mẫu ban đầu? Tất cả dữ liệu thử nghiệm sẽ được đưa về mặc định.')) {
       resetDemoData();
       refreshCounts();
       setResetSuccess(true);
@@ -71,7 +71,7 @@ export default function SettingsPage() {
       'Email': l.email,
       'Trường THPT': l.highSchool || '',
       'Tỉnh Thành': l.province || '',
-      'Năm Tốt Nghiệp': l.graduationYear || 2026,
+      'Năm Tốt Nghiệp': l.graduationYear || new Date().getFullYear(),
       'Mã Ngành': l.programId,
       'Tên Ngành': l.programName || '',
       'Nguồn Tiếp Cận': l.source,
@@ -83,7 +83,7 @@ export default function SettingsPage() {
       'Ngày Tiếp Nhận': l.createdAt
     }));
     const wsLeads = XLSX.utils.json_to_sheet(leadsData);
-    XLSX.utils.book_append_sheet(wb, wsLeads, 'Danh_Sach_Leads_K32');
+    XLSX.utils.book_append_sheet(wb, wsLeads, 'Danh_Sach_Leads');
 
     // Sheet 2: Consultation History
     const logsData = logs.map(log => ({
@@ -115,12 +115,12 @@ export default function SettingsPage() {
     const wsCampaigns = XLSX.utils.json_to_sheet(campaignsData);
     XLSX.utils.book_append_sheet(wb, wsCampaigns, 'Chien_Dich_Marketing');
 
-    XLSX.writeFile(wb, `Bao_Cao_Tong_The_Du_Lieu_K32_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    XLSX.writeFile(wb, `Bao_Cao_Tong_The_Du_Lieu_${new Date().toISOString().slice(0, 10)}.xlsx`);
   };
 
   const handleExportBackupJSON = () => {
     const backup = {
-      version: '1.2.0-K32',
+      version: '1.2.0',
       institution: 'Trường Đào tạo Quốc tế (VN-US) - ĐH Duy Tân',
       exportedAt: new Date().toISOString(),
       leads: getLeads(),
@@ -170,14 +170,14 @@ export default function SettingsPage() {
           Cấu Hình Hệ Thống & Kết Nối Cơ Sở Dữ Liệu
         </h1>
         <p className="text-xs text-slate-500 mt-0.5">
-          Quản lý kết nối dữ liệu thực tế, đồng bộ Supabase Cloud PostgreSQL và nhập/xuất dữ liệu K32
+          Quản lý kết nối dữ liệu thực tế, đồng bộ Supabase Cloud PostgreSQL và nhập/xuất dữ liệu tuyển sinh
         </p>
       </div>
 
       {resetSuccess && (
         <div className="p-4 rounded-xl bg-emerald-50 text-emerald-900 border border-emerald-200 flex items-center gap-2 text-xs font-bold animate-fade-in">
           <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-          <span>Đã khôi phục toàn bộ dữ liệu mẫu chuẩn K32 thành công! Mọi thay đổi thử nghiệm đã được làm mới.</span>
+          <span>Đã khôi phục toàn bộ dữ liệu mẫu ban đầu thành công! Mọi thay đổi thử nghiệm đã được làm mới.</span>
         </div>
       )}
 

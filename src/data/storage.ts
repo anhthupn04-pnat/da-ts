@@ -141,7 +141,7 @@ export function batchAddLeads(newLeadsList: Omit<Lead, 'id' | 'createdAt' | 'upd
       email: cleanEmail,
       highSchool: (item.highSchool || 'Chưa cập nhật').toString().trim(),
       province: (item.province || 'Đà Nẵng').toString().trim(),
-      graduationYear: Number(item.graduationYear) || 2026,
+      graduationYear: Number(item.graduationYear) || new Date().getFullYear(),
       programId: prog.id,
       programName: prog.name,
       source: item.source || 'other',

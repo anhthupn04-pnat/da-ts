@@ -91,7 +91,7 @@ export const INITIAL_LEADS: Lead[] = [
     email: 'giahuy.pham@outlook.com',
     highSchool: 'THPT Quốc Học Huế',
     province: 'Thừa Thiên Huế',
-    graduationYear: 2026,
+    graduationYear: 2027,
     programId: 'cmu-is',
     programName: 'An ninh Mạng chuẩn CMU',
     source: 'tiktok',
@@ -111,7 +111,7 @@ export const INITIAL_LEADS: Lead[] = [
     email: 'thaomy.vo@gmail.com',
     highSchool: 'THPT Chuyên Nguyễn Bỉnh Khiêm',
     province: 'Quảng Nam',
-    graduationYear: 2026,
+    graduationYear: 2025,
     programId: 'psu-fintech',
     programName: 'Công nghệ Tài chính (FinTech) chuẩn PSU',
     source: 'event',
@@ -120,7 +120,7 @@ export const INITIAL_LEADS: Lead[] = [
     assignedTo: 'usr-counselor-1',
     assignedToName: 'Trần Thị Mai Lan',
     scoreThpt: 27.0,
-    notes: 'Gặp tại Ngày hội Tư vấn Tuyển sinh & Hướng nghiệp 2026.',
+    notes: 'Gặp tại Ngày hội Tư vấn Tuyển sinh & Hướng nghiệp.',
     createdAt: '2026-10-09T11:00:00Z',
     updatedAt: '2026-10-11T15:30:00Z'
   },
@@ -151,7 +151,7 @@ export const INITIAL_LEADS: Lead[] = [
     email: 'kimchi.hoang@gmail.com',
     highSchool: 'THPT Trần Phú',
     province: 'Đà Nẵng',
-    graduationYear: 2026,
+    graduationYear: 2024,
     programId: 'troy-thm',
     programName: 'Quản trị Du lịch & Khách sạn TROY (Mỹ)',
     source: 'website',
@@ -194,7 +194,7 @@ export const INITIAL_CONSULTATION_LOGS: ConsultationHistory[] = [
     staffName: 'Lê Hoàng Anh Tuấn',
     contactMethod: 'call',
     content: 'Tư vấn chi tiết chương trình CMU Software Engineering đạt chuẩn ABET, thông báo điều kiện hồ sơ học bổng 25 điểm trở lên.',
-    outcome: 'Thí sinh rất hào hứng, xin gửi tài liệu PDF K32 qua Zalo để trao đổi với bố mẹ.',
+    outcome: 'Thí sinh rất hào hứng, xin gửi tài liệu PDF tuyển sinh qua Zalo để trao đổi với bố mẹ.',
     nextFollowUpDate: '2026-10-16',
     createdAt: '2026-10-12T14:20:00Z'
   },
@@ -225,7 +225,7 @@ export const INITIAL_CONSULTATION_LOGS: ConsultationHistory[] = [
 export const INITIAL_CAMPAIGNS: MarketingCampaign[] = [
   {
     id: 'camp-1',
-    title: 'Chiến dịch Tuyển sinh K32: Nắm Bắt Tương Lai Chuẩn Mỹ',
+    title: 'Chiến dịch Tuyển sinh Quốc tế: Nắm Bắt Tương Lai Chuẩn Mỹ',
     channel: 'facebook',
     targetAudience: 'Học sinh lớp 12 & Phụ huynh tại Đà Nẵng, Quảng Nam, Thừa Thiên Huế, Quảng Ngãi',
     budget: 35000000,
@@ -251,7 +251,7 @@ export const INITIAL_CAMPAIGNS: MarketingCampaign[] = [
   },
   {
     id: 'camp-3',
-    title: 'Ngày hội Open Day & Trải Nghiệm Học Thử VN-US K32',
+    title: 'Ngày hội Open Day & Trải Nghiệm Học Thử VN-US',
     channel: 'event',
     targetAudience: 'Học sinh các trường THPT Chuyên Miền Trung',
     budget: 50000000,
@@ -275,7 +275,7 @@ export const INITIAL_CONTENT_CALENDAR: ContentItem[] = [
     author: 'Phạm Minh Phương',
     scheduledAt: '2026-10-08',
     publishUrl: 'https://facebook.com/vnus.dtu/posts/10293847',
-    contentSnippet: 'Với thiết kế kính tinh tế, view bầu trời xanh mát cùng hệ thống hơn 184 phòng học, Tòa G 120 Hoàng Minh Thảo đã sẵn sàng đón chào K32...'
+    contentSnippet: 'Với thiết kế kính tinh tế, view bầu trời xanh mát cùng hệ thống hơn 184 phòng học, Tòa G 120 Hoàng Minh Thảo đã sẵn sàng đón chào tân sinh viên...'
   },
   {
     id: 'cnt-2',
@@ -286,7 +286,7 @@ export const INITIAL_CONTENT_CALENDAR: ContentItem[] = [
     status: 'published',
     author: 'Phạm Minh Phương',
     scheduledAt: '2026-10-11',
-    publishUrl: 'https://troy.edu.vn/tin-tuc/hoc-bong-k32',
+    publishUrl: 'https://troy.edu.vn/tin-tuc/hoc-bong-tuyen-sinh',
     contentSnippet: 'Chi tiết 3 điều kiện nhận học bổng Quỹ Troy toàn phần với điểm THPT từ 23-26đ hoặc IELTS 5.5...'
   },
   {

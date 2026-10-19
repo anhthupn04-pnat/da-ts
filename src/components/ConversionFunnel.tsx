@@ -45,7 +45,7 @@ export default function ConversionFunnel({ leads }: ConversionFunnelProps) {
       icon: FileCheck
     },
     {
-      title: 'Nhập Học Chính Thức (K32)',
+      title: 'Nhập Học Chính Thức',
       count: countEnrolled,
       percent: Math.round((countEnrolled / total) * 100),
       color: 'bg-emerald-600',
@@ -58,7 +58,7 @@ export default function ConversionFunnel({ leads }: ConversionFunnelProps) {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-base font-bold text-slate-900">
-            Phễu Chuyển Đổi Tuyển Sinh K32
+            Phễu Chuyển Đổi Tuyển Sinh
           </h3>
           <p className="text-xs text-slate-500 mt-0.5">
             Tỷ lệ chuyển đổi qua các giai đoạn từ tiếp nhận đến nhập học

@@ -221,7 +221,7 @@ export default function LeadModal({ lead, onClose, onLeadUpdated }: LeadModalPro
               </div>
               <div className="flex items-center gap-2 text-slate-600">
                 <School className="w-4 h-4 text-purple-600 shrink-0" />
-                <span>{currentLead.highSchool || 'Chưa cập nhật'} (TN: {currentLead.graduationYear || 2026})</span>
+                <span>{currentLead.highSchool || 'Chưa cập nhật'} {currentLead.graduationYear ? `(TN: ${currentLead.graduationYear})` : ''}</span>
               </div>
               <div className="flex items-center gap-2 text-slate-600">
                 <MapPin className="w-4 h-4 text-rose-600 shrink-0" />

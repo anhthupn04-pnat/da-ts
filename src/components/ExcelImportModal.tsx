@@ -54,6 +54,7 @@ export default function ExcelImportModal({ isOpen, onClose, onSuccess }: ExcelIm
 
   // Generate and download standard sample Excel file
   const handleDownloadTemplate = () => {
+    const currentYear = new Date().getFullYear();
     const sampleData = [
       {
         'Họ và Tên': 'Nguyễn Hoàng Long',
@@ -61,7 +62,7 @@ export default function ExcelImportModal({ isOpen, onClose, onSuccess }: ExcelIm
         'Email': 'hoanglong.dtu@gmail.com',
         'Trường THPT': 'THPT Chuyên Lê Quý Đôn',
         'Tỉnh Thành': 'Đà Nẵng',
-        'Năm Tốt Nghiệp': 2026,
+        'Năm Tốt Nghiệp': currentYear,
         'Mã Ngành Hoặc Tên Ngành': '102(CMU)',
         'Điểm Xét Tuyển THPT': 26.5,
         'Nguồn Tiếp Cận': 'website',
@@ -73,7 +74,7 @@ export default function ExcelImportModal({ isOpen, onClose, onSuccess }: ExcelIm
         'Email': 'thuthao.tran@gmail.com',
         'Trường THPT': 'THPT Phan Châu Trinh',
         'Tỉnh Thành': 'Đà Nẵng',
-        'Năm Tốt Nghiệp': 2026,
+        'Năm Tốt Nghiệp': currentYear + 1,
         'Mã Ngành Hoặc Tên Ngành': '400(TROY)',
         'Điểm Xét Tuyển THPT': 25.0,
         'Nguồn Tiếp Cận': 'facebook',
@@ -85,7 +86,7 @@ export default function ExcelImportModal({ isOpen, onClose, onSuccess }: ExcelIm
         'Email': 'minhtri.le@gmail.com',
         'Trường THPT': 'THPT Quốc Học Huế',
         'Tỉnh Thành': 'Thừa Thiên Huế',
-        'Năm Tốt Nghiệp': 2026,
+        'Năm Tốt Nghiệp': currentYear - 1,
         'Mã Ngành Hoặc Tên Ngành': '107(CSU)',
         'Điểm Xét Tuyển THPT': 24.0,
         'Nguồn Tiếp Cận': 'event',
@@ -97,7 +98,7 @@ export default function ExcelImportModal({ isOpen, onClose, onSuccess }: ExcelIm
         'Email': 'khanhhuyen.pham@gmail.com',
         'Trường THPT': 'THPT Huỳnh Thúc Kháng',
         'Tỉnh Thành': 'Quảng Nam',
-        'Năm Tốt Nghiệp': 2026,
+        'Năm Tốt Nghiệp': currentYear,
         'Mã Ngành Hoặc Tên Ngành': '435(PSU)',
         'Điểm Xét Tuyển THPT': 25.5,
         'Nguồn Tiếp Cận': 'tiktok',
@@ -121,8 +122,8 @@ export default function ExcelImportModal({ isOpen, onClose, onSuccess }: ExcelIm
     ];
 
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Thi_Sinh_K32');
-    XLSX.writeFile(workbook, 'Mau_Danh_Sach_Thi_Sinh_K32_VNUS.xlsx');
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Thi_Sinh');
+    XLSX.writeFile(workbook, 'Mau_Danh_Sach_Thi_Sinh_Tuyen_Sinh.xlsx');
   };
 
   // Process uploaded Excel / CSV file
@@ -177,7 +178,7 @@ export default function ExcelImportModal({ isOpen, onClose, onSuccess }: ExcelIm
         const highSchool = findVal('Trường THPT', 'Trường', 'THPT', 'School') || 'Chưa cập nhật';
         const province = findVal('Tỉnh Thành', 'Tỉnh/Thành', 'Tỉnh', 'Thành phố', 'Province') || 'Đà Nẵng';
         const gradYearRaw = findVal('Năm Tốt Nghiệp', 'Năm TN', 'Graduation Year');
-        const graduationYear = Number(gradYearRaw) || 2026;
+        const graduationYear = Number(gradYearRaw) || new Date().getFullYear();
         const programRaw = findVal('Mã Ngành Hoặc Tên Ngành', 'Mã Ngành', 'Tên Ngành', 'Ngành', 'Chương trình', 'Program');
         const scoreRaw = findVal('Điểm Xét Tuyển THPT', 'Điểm THPT', 'Điểm', 'Score');
         const scoreThpt = scoreRaw ? parseFloat(scoreRaw) : undefined;
@@ -293,7 +294,7 @@ export default function ExcelImportModal({ isOpen, onClose, onSuccess }: ExcelIm
                 Nhập Dữ Liệu Thí Sinh Từ File Excel / CSV
               </h2>
               <p className="text-xs text-slate-500">
-                Tự động kiểm tra trùng lặp SĐT/Email và ánh xạ chương trình đào tạo K32
+                Tự động kiểm tra trùng lặp SĐT/Email và ánh xạ chương trình đào tạo quốc tế
               </p>
             </div>
           </div>
@@ -318,7 +319,7 @@ export default function ExcelImportModal({ isOpen, onClose, onSuccess }: ExcelIm
                   <FileCheck className="w-5 h-5 text-blue-700 shrink-0 mt-0.5" />
                   <div>
                     <h4 className="text-xs font-bold text-blue-950">
-                      Tải File Mẫu Excel Chuẩn Tuyển Sinh K32
+                      Tải File Mẫu Excel Chuẩn Tuyển Sinh
                     </h4>
                     <p className="text-xs text-blue-800/90 mt-0.5">
                       File mẫu chứa sẵn cấu trúc cột và dữ liệu mẫu chuẩn (Họ tên, SĐT, Email, Trường THPT, Mã ngành, Điểm THPT).

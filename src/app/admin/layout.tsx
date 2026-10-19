@@ -221,7 +221,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="px-3.5 py-1 text-[11px] text-slate-500 flex items-center justify-between">
             <span className="flex items-center gap-1">
               <Shield className="w-3 h-3 text-emerald-500" />
-              Bảo Mật K32
+              Bảo Mật SSL
             </span>
             <span className="font-mono text-slate-400">v1.2-VNUS</span>
           </div>
@@ -242,7 +242,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </button>
             <div>
               <h2 className="text-sm sm:text-base font-bold text-slate-800 truncate">
-                Hệ Thống Số Hóa Tuyển Sinh & Marketing K32
+                Hệ Thống Số Hóa Tuyển Sinh & Marketing VN-US
               </h2>
               {currentUser && (
                 <span className="text-[11px] text-slate-500 hidden sm:block">

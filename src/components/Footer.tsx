@@ -106,7 +106,7 @@ export default function Footer() {
             <ul className="space-y-2 text-xs">
               <li>
                 <Link href="/programs" className="text-slate-300 hover:text-amber-400 transition-colors">
-                  • 14 Ngành Đào tạo Quốc tế K32
+                  • 14 Ngành Đào tạo Quốc tế (CMU, PSU, CSU, TROY)
                 </Link>
               </li>
               <li>
@@ -116,7 +116,7 @@ export default function Footer() {
               </li>
               <li>
                 <a href="#admission-methods" className="text-slate-300 hover:text-amber-400 transition-colors">
-                  • 5 Phương thức xét tuyển 2026
+                  • 5 Phương thức xét tuyển linh hoạt
                 </a>
               </li>
               <li>
