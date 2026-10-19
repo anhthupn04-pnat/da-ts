@@ -19,8 +19,7 @@ export interface StudyProgram {
   degree: string;
   accreditation: string;
   duration: string;
-  tuitionPerYear: string;
-  tuitionNote?: string;
+  tuitionPerYear?: string;
   description: string;
   careerProspects: string;
   admissionCriteria: string;

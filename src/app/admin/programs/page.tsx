@@ -121,22 +121,20 @@ export default function AdminProgramsPage() {
                   <Briefcase className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                   <span className="truncate"><strong>Nghề nghiệp:</strong> {p.careerProspects}</span>
                 </div>
-                {p.tuitionNote && (
-                  <div className="p-2.5 rounded-xl bg-amber-50/70 border border-amber-200/80 text-[11px] text-amber-900 leading-relaxed mt-2">
-                    <strong className="text-amber-950 font-bold">Lưu ý tư vấn học phí & học bổng:</strong> {p.tuitionNote}
-                  </div>
-                )}
+                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-[11px] text-slate-600 leading-relaxed mt-2">
+                  <strong className="text-slate-900 font-bold">Phương thức xét tuyển:</strong> {p.admissionCriteria}
+                </div>
               </div>
             </div>
 
             <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-              <div>
-                <span className="text-[11px] text-slate-400 block font-medium">Học phí K32:</span>
-                <span className="inline-block mt-0.5 px-2.5 py-1 rounded-md bg-blue-50 text-blue-800 font-bold border border-blue-200">
-                  {p.tuitionPerYear}
-                </span>
-              </div>
-              <span className="font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-md">Thời gian: {p.duration}</span>
+              <span className="font-semibold text-slate-600 flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-slate-400" />
+                Thời gian đào tạo: <strong className="text-slate-900">{p.duration}</strong>
+              </span>
+              <span className="px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 font-bold border border-blue-200">
+                Chỉ tiêu K32
+              </span>
             </div>
           </div>
         ))}

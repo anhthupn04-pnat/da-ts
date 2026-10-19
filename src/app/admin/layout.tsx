@@ -66,7 +66,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       roles: ['admin', 'manager', 'counselor']
     },
     {
-      name: 'Chương Trình Đào Tạo & Học Phí',
+      name: 'Chương Trình Đào Tạo',
       href: '/admin/programs',
       icon: BookOpen,
       roles: ['admin', 'manager', 'counselor']

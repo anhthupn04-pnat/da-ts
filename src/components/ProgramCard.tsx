@@ -58,24 +58,17 @@ export default function ProgramCard({ program, onSelect }: ProgramCardProps) {
         </div>
       </div>
 
-      {/* Card Footer: Tuition, Duration & CTA */}
+      {/* Card Footer: Duration & CTA */}
       <div className="px-6 py-4 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between gap-3 text-xs">
-        <div>
-          <span className="text-[11px] text-slate-500 font-medium block">Học phí K32:</span>
-          <div className="flex items-center gap-1.5 mt-0.5">
-            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
-              {program.tuitionPerYear}
-            </span>
-            <span className="text-[10px] text-slate-400 hidden sm:inline">
-              {isTroy ? '(~1/10 du học Mỹ)' : '(Có HB 100%)'}
-            </span>
-          </div>
+        <div className="flex items-center gap-1.5 text-slate-600 font-medium">
+          <Clock className="w-4 h-4 text-slate-400 shrink-0" />
+          <span>Thời gian: <strong className="text-slate-800">{program.duration}</strong></span>
         </div>
 
         <a
           href="#registration-form"
           onClick={() => onSelect && onSelect(program.id)}
-          className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-lg shadow-xs hover:shadow-md transition-all group-hover:scale-105"
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-xl shadow-xs hover:shadow-md transition-all group-hover:scale-105"
         >
           <span>Đăng Ký Tư Vấn</span>
           <ArrowUpRight className="w-3.5 h-3.5" />

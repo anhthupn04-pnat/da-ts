@@ -71,10 +71,10 @@ Rất vui vì ${studentName} đã quan tâm đến chương trình ${prog.name} 
 • Đối tác Hoa Kỳ: ${prog.partner}
 • Văn bằng: ${prog.degree}
 • Kiểm định: ${prog.accreditation}
-• Học phí năm học: ${prog.tuitionPerYear}
+• Thời gian đào tạo: ${prog.duration}
 • Điểm chuẩn xét tuyển: Đang nhận hồ sơ học bạ từ 18 điểm hoặc điểm thi THPT từ 15 điểm.
 
-🎁 Thầy/Cô gửi tặng em file Cẩm nang Tuyển sinh K32 (Tổng hợp thông tin học bổng 13 Tỷ và hướng dẫn nhập học). Em xem qua nếu có câu hỏi nào về học phí, ký túc xá hay thủ tục xét tuyển thì nhắn lại cho Thầy/Cô ngay tại đây nhé!
+🎁 Thầy/Cô gửi tặng em file Cẩm nang Tuyển sinh K32 (Tổng hợp thông tin học bổng 13 Tỷ và hướng dẫn nhập học). Em xem qua nếu có câu hỏi nào về chương trình, ký túc xá hay thủ tục xét tuyển thì nhắn lại cho Thầy/Cô ngay tại đây nhé!
 
 🏢 Địa chỉ văn phòng: Tòa G, 120 Hoàng Minh Thảo, Đà Nẵng
 📞 Hotline hỗ trợ 24/7: 0979 407 340 | 0888 414141`;
@@ -92,7 +92,7 @@ Bạn có biết? Không cần phải bay sang nửa vòng trái đất với ch
 2️⃣ Cơ hội nghề nghiệp rộng mở: ${prog.careerProspects}.
 3️⃣ Không gian học tập chuẩn 5 sao tại Tòa G biểu tượng mới với thang máy kính trong suốt và hơn 184 phòng học tiện nghi.
 
-🔥 ĐẶC BIỆT: Cơ hội rinh học bổng toàn phần 100% học phí hoặc Quỹ học bổng Đại học Troy lên đến 13 Tỷ đồng!
+🔥 ĐẶC BIỆT: Cơ hội nhận 55 suất Học bổng toàn phần hoặc Quỹ học bổng Đại học Troy lên đến 13 Tỷ đồng!
 
 👉 Đăng ký xét tuyển sớm ngay hôm nay để nhận quyền ưu tiên chọn phòng Lab và giữ chỉ tiêu!
 🔗 Link đăng ký tư vấn 1-1 miễn phí: https://duytan.edu.vn
@@ -108,7 +108,6 @@ Bạn có biết? Không cần phải bay sang nửa vòng trái đất với ch
 • Đối tác chuyển giao: ${prog.partner}
 • Tiêu chuẩn kiểm định: ${prog.accreditation}
 • Thời gian đào tạo: ${prog.duration}
-• Dự kiến học phí: ${prog.tuitionPerYear}
 
 [NỘI DUNG CỐT LÕI CẦN NHỚ KHI TƯ VẤN]
 ${prog.description}
@@ -126,7 +125,7 @@ ${prog.admissionCriteria}
       } else {
         output = `❓ PHÂN LOẠI & GỢI Ý CÂU TRẢ LỜI CHO THẮC MẮC PHỔ BIẾN
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Nhóm câu hỏi: CHÍNH SÁCH HỌC BỔNG & HỌC PHÍ K32
+Nhóm câu hỏi: CHÍNH SÁCH HỌC BỔNG & HỒ SƠ TUYỂN SINH K32
 
 Q1: "Học bổng 13 tỷ của Troy có cần thi tuyển riêng không?"
 A: Không cần thi riêng! Xét trực tiếp dựa trên điểm thi tốt nghiệp THPT từ 23-26 điểm hoặc IELTS từ 5.5 trở lên.

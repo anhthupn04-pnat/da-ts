@@ -180,7 +180,7 @@ export const INITIAL_LEADS: Lead[] = [
     assignedTo: 'usr-counselor-1',
     assignedToName: 'Trần Thị Mai Lan',
     scoreThpt: 23.0,
-    notes: 'Phụ huynh gọi hotline hỏi về học phí và chính sách trả góp.',
+    notes: 'Phụ huynh gọi hotline hỏi về thủ tục nộp hồ sơ xét học bổng và quy trình nhập học.',
     createdAt: '2026-10-12T10:00:00Z',
     updatedAt: '2026-10-13T14:00:00Z'
   }
@@ -215,7 +215,7 @@ export const INITIAL_CONSULTATION_LOGS: ConsultationHistory[] = [
     staffId: 'usr-counselor-1',
     staffName: 'Trần Thị Mai Lan',
     contactMethod: 'zalo',
-    content: 'Gửi bảng học phí FinTech PSU, giải thích cơ hội việc làm liên kết với các ngân hàng MB, Vietinbank và các công ty công nghệ thanh toán.',
+    content: 'Tư vấn lộ trình đào tạo FinTech PSU, giải thích cơ hội việc làm liên kết với các ngân hàng MB, Vietinbank và các công ty công nghệ thanh toán.',
     outcome: 'Em My hẹn cuối tuần lên tham quan trường.',
     nextFollowUpDate: '2026-10-18',
     createdAt: '2026-10-11T15:30:00Z'
@@ -287,7 +287,7 @@ export const INITIAL_CONTENT_CALENDAR: ContentItem[] = [
     author: 'Phạm Minh Phương',
     scheduledAt: '2026-10-11',
     publishUrl: 'https://troy.edu.vn/tin-tuc/hoc-bong-k32',
-    contentSnippet: 'Chi tiết 3 điều kiện nhận học bổng Quỹ Troy lên đến 100% học phí với điểm THPT từ 23-26đ hoặc IELTS 5.5...'
+    contentSnippet: 'Chi tiết 3 điều kiện nhận học bổng Quỹ Troy toàn phần với điểm THPT từ 23-26đ hoặc IELTS 5.5...'
   },
   {
     id: 'cnt-3',

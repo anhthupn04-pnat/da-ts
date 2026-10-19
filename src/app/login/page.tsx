@@ -40,7 +40,7 @@ export default function LoginPage() {
       icon: <UserCheck className="w-5 h-5 text-emerald-600" />,
       bg: 'bg-emerald-50 hover:bg-emerald-100/70 border-emerald-200',
       badge: 'bg-emerald-100 text-emerald-800',
-      description: 'Chăm sóc lead, gọi điện/Zalo tư vấn học phí & học bổng K32, tiếp nhận hồ sơ, nhập dữ liệu Excel.'
+      description: 'Chăm sóc lead, gọi điện/Zalo tư vấn chương trình đào tạo & học bổng K32, tiếp nhận hồ sơ, nhập dữ liệu Excel.'
     },
     {
       role: 'marketer' as Role,

@@ -23,7 +23,7 @@ export default function HomePage() {
     },
     {
       q: 'Điều kiện nhận Học bổng toàn phần VN-US và Quỹ học bổng Troy 13 Tỷ là gì?',
-      a: 'Thí sinh đạt tổng điểm 3 môn từ 25 điểm trở lên trong kỳ thi Tốt nghiệp THPT 2026 sẽ được xét nhận học bổng toàn phần (100% học phí) các ngành CMU, PSU, CSU. Với Quỹ học bổng Troy 13 Tỷ, thí sinh có điểm THPT từ 23-26đ hoặc có chứng chỉ IELTS từ 5.5+ sẽ nhận các mức học bổng từ 50% đến 100% toàn khóa.'
+      a: 'Thí sinh đạt tổng điểm 3 môn từ 25 điểm trở lên trong kỳ thi Tốt nghiệp THPT 2026 sẽ được xét nhận học bổng toàn phần các ngành CMU, PSU, CSU. Với Quỹ học bổng Troy 13 Tỷ, thí sinh có điểm THPT từ 23-26đ hoặc có chứng chỉ IELTS từ 5.5+ sẽ nhận các mức học bổng giá trị toàn khóa.'
     },
     {
       q: 'Kiểm định ABET và AACSB có ý nghĩa gì đối với sinh viên?',

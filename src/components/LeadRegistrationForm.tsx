@@ -332,7 +332,7 @@ export default function LeadRegistrationForm() {
             </label>
             <textarea
               rows={2}
-              placeholder="Ví dụ: Em muốn hỏi về điều kiện xét học bổng toàn phần CMU với điểm thi 26 điểm; chính sách ký túc xá và học phí..."
+              placeholder="Ví dụ: Em muốn hỏi về điều kiện xét học bổng toàn phần CMU với điểm thi 26 điểm; chính sách ký túc xá hay thủ tục xét tuyển..."
               value={formData.notes}
               onChange={e => setFormData({ ...formData, notes: e.target.value })}
               className="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600 focus:border-transparent transition"
