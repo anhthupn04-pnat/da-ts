@@ -415,14 +415,14 @@ export default function SettingsPage() {
                             <Key className="w-4 h-4" />
                           </button>
                           
-                          {staff.email.toLowerCase() !== 'anhthuphan0102@gmail.com' && (
+                          {staff.id !== currentUser?.id && (
                             <>
                               <button
                                 onClick={() => handleToggleLockUser(staff.id)}
                                 className="p-1.5 text-slate-400 hover:text-amber-600 rounded-lg hover:bg-amber-50 transition cursor-pointer"
-                                title={staff.status === 'locked' ? 'Mở khóa tài khoản' : 'Tạm khóa tài khoản'}
+                                title={staff.status === 'locked' || staff.status === 'INACTIVE' ? 'Mở khóa tài khoản' : 'Tạm khóa tài khoản'}
                               >
-                                {staff.status === 'locked' ? <Unlock className="w-4 h-4 text-emerald-600" /> : <Lock className="w-4 h-4" />}
+                                {staff.status === 'locked' || staff.status === 'INACTIVE' ? <Unlock className="w-4 h-4 text-emerald-600" /> : <Lock className="w-4 h-4" />}
                               </button>
                               
                               <button

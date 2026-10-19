@@ -109,25 +109,38 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       roles: ['admin', 'manager', 'counselor', 'marketer', 'verifier']
     },
     {
+      name: 'Quản Lý Người Dùng (Admin)',
+      href: '/admin/users',
+      icon: Users,
+      roles: ['ADMIN', 'admin']
+    },
+    {
       name: 'Cấu Hình RBAC & Audit Logs',
       href: '/admin/settings',
       icon: Settings,
-      roles: ['admin', 'manager']
+      roles: ['ADMIN', 'admin', 'manager']
     }
   ];
 
-  // Lọc navigation theo role người dùng hiện tại
-  const userRole = currentUser?.role || 'admin';
-  const navigation = allNavigation.filter(item => item.roles.includes(userRole));
+  const isAdmin = currentUser?.role === 'ADMIN' || currentUser?.role === 'admin';
+
+  // Lọc navigation theo role người dùng hiện tại (Admin xem toàn bộ)
+  const navigation = allNavigation.filter(item => {
+    if (isAdmin) return true;
+    return item.roles.includes(currentUser?.role || '');
+  });
 
   // Kiểm tra phân quyền trang hiện tại (Route Guard)
   const currentNavRule = allNavigation.find(item => item.href === pathname);
-  const isAuthorized = !currentNavRule || (currentUser && currentNavRule.roles.includes(currentUser.role));
+  const isAuthorized = !currentNavRule || isAdmin || (currentUser && currentNavRule.roles.includes(currentUser.role));
 
   const getRoleBadge = (role?: string) => {
     switch (role) {
+      case 'ADMIN':
       case 'admin':
-        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-900/60 text-purple-300 border border-purple-700/50">Super Admin</span>;
+        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-900/60 text-purple-300 border border-purple-700/50">Quản Trị Viên (Admin)</span>;
+      case 'STAFF':
+        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-900/60 text-blue-300 border border-blue-700/50">Chuyên Viên Tuyển Sinh</span>;
       case 'manager':
         return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-900/60 text-blue-300 border border-blue-700/50">Admissions Manager</span>;
       case 'counselor':
@@ -137,15 +150,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       case 'marketer':
         return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-900/60 text-amber-300 border border-amber-700/50">Marketing Officer</span>;
       default:
-        return null;
+        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-300">{role}</span>;
     }
   };
 
   if (authChecking) {
     return (
       <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white space-y-4">
-        <div className="p-3 bg-white rounded-2xl shadow-xl">
-          <img src="/logo.png" alt="VN-US Logo" className="h-12 w-auto object-contain animate-pulse" />
+        <div className="w-16 h-16 aspect-square rounded-full overflow-hidden p-2 bg-white ring-4 ring-white/20 shadow-xl flex items-center justify-center shrink-0">
+          <img src="/logo.png" alt="VN-US Logo" className="w-full h-full object-contain rounded-full aspect-square animate-pulse" />
         </div>
         <p className="text-xs text-slate-400 font-medium tracking-wide">Đang xác thực phiên làm việc nội bộ...</p>
       </div>
@@ -173,11 +186,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {/* Logo & Brand Header */}
           <div className="h-20 px-6 border-b border-slate-800 flex items-center justify-between">
             <Link href="/admin" className="flex items-center gap-3">
-              <div className="p-1 bg-white rounded-xl shadow-xs flex items-center justify-center">
+              <div className="w-10 h-10 aspect-square rounded-full overflow-hidden p-1 bg-white ring-2 ring-slate-700/80 shadow-xs flex items-center justify-center shrink-0">
                 <img
                   src="/logo.png"
                   alt="VN-US Duy Tan"
-                  className="h-9 w-auto object-contain"
+                  className="w-full h-full object-contain rounded-full aspect-square"
                 />
               </div>
               <div className="flex flex-col">

@@ -15,11 +15,11 @@ export default function Navbar() {
           
           {/* Logo & Brand */}
           <Link href="/" className="flex items-center gap-3 sm:gap-3.5 group">
-            <div className="bg-white p-1 rounded-xl shadow-xs group-hover:scale-105 transition-transform duration-200 flex items-center justify-center">
+            <div className="w-12 h-12 sm:w-13 sm:h-13 aspect-square rounded-full overflow-hidden bg-white p-1 ring-2 ring-slate-200/90 shadow-sm group-hover:scale-105 transition-transform duration-200 flex items-center justify-center shrink-0">
               <img
                 src="/logo.png"
                 alt="VN-US Duy Tan University International School"
-                className="h-10 sm:h-12 w-auto object-contain"
+                className="w-full h-full object-contain rounded-full aspect-square"
               />
             </div>
             <div className="hidden sm:flex flex-col">

@@ -9,19 +9,37 @@ import {
   ZnsSmsLog
 } from '@/types';
 
-// Danh sách cán bộ nhân sự nội bộ (Mặc định khởi tạo chỉ có duy nhất Quản trị viên tối cao)
+// Danh sách tài khoản người dùng nội bộ (Admin & Chuyên viên)
 export const INITIAL_STAFF: UserProfile[] = [
   {
-    id: 'usr-admin-anhthu',
-    email: 'anhthuphan0102@gmail.com',
-    fullName: 'Anh Thư',
-    role: 'admin',
-    password: '0102024',
-    department: 'Ban Giám đốc & Quản trị Hệ thống Tuyển sinh Quốc tế VN-US',
-    phone: '0905123456',
-    status: 'active',
+    id: 'usr-admin-default',
+    username: 'admin',
+    email: 'admin@vnus.edu.vn',
+    fullName: 'Quản Trị Viên Hệ Thống',
+    role: 'ADMIN',
+    password: 'Admin@VNUS2026!',
+    department: 'Ban Giám Đốc & Quản Trị Hệ Thống Tuyển Sinh VN-US',
+    phone: '0236.3650403',
+    status: 'ACTIVE',
     assignedRegion: 'Toàn quốc',
-    targetQuota: 200
+    targetQuota: 200,
+    created_at: '2026-01-01T08:00:00Z',
+    updated_at: '2026-01-01T08:00:00Z'
+  },
+  {
+    id: 'usr-staff-default',
+    username: 'staff',
+    email: 'staff@vnus.edu.vn',
+    fullName: 'Chuyên Viên Tuyển Sinh VN-US',
+    role: 'STAFF',
+    password: 'Staff@VNUS2026!',
+    department: 'Tổ Tư Vấn Tuyển Sinh & Chăm Sóc Thí Sinh',
+    phone: '0905123456',
+    status: 'ACTIVE',
+    assignedRegion: 'Đà Nẵng & Quảng Nam',
+    targetQuota: 100,
+    created_at: '2026-01-02T08:00:00Z',
+    updated_at: '2026-01-02T08:00:00Z'
   }
 ];
 

@@ -63,7 +63,7 @@ export default function UserProfileModal({ user, isOpen, onClose, onUpdated }: U
         return;
       }
 
-      const activePass = user.password || (user.email === 'anhthuphan0102@gmail.com' ? '0102024' : '');
+      const activePass = user.password || user.password_hash || '';
       if (currentPassword.trim() !== activePass) {
         setError('Mật khẩu hiện tại không chính xác!');
         return;

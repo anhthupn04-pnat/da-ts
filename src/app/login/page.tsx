@@ -1,40 +1,56 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { authenticateStaff } from '@/data/storage';
 import {
   Shield,
   Lock,
-  Mail,
+  User,
   ArrowRight,
   ArrowLeft,
   CheckCircle2,
   AlertCircle,
   Eye,
   EyeOff,
-  Sparkles,
   KeyRound,
-  UserCheck
+  CheckSquare,
+  Square
 } from 'lucide-react';
+
+const REMEMBER_KEY = 'da_ts_remembered_account';
 
 export default function LoginPage() {
   const router = useRouter();
 
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  // Đọc tài khoản đã ghi nhớ (nếu có)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(REMEMBER_KEY);
+      if (saved) {
+        setIdentifier(saved);
+        setRememberMe(true);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    if (!email.trim()) {
-      setError('Vui lòng nhập địa chỉ email công vụ của bạn.');
+    if (!identifier.trim()) {
+      setError('Vui lòng nhập tên đăng nhập hoặc địa chỉ email công vụ.');
       return;
     }
 
@@ -46,19 +62,30 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = authenticateStaff(email, password);
+      const res = authenticateStaff(identifier, password);
 
       if (res.success && res.user) {
+        // Xử lý Remember Me
+        try {
+          if (rememberMe) {
+            localStorage.setItem(REMEMBER_KEY, identifier.trim());
+          } else {
+            localStorage.removeItem(REMEMBER_KEY);
+          }
+        } catch {
+          // ignore
+        }
+
         setSuccess(true);
         setTimeout(() => {
           router.push('/admin');
-        }, 600);
+        }, 500);
       } else {
-        setError(res.message || 'Email hoặc mật khẩu không chính xác.');
+        setError(res.message || 'Tên đăng nhập hoặc mật khẩu không chính xác.');
         setLoading(false);
       }
     } catch (err: any) {
-      setError(err?.message || 'Có lỗi xảy ra khi xác thực.');
+      setError(err?.message || 'Có lỗi xảy ra trong quá trình xác thực.');
       setLoading(false);
     }
   };
@@ -85,13 +112,13 @@ export default function LoginPage() {
       {/* Main Login Card */}
       <div className="max-w-md mx-auto w-full my-6">
         
-        {/* Logo and Brand Header */}
-        <div className="text-center space-y-3 mb-6">
-          <div className="inline-flex items-center justify-center p-3 bg-white rounded-2xl shadow-2xl shadow-blue-950/50 border border-slate-200">
+        {/* Circular Logo and Brand Header */}
+        <div className="text-center space-y-3 mb-6 flex flex-col items-center">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 aspect-square rounded-full overflow-hidden p-2 bg-white ring-4 ring-white/20 shadow-2xl shadow-blue-950/60 flex items-center justify-center shrink-0">
             <img
               src="/logo.png"
               alt="VN-US Duy Tan University"
-              className="h-14 sm:h-16 w-auto object-contain"
+              className="w-full h-full object-contain rounded-full aspect-square"
             />
           </div>
           <div>
@@ -99,7 +126,7 @@ export default function LoginPage() {
               Đăng Nhập Cán Bộ Tuyển Sinh
             </h1>
             <p className="text-xs text-slate-300 font-medium mt-1">
-              Hệ Thống Quản Trị Tuyển Sinh & Chăm Sóc Thí Sinh (VN-US)
+              Hệ Thống Quản Trị Tuyển Sinh & Phân Quyền Nội Bộ (VN-US)
             </p>
           </div>
         </div>
@@ -108,7 +135,7 @@ export default function LoginPage() {
         <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200/80">
           
           {error && (
-            <div className="mb-5 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start gap-2.5">
+            <div className="mb-5 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start gap-2.5 animate-fade-in">
               <AlertCircle className="w-4 h-4 shrink-0 text-rose-600 mt-0.5" />
               <div className="space-y-0.5">
                 <p className="font-bold">Đăng nhập không thành công</p>
@@ -118,27 +145,28 @@ export default function LoginPage() {
           )}
 
           {success && (
-            <div className="mb-5 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2.5">
+            <div className="mb-5 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2.5 animate-fade-in">
               <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-600" />
               <span className="font-bold">Xác thực thành công! Đang chuyển hướng vào bảng điều khiển...</span>
             </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-5">
+          <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                Tài khoản Email công vụ <span className="text-rose-500">*</span>
+                Tên đăng nhập / Email <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 <input
-                  type="email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  placeholder="anhthuphan0102@gmail.com"
+                  type="text"
+                  value={identifier}
+                  onChange={e => setIdentifier(e.target.value)}
+                  placeholder="Nhập tên đăng nhập hoặc email công vụ..."
                   className="w-full pl-10 pr-4 py-3 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-transparent font-medium"
                   required
+                  autoFocus
                 />
-                <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
               </div>
             </div>
 
@@ -161,20 +189,39 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600 transition"
+                  className="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                  title={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
 
+            {/* Remember Me Checkbox */}
+            <div className="flex items-center justify-between text-xs pt-1">
+              <label className="flex items-center gap-2 text-slate-600 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={e => setRememberMe(e.target.checked)}
+                  className="sr-only"
+                />
+                {rememberMe ? (
+                  <CheckSquare className="w-4 h-4 text-blue-900" />
+                ) : (
+                  <Square className="w-4 h-4 text-slate-400" />
+                )}
+                <span>Ghi nhớ đăng nhập trên thiết bị này</span>
+              </label>
+            </div>
+
             <button
               type="submit"
               disabled={loading || success}
-              className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-950 hover:from-blue-950 hover:to-slate-900 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-900/25 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50"
+              className="w-full mt-2 py-3.5 px-4 bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-950 hover:from-blue-950 hover:to-slate-900 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-900/25 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50"
             >
               {loading ? (
-                <span>Đang xác thực thông tin...</span>
+                <span>Đang xử lý xác thực...</span>
               ) : (
                 <>
                   <span>Đăng Nhập Hệ Thống</span>
@@ -189,20 +236,17 @@ export default function LoginPage() {
             <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1.5 text-slate-600">
               <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900">
                 <KeyRound className="w-4 h-4 text-blue-900" />
-                <span>Quy định phân quyền & Tạo tài khoản:</span>
+                <span>Quy định phân quyền & Tài khoản nội bộ:</span>
               </div>
               <ul className="text-[11px] space-y-1 list-disc list-inside text-slate-600 leading-relaxed">
                 <li>
-                  Tài khoản Quản trị tối cao: <strong>anhthuphan0102@gmail.com</strong>
+                  Chỉ cán bộ thuộc 2 vai trò <strong>Admin</strong> (Quản trị viên) và <strong>Staff</strong> (Chuyên viên) mới được cấp quyền truy cập.
                 </li>
                 <li>
-                  Hệ thống <strong>không cho phép tự đăng ký</strong> công khai.
+                  Hệ thống <strong>không hỗ trợ tự đăng ký</strong> công khai từ bên ngoài.
                 </li>
                 <li>
-                  Các tài khoản Chuyên viên/Cán bộ khác do <strong>Admin tự tạo và gán vai trò</strong> trong Dashboard.
-                </li>
-                <li>
-                  Cán bộ sau khi được cấp tài khoản có thể <strong>tự chỉnh sửa thông tin & đổi mật khẩu</strong> tại mục Hồ sơ cá nhân.
+                  Tài khoản chuyên viên do <strong>Quản trị viên (Admin) tạo và phân quyền</strong> từ Dashboard Quản Trị Người Dùng.
                 </li>
               </ul>
             </div>

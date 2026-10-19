@@ -1,17 +1,36 @@
-export type Role = 'admin' | 'manager' | 'counselor' | 'marketer' | 'verifier';
+export type Role = 'ADMIN' | 'STAFF' | 'admin' | 'manager' | 'counselor' | 'marketer' | 'verifier';
 
 export interface UserProfile {
   id: string;
   email: string;
+  username?: string;
   fullName: string;
   role: Role;
-  department: string;
-  phone: string;
+  department?: string;
+  phone?: string;
   password?: string;
+  password_hash?: string;
   avatarUrl?: string;
-  status?: 'active' | 'locked';
+  status?: 'ACTIVE' | 'INACTIVE' | 'active' | 'locked';
   assignedRegion?: string;
   targetQuota?: number; // KPI chỉ tiêu tuyển sinh
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface SystemUser {
+  id: string;
+  fullName: string;
+  username: string;
+  email: string;
+  password?: string;
+  passwordHash?: string;
+  role: 'ADMIN' | 'STAFF';
+  department?: string;
+  phone?: string;
+  status: 'ACTIVE' | 'INACTIVE';
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Permission {

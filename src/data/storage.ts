@@ -25,15 +25,15 @@ import {
 
 // Storage keys for browser localStorage
 const STORAGE_KEYS = {
-  LEADS: 'tttv_leads_v3',
-  LOGS: 'tttv_consultation_logs_v3',
-  CAMPAIGNS: 'tttv_campaigns_v3',
-  CONTENT: 'tttv_content_v3',
-  STAFF: 'tttv_staff_v3',
-  CURRENT_USER: 'tttv_current_user_v3',
-  AUDIT_LOGS: 'tttv_audit_logs_v3',
-  IMPORT_BATCHES: 'tttv_import_batches_v3',
-  ZNS_SMS_LOGS: 'tttv_zns_sms_logs_v3'
+  LEADS: 'tttv_leads_v4',
+  LOGS: 'tttv_consultation_logs_v4',
+  CAMPAIGNS: 'tttv_campaigns_v4',
+  CONTENT: 'tttv_content_v4',
+  STAFF: 'tttv_staff_v4',
+  CURRENT_USER: 'tttv_current_user_v4',
+  AUDIT_LOGS: 'tttv_audit_logs_v4',
+  IMPORT_BATCHES: 'tttv_import_batches_v4',
+  ZNS_SMS_LOGS: 'tttv_zns_sms_logs_v4'
 };
 
 // In-memory fallback for server-side execution
@@ -880,19 +880,28 @@ export function sendOmnichannelMessage(
 // ==============================================================================
 // 10. AUTH & USER ROLES (RBAC & CREDENTIAL MANAGEMENT)
 // ==============================================================================
+
+/**
+ * Kiểm tra người dùng có quyền Quản trị viên (Admin) tối cao hay không
+ */
+export function isUserAdmin(user?: UserProfile | null): boolean {
+  if (!user) return false;
+  return user.role === 'ADMIN' || user.role === 'admin';
+}
+
 export function getStaffList(): UserProfile[] {
   if (isBrowser) {
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.STAFF);
       if (stored) {
         const parsed: UserProfile[] = JSON.parse(stored);
-        // Đảm bảo luôn có tài khoản Quản trị tối cao Anh Thư và xóa các tài khoản mock cũ
-        const hasAnhThu = parsed.some(s => s.email.toLowerCase() === 'anhthuphan0102@gmail.com');
-        if (hasAnhThu) {
+        // Đảm bảo không còn dữ liệu cũ có tài khoản cá nhân không chuẩn
+        const hasLegacyNonOrgEmail = parsed.some(s => !s.email.toLowerCase().endsWith('@vnus.edu.vn'));
+        if (!hasLegacyNonOrgEmail && parsed.length > 0) {
           return parsed;
         }
       }
-      // Khởi tạo mới sạch sẽ với tài khoản Quản trị viên Anh Thư
+      // Khởi tạo mới sạch sẽ với tài khoản hệ thống chuẩn
       localStorage.setItem(STORAGE_KEYS.STAFF, JSON.stringify(INITIAL_STAFF));
       return INITIAL_STAFF;
     } catch {
@@ -913,6 +922,9 @@ export function saveStaffList(staff: UserProfile[]) {
     }
   }
 }
+
+export const getUsersList = getStaffList;
+export const saveUsersList = saveStaffList;
 
 export function getCurrentUser(): UserProfile | null {
   if (isBrowser) {
@@ -936,44 +948,45 @@ export function getSafeCurrentUser(): UserProfile {
 }
 
 /**
- * Đăng nhập hệ thống bằng email và mật khẩu thực tế
- * Bắt buộc nhập đúng tài khoản và mật khẩu mới được vào
+ * Đăng nhập hệ thống bằng Tên đăng nhập (username) hoặc Email công vụ và mật khẩu
  */
 export function authenticateStaff(
-  email: string,
+  identifier: string,
   pass: string
 ): { success: boolean; user?: UserProfile; message?: string } {
   const staff = getStaffList();
-  const cleanEmail = email.trim().toLowerCase();
+  const cleanId = identifier.trim().toLowerCase();
   const cleanPass = pass.trim();
 
-  if (!cleanEmail || !cleanPass) {
-    return { success: false, message: 'Vui lòng nhập đầy đủ tài khoản (email) và mật khẩu.' };
+  if (!cleanId || !cleanPass) {
+    return { success: false, message: 'Vui lòng nhập đầy đủ tên đăng nhập/email và mật khẩu.' };
   }
 
-  const target = staff.find(s => s.email.toLowerCase() === cleanEmail);
+  // Tìm theo email hoặc username
+  const target = staff.find(
+    s => s.email.toLowerCase() === cleanId || (s.username && s.username.toLowerCase() === cleanId)
+  );
 
   if (!target) {
     return {
       success: false,
-      message: 'Tài khoản không tồn tại trong hệ thống. Vui lòng liên hệ Quản trị viên (Admin) để được cấp quyền.'
+      message: 'Tài khoản không tồn tại trong hệ thống. Vui lòng liên hệ Quản trị viên để được cấp quyền.'
     };
   }
 
-  if (target.status === 'locked') {
+  if (target.status === 'INACTIVE' || target.status === 'locked') {
     return {
       success: false,
-      message: 'Tài khoản này đã bị khóa. Vui lòng liên hệ Quản trị viên để được mở lại.'
+      message: 'Tài khoản này đã bị khóa. Vui lòng liên hệ Quản trị viên hệ thống để được mở lại.'
     };
   }
 
-  // So sánh mật khẩu (hỗ trợ tài khoản mặc định và các tài khoản do admin tạo)
-  const validPass = target.password || (target.email === 'anhthuphan0102@gmail.com' ? '0102024' : '');
+  const validPass = target.password || target.password_hash || '';
 
   if (cleanPass !== validPass) {
     return {
       success: false,
-      message: 'Mật khẩu không chính xác! Vui lòng thử lại.'
+      message: 'Mật khẩu đăng nhập không chính xác! Vui lòng thử lại.'
     };
   }
 
@@ -986,7 +999,7 @@ export function authenticateStaff(
     'auth_sessions',
     target.id,
     null,
-    { loginAt: new Date().toISOString(), email: target.email },
+    { loginAt: new Date().toISOString(), identifier: cleanId },
     target
   );
 
@@ -1020,13 +1033,14 @@ export function updateUserProfile(
     phone: data.phone?.trim() || oldUser.phone,
     password: data.password ? data.password.trim() : oldUser.password,
     department: data.department?.trim() || oldUser.department,
-    avatarUrl: data.avatarUrl || oldUser.avatarUrl
+    avatarUrl: data.avatarUrl || oldUser.avatarUrl,
+    updated_at: new Date().toISOString()
   };
 
   staffList[index] = updatedUser;
   saveStaffList(staffList);
 
-  // Nếu đang là phiên làm việc của chính người này thì cập nhật luôn session
+  // Cập nhật session nếu đúng là người đang đăng nhập
   const currentUser = getCurrentUser();
   if (currentUser && currentUser.id === userId) {
     setCurrentUser(updatedUser);
@@ -1049,46 +1063,62 @@ export function updateUserProfile(
 }
 
 /**
- * Chỉ Quản trị viên (Admin) mới có quyền tạo mới tài khoản và phân quyền
+ * Quản trị viên (Admin) tạo mới tài khoản nhân sự nội bộ (ADMIN hoặc STAFF)
  */
 export function createStaffAccount(
   creator: UserProfile,
   newStaff: {
+    username?: string;
     email: string;
     fullName: string;
     role: Role;
-    department: string;
-    phone: string;
+    department?: string;
+    phone?: string;
     password: string;
     assignedRegion?: string;
     targetQuota?: number;
   }
 ): { success: boolean; staff?: UserProfile; message?: string } {
-  if (creator.role !== 'admin') {
-    return { success: false, message: 'Chỉ Quản trị viên (Super Admin) mới có quyền tạo tài khoản nhân sự!' };
+  if (!isUserAdmin(creator)) {
+    return { success: false, message: '403 Forbidden: Chỉ Quản trị viên (Admin) mới có quyền tạo tài khoản!' };
   }
 
   const staffList = getStaffList();
   const cleanEmail = newStaff.email.trim().toLowerCase();
+  const cleanUsername = (newStaff.username || cleanEmail.split('@')[0]).trim().toLowerCase();
 
   if (staffList.some(s => s.email.toLowerCase() === cleanEmail)) {
-    return { success: false, message: 'Địa chỉ Email này đã tồn tại trong danh sách nhân sự!' };
+    return { success: false, message: 'Địa chỉ Email này đã tồn tại trong danh sách người dùng!' };
   }
 
+  if (staffList.some(s => s.username && s.username.toLowerCase() === cleanUsername)) {
+    return { success: false, message: 'Tên đăng nhập (username) này đã được sử dụng!' };
+  }
+
+  if (newStaff.password.trim().length < 8) {
+    return { success: false, message: 'Mật khẩu khởi tạo phải có độ dài tối thiểu 8 ký tự.' };
+  }
+
+  const normalizedRole: Role = newStaff.role === 'ADMIN' || newStaff.role === 'admin' ? 'ADMIN' : 'STAFF';
+
   const created: UserProfile = {
-    id: 'usr-staff-' + Date.now(),
+    id: 'usr-' + Date.now().toString(),
+    username: cleanUsername,
     email: cleanEmail,
     fullName: newStaff.fullName.trim(),
-    role: newStaff.role,
-    department: newStaff.department.trim() || 'Trung tâm Tuyển sinh & Hỗ trợ Sinh viên (VN-US)',
-    phone: newStaff.phone.trim(),
+    role: normalizedRole,
+    department: newStaff.department?.trim() || (normalizedRole === 'ADMIN' ? 'Ban Quản Trị Hệ Thống VN-US' : 'Trung Tâm Tuyển Sinh VN-US'),
+    phone: newStaff.phone?.trim() || '',
     password: newStaff.password.trim(),
-    status: 'active',
+    password_hash: newStaff.password.trim(),
+    status: 'ACTIVE',
     assignedRegion: newStaff.assignedRegion || 'Toàn quốc',
-    targetQuota: newStaff.targetQuota || 50
+    targetQuota: newStaff.targetQuota || 80,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
   };
 
-  const updatedList = [...staffList, created];
+  const updatedList = [created, ...staffList];
   saveStaffList(updatedList);
 
   addAuditLog(
@@ -1098,25 +1128,153 @@ export function createStaffAccount(
     null,
     {
       fullName: created.fullName,
+      username: created.username,
       email: created.email,
-      role: created.role,
-      department: created.department
+      role: created.role
     },
     creator
   );
 
-  return { success: true, staff: created, message: 'Cấp tài khoản nhân sự mới thành công!' };
+  return { success: true, staff: created, message: 'Cấp tài khoản người dùng mới thành công!' };
 }
 
 /**
- * Xóa tài khoản nhân sự (Chỉ Admin, không được tự xóa Quản trị tối cao)
+ * Quản trị viên chỉnh sửa thông tin/vai trò tài khoản
+ */
+export function updateUserByAdmin(
+  creator: UserProfile,
+  userId: string,
+  data: {
+    fullName?: string;
+    username?: string;
+    email?: string;
+    role?: Role;
+    phone?: string;
+    department?: string;
+    status?: 'ACTIVE' | 'INACTIVE';
+  }
+): { success: boolean; staff?: UserProfile; message?: string } {
+  if (!isUserAdmin(creator)) {
+    return { success: false, message: '403 Forbidden: Chỉ Quản trị viên mới có thẩm quyền chỉnh sửa tài khoản!' };
+  }
+
+  const staffList = getStaffList();
+  const index = staffList.findIndex(s => s.id === userId);
+
+  if (index === -1) {
+    return { success: false, message: 'Không tìm thấy tài khoản cần chỉnh sửa.' };
+  }
+
+  const target = staffList[index];
+
+  // Chặn đổi vai trò của chính Admin đang thao tác nếu muốn giáng quyền chính mình
+  if (target.id === creator.id && data.role && data.role !== 'ADMIN' && data.role !== 'admin') {
+    return { success: false, message: 'Bạn không thể tự giáng cấp vai trò Admin của chính mình!' };
+  }
+
+  const updated: UserProfile = {
+    ...target,
+    fullName: data.fullName?.trim() || target.fullName,
+    username: data.username ? data.username.trim().toLowerCase() : target.username,
+    email: data.email ? data.email.trim().toLowerCase() : target.email,
+    role: data.role ? (data.role === 'ADMIN' || data.role === 'admin' ? 'ADMIN' : 'STAFF') : target.role,
+    phone: data.phone !== undefined ? data.phone.trim() : target.phone,
+    department: data.department !== undefined ? data.department.trim() : target.department,
+    status: data.status || target.status,
+    updated_at: new Date().toISOString()
+  };
+
+  staffList[index] = updated;
+  saveStaffList(staffList);
+
+  if (creator.id === userId) {
+    setCurrentUser(updated);
+  }
+
+  addAuditLog('UPDATE', 'users', userId, target, updated, creator);
+
+  return { success: true, staff: updated, message: 'Cập nhật tài khoản người dùng thành công!' };
+}
+
+/**
+ * Đổi trạng thái kích hoạt / khóa tài khoản
+ */
+export function toggleStaffStatus(
+  creator: UserProfile,
+  staffId: string
+): { success: boolean; message?: string } {
+  if (!isUserAdmin(creator)) {
+    return { success: false, message: '403 Forbidden: Chỉ Quản trị viên mới có thẩm quyền đổi trạng thái!' };
+  }
+
+  const staffList = getStaffList();
+  const target = staffList.find(s => s.id === staffId);
+
+  if (!target) {
+    return { success: false, message: 'Không tìm thấy tài khoản.' };
+  }
+
+  // Chặn Admin tự khóa tài khoản của chính mình
+  if (target.id === creator.id) {
+    return { success: false, message: 'Bạn không thể tự khóa tài khoản đang đăng nhập của chính mình!' };
+  }
+
+  const newStatus = (target.status === 'ACTIVE' || target.status === 'active') ? 'INACTIVE' : 'ACTIVE';
+  target.status = newStatus;
+  target.updated_at = new Date().toISOString();
+  saveStaffList(staffList);
+
+  addAuditLog('UPDATE', 'users', staffId, { status: target.status }, { status: newStatus }, creator);
+
+  return {
+    success: true,
+    message: newStatus === 'INACTIVE' ? 'Đã tạm khóa tài khoản thành công.' : 'Đã kích hoạt lại tài khoản thành công.'
+  };
+}
+
+/**
+ * Reset mật khẩu cho tài khoản người dùng
+ */
+export function resetUserPassword(
+  creator: UserProfile,
+  staffId: string,
+  newPassword?: string
+): { success: boolean; newPassword?: string; message?: string } {
+  if (!isUserAdmin(creator)) {
+    return { success: false, message: '403 Forbidden: Chỉ Quản trị viên mới có thẩm quyền đặt lại mật khẩu!' };
+  }
+
+  const staffList = getStaffList();
+  const target = staffList.find(s => s.id === staffId);
+
+  if (!target) {
+    return { success: false, message: 'Không tìm thấy tài khoản người dùng.' };
+  }
+
+  const pass = newPassword?.trim() || `VNUS@${Math.floor(100000 + Math.random() * 900000)}`;
+  target.password = pass;
+  target.password_hash = pass;
+  target.updated_at = new Date().toISOString();
+  saveStaffList(staffList);
+
+  addAuditLog('UPDATE', 'users', staffId, null, { action: 'RESET_PASSWORD' }, creator);
+
+  return {
+    success: true,
+    newPassword: pass,
+    message: `Đã đặt lại mật khẩu thành công: ${pass}`
+  };
+}
+
+/**
+ * Xóa tài khoản nhân sự (Chỉ Admin, chặn tự xóa chính mình)
  */
 export function deleteStaffAccount(
   creator: UserProfile,
   staffId: string
 ): { success: boolean; message?: string } {
-  if (creator.role !== 'admin') {
-    return { success: false, message: 'Chỉ Quản trị viên mới có thẩm quyền xóa tài khoản!' };
+  if (!isUserAdmin(creator)) {
+    return { success: false, message: '403 Forbidden: Chỉ Quản trị viên mới có thẩm quyền xóa tài khoản!' };
   }
 
   const staffList = getStaffList();
@@ -1126,12 +1284,8 @@ export function deleteStaffAccount(
     return { success: false, message: 'Không tìm thấy tài khoản cần xóa.' };
   }
 
-  if (target.email.toLowerCase() === 'anhthuphan0102@gmail.com') {
-    return { success: false, message: 'Không thể xóa tài khoản Quản trị viên tối cao (Anh Thư)!' };
-  }
-
   if (target.id === creator.id) {
-    return { success: false, message: 'Bạn không thể tự xóa tài khoản đang đăng nhập của chính mình!' };
+    return { success: false, message: 'Bảo mật: Bạn không thể tự xóa tài khoản đang đăng nhập của chính mình!' };
   }
 
   const filtered = staffList.filter(s => s.id !== staffId);
@@ -1146,38 +1300,7 @@ export function deleteStaffAccount(
     creator
   );
 
-  return { success: true, message: 'Đã xóa tài khoản nhân sự thành công!' };
-}
-
-/**
- * Khóa / Mở khóa tài khoản nhân sự
- */
-export function toggleStaffStatus(
-  creator: UserProfile,
-  staffId: string
-): { success: boolean; message?: string } {
-  if (creator.role !== 'admin') {
-    return { success: false, message: 'Chỉ Quản trị viên mới có thẩm quyền đổi trạng thái tài khoản!' };
-  }
-
-  const staffList = getStaffList();
-  const target = staffList.find(s => s.id === staffId);
-
-  if (!target) {
-    return { success: false, message: 'Không tìm thấy tài khoản.' };
-  }
-
-  if (target.email.toLowerCase() === 'anhthuphan0102@gmail.com') {
-    return { success: false, message: 'Không thể khóa tài khoản Quản trị viên tối cao!' };
-  }
-
-  target.status = target.status === 'locked' ? 'active' : 'locked';
-  saveStaffList(staffList);
-
-  return {
-    success: true,
-    message: target.status === 'locked' ? 'Đã tạm khóa tài khoản thành công.' : 'Đã mở khóa tài khoản thành công.'
-  };
+  return { success: true, message: 'Đã xóa tài khoản người dùng thành công!' };
 }
 
 export function switchRole(role: Role): UserProfile {

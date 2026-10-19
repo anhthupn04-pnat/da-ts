@@ -23,3 +23,13 @@ VALUES
 ('troy-thm', '407(TROY)', 'Quản trị Du lịch & Khách sạn TROY (Mỹ)', 'Viện Đào tạo Quốc tế (VN-US)', 'Đại học Troy (Mỹ)', 'Bằng Cử nhân Mỹ do ĐH Troy cấp', 'Kiểm định SACSCOC và ACBSP', '4 năm (11 học kỳ)', NULL, 'Thực tập tại các resort 5 sao quốc tế (Marriott, Hyatt).', 'General Manager khách sạn/resort 5 sao', 'Tốt nghiệp THPT, IELTS từ 5.5+ (Quỹ học bổng hơn 13 tỷ đồng)', true),
 ('troy-cs', '102(TROY)', 'Khoa học Máy tính TROY (Mỹ)', 'Viện Đào tạo Quốc tế (VN-US)', 'Đại học Troy (Mỹ)', 'Bằng Cử nhân Computer Science ĐH Troy', 'Kiểm định SACSCOC Hoa Kỳ', '4 năm (11 học kỳ)', NULL, 'Trí tuệ nhân tạo, khoa học dữ liệu, hệ phân tán.', 'AI Research Engineer, Data Scientist', 'Tốt nghiệp THPT, IELTS từ 5.5+ (Quỹ học bổng hơn 13 tỷ đồng)', true)
 ON CONFLICT (id) DO NOTHING;
+
+-- ==============================================================================
+-- Seed: Internal Users (Admin & Staff)
+-- ==============================================================================
+
+INSERT INTO public.users (id, full_name, username, email, password_hash, role, status)
+VALUES
+('00000000-0000-0000-0000-000000000001', 'Quản Trị Viên Hệ Thống', 'admin', 'admin@vnus.edu.vn', 'Admin@VNUS2026!', 'ADMIN', 'ACTIVE'),
+('00000000-0000-0000-0000-000000000002', 'Chuyên Viên Tuyển Sinh', 'staff', 'staff@vnus.edu.vn', 'Staff@VNUS2026!', 'STAFF', 'ACTIVE')
+ON CONFLICT (username) DO NOTHING;
