@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import LeadModal from '@/components/LeadModal';
+import ExcelImportModal from '@/components/ExcelImportModal';
 import { getLeads, addLead, deleteLead, updateLead } from '@/data/storage';
 import { STUDY_PROGRAMS } from '@/data/programsData';
 import { Lead, LeadStatus, LeadSource, LeadPriority } from '@/types';
@@ -32,6 +33,8 @@ export default function LeadsManagementPage() {
   const [programFilter, setProgramFilter] = useState<string>('ALL');
   const [sourceFilter, setSourceFilter] = useState<string>('ALL');
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [excelModalOpen, setExcelModalOpen] = useState(false);
+  const [importSuccessMsg, setImportSuccessMsg] = useState<string | null>(null);
   
   // Add Lead Modal State
   const [addModalOpen, setAddModalOpen] = useState(false);
@@ -211,6 +214,15 @@ export default function LeadsManagementPage() {
 
         <div className="flex items-center gap-2.5">
           <button
+            onClick={() => setExcelModalOpen(true)}
+            className="px-3.5 py-2 rounded-xl text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-300 hover:bg-emerald-100 shadow-2xs transition flex items-center gap-1.5 cursor-pointer"
+            title="Nhập dữ liệu danh sách thí sinh từ file Excel (.xlsx, .xls) hoặc CSV"
+          >
+            <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+            <span>Nhập từ Excel / CSV</span>
+          </button>
+
+          <button
             onClick={exportToCSV}
             className="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 shadow-2xs transition flex items-center gap-1.5 cursor-pointer"
             title="Xuất file CSV tương thích Excel hỗ trợ tiếng Việt đầy đủ"
@@ -228,6 +240,14 @@ export default function LeadsManagementPage() {
           </button>
         </div>
       </div>
+
+      {/* Success alert when imported from Excel */}
+      {importSuccessMsg && (
+        <div className="p-4 rounded-2xl bg-emerald-50 text-emerald-900 border border-emerald-200 text-xs font-bold flex items-center gap-2 animate-fade-in shadow-xs">
+          <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+          <span>{importSuccessMsg}</span>
+        </div>
+      )}
 
       {/* Filter and Search Bar */}
       <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-xs space-y-3">
@@ -581,6 +601,17 @@ export default function LeadsManagementPage() {
           onLeadUpdated={loadData}
         />
       )}
+
+      {/* Excel / CSV Import Modal */}
+      <ExcelImportModal
+        isOpen={excelModalOpen}
+        onClose={() => setExcelModalOpen(false)}
+        onSuccess={(count) => {
+          loadData();
+          setImportSuccessMsg(`Đã nhập thành công ${count} hồ sơ thí sinh từ file Excel vào hệ thống!`);
+          setTimeout(() => setImportSuccessMsg(null), 5000);
+        }}
+      />
 
     </div>
   );

@@ -116,6 +116,16 @@ export default function RoleSwitcher({ onRoleChanged }: RoleSwitcherProps) {
               );
             })}
           </div>
+
+          <div className="pt-2 mt-2 border-t border-slate-100 flex items-center justify-between text-xs px-2">
+            <a
+              href="/login"
+              className="text-blue-700 hover:underline font-bold flex items-center gap-1"
+            >
+              <span>Cổng Đăng Nhập Cán Bộ</span>
+            </a>
+            <span className="text-[10px] text-slate-400">K32 VN-US</span>
+          </div>
         </div>
       )}
     </div>

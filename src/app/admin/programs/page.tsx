@@ -114,22 +114,29 @@ export default function AdminProgramsPage() {
 
               <div className="mt-3 pt-3 border-t border-slate-100 space-y-1.5 text-xs text-slate-500">
                 <div className="flex items-center gap-1.5">
-                  <GraduationCap className="w-3.5 h-3.5 text-slate-400" />
+                  <GraduationCap className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                   <span><strong>Văn bằng:</strong> {p.degree}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Briefcase className="w-3.5 h-3.5 text-slate-400" />
+                  <Briefcase className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                   <span className="truncate"><strong>Nghề nghiệp:</strong> {p.careerProspects}</span>
                 </div>
+                {p.tuitionNote && (
+                  <div className="p-2.5 rounded-xl bg-amber-50/70 border border-amber-200/80 text-[11px] text-amber-900 leading-relaxed mt-2">
+                    <strong className="text-amber-950 font-bold">Lưu ý tư vấn học phí & học bổng:</strong> {p.tuitionNote}
+                  </div>
+                )}
               </div>
             </div>
 
             <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
               <div>
-                <span className="text-[11px] text-slate-400 block">Học phí năm học:</span>
-                <span className="font-bold text-slate-900">{p.tuitionPerYear}</span>
+                <span className="text-[11px] text-slate-400 block font-medium">Học phí K32:</span>
+                <span className="inline-block mt-0.5 px-2.5 py-1 rounded-md bg-blue-50 text-blue-800 font-bold border border-blue-200">
+                  {p.tuitionPerYear}
+                </span>
               </div>
-              <span className="font-medium text-slate-500">Thời gian: {p.duration}</span>
+              <span className="font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-md">Thời gian: {p.duration}</span>
             </div>
           </div>
         ))}

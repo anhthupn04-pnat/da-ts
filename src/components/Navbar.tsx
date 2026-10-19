@@ -53,17 +53,17 @@ export default function Navbar() {
           {/* Right Action Buttons */}
           <div className="hidden sm:flex items-center gap-3">
             <Link
-              href="/admin"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors border border-slate-200"
-              title="Khu vực quản trị nội bộ dành cho chuyên viên & quản lý"
+              href="/login"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-blue-900 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors border border-blue-200 shadow-2xs"
+              title="Đăng nhập dành cho cán bộ & chuyên viên các bộ phận tuyển sinh"
             >
-              <ShieldCheck className="w-4 h-4 text-slate-600" />
-              <span>Cổng Quản Trị CRM</span>
+              <ShieldCheck className="w-4 h-4 text-blue-700" />
+              <span>Đăng Nhập Chuyên Viên</span>
             </Link>
 
             <a
               href="#registration-form"
-              className="inline-flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-semibold text-white bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 rounded-xl shadow-md shadow-blue-600/25 transition-all hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
+              className="inline-flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold text-white bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 rounded-xl shadow-md shadow-blue-600/25 transition-all hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
             >
               <Sparkles className="w-4 h-4 text-amber-300" />
               <span>Đăng Ký Tư Vấn</span>
@@ -121,12 +121,12 @@ export default function Navbar() {
           </a>
           <div className="pt-2 border-t border-slate-100 flex flex-col gap-2">
             <Link
-              href="/admin"
+              href="/login"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-blue-900 bg-blue-50 border border-blue-200 rounded-xl"
             >
-              <ShieldCheck className="w-4 h-4 text-blue-600" />
-              <span>Cổng Quản Trị & CRM</span>
+              <ShieldCheck className="w-4 h-4 text-blue-700" />
+              <span>Đăng Nhập Cán Bộ & Chuyên Viên</span>
             </Link>
             <a
               href="#registration-form"

@@ -83,6 +83,96 @@ export function addLead(newLeadData: Omit<Lead, 'id' | 'createdAt' | 'updatedAt'
   return { success: true, lead };
 }
 
+export interface BatchAddResult {
+  total: number;
+  inserted: number;
+  duplicateCount: number;
+  skipped: number;
+  insertedLeads: Lead[];
+  errors: string[];
+}
+
+export function batchAddLeads(newLeadsList: Omit<Lead, 'id' | 'createdAt' | 'updatedAt'>[]): BatchAddResult {
+  const currentLeads = getLeads();
+  const existingPhones = new Set(currentLeads.map(l => l.phone.replace(/[\s\-\.]/g, '')));
+  const existingEmails = new Set(currentLeads.map(l => l.email.trim().toLowerCase()).filter(Boolean));
+
+  const validNewLeads: Lead[] = [];
+  const errors: string[] = [];
+  let duplicateCount = 0;
+  let skipped = 0;
+
+  newLeadsList.forEach((item, index) => {
+    const cleanPhone = (item.phone || '').toString().replace(/[\s\-\.]/g, '');
+    const cleanEmail = (item.email || '').toString().trim().toLowerCase();
+
+    if (!item.fullName || item.fullName.toString().trim().length < 2) {
+      errors.push(`Dòng ${index + 1}: Họ và tên không hợp lệ`);
+      skipped++;
+      return;
+    }
+
+    if (!cleanPhone || cleanPhone.length < 9) {
+      errors.push(`Dòng ${index + 1} (${item.fullName}): SĐT không hợp lệ (${item.phone})`);
+      skipped++;
+      return;
+    }
+
+    if (existingPhones.has(cleanPhone) || (cleanEmail && existingEmails.has(cleanEmail))) {
+      duplicateCount++;
+      return;
+    }
+
+    // Match program
+    let prog = STUDY_PROGRAMS.find(p => p.id === item.programId || p.code.toLowerCase() === (item.programId || '').toLowerCase());
+    if (!prog && item.programName) {
+      const pName = item.programName.toLowerCase();
+      prog = STUDY_PROGRAMS.find(p => p.name.toLowerCase().includes(pName) || pName.includes(p.name.toLowerCase()) || p.code.toLowerCase().includes(pName));
+    }
+    if (!prog) {
+      prog = STUDY_PROGRAMS[0];
+    }
+
+    const lead: Lead = {
+      ...item,
+      id: `lead-import-${Date.now()}-${index}-${Math.random().toString(36).substring(2, 6)}`,
+      fullName: item.fullName.toString().trim(),
+      phone: cleanPhone,
+      email: cleanEmail,
+      highSchool: (item.highSchool || 'Chưa cập nhật').toString().trim(),
+      province: (item.province || 'Đà Nẵng').toString().trim(),
+      graduationYear: Number(item.graduationYear) || 2026,
+      programId: prog.id,
+      programName: prog.name,
+      source: item.source || 'other',
+      status: item.status || 'new',
+      priority: item.priority || 'medium',
+      scoreThpt: item.scoreThpt ? Number(item.scoreThpt) : undefined,
+      notes: (item.notes || 'Nhập từ file Excel/CSV').toString().trim(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    existingPhones.add(cleanPhone);
+    if (cleanEmail) existingEmails.add(cleanEmail);
+    validNewLeads.push(lead);
+  });
+
+  if (validNewLeads.length > 0) {
+    const updated = [...validNewLeads, ...currentLeads];
+    saveLeads(updated);
+  }
+
+  return {
+    total: newLeadsList.length,
+    inserted: validNewLeads.length,
+    duplicateCount,
+    skipped,
+    insertedLeads: validNewLeads,
+    errors
+  };
+}
+
 export function updateLead(id: string, updates: Partial<Lead>): { success: boolean; lead?: Lead } {
   const leads = getLeads();
   const idx = leads.findIndex(l => l.id === id);
@@ -247,9 +337,48 @@ export function switchRole(role: Role): UserProfile {
   if (isBrowser) {
     try {
       localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(staff));
+      window.dispatchEvent(new Event('auth-changed'));
     } catch {
       // ignore
     }
   }
   return staff;
 }
+
+export function getAllStaff(): UserProfile[] {
+  return INITIAL_STAFF;
+}
+
+export function setCurrentUser(user: UserProfile) {
+  if (isBrowser) {
+    try {
+      localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+      window.dispatchEvent(new Event('auth-changed'));
+    } catch {
+      // ignore
+    }
+  }
+}
+
+export function logoutUser() {
+  if (isBrowser) {
+    try {
+      localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+      window.dispatchEvent(new Event('auth-changed'));
+    } catch {
+      // ignore
+    }
+  }
+}
+
+export function isUserAuthenticated(): boolean {
+  if (isBrowser) {
+    try {
+      return Boolean(localStorage.getItem(STORAGE_KEYS.CURRENT_USER));
+    } catch {
+      return false;
+    }
+  }
+  return true;
+}
+

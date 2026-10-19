@@ -1,7 +1,7 @@
 import { StudyProgram } from '@/types';
 
 export const STUDY_PROGRAMS: StudyProgram[] = [
-  // CMU Programs
+  // CMU Programs (Carnegie Mellon University - Top 1 Thế giới về CNTT)
   {
     id: 'cmu-se',
     code: '102(CMU)',
@@ -11,10 +11,11 @@ export const STUDY_PROGRAMS: StudyProgram[] = [
     degree: 'Kỹ sư / Cử nhân Đại học Duy Tân & Chứng chỉ hoàn tất từ CMU',
     accreditation: 'Đạt kiểm định quốc tế ABET (Hoa Kỳ)',
     duration: '4 năm',
-    tuitionPerYear: '52.000.000 - 58.000.000 VNĐ',
+    tuitionPerYear: 'Liên hệ tư vấn',
+    tuitionNote: 'Không có mức học phí cố định trong tài liệu K32. Thí sinh liên hệ chuyên viên tư vấn theo đợt nhập học; có 05 suất Học bổng Toàn phần 100% học phí (tổng điểm 3 môn THPT từ 25đ trở lên).',
     description: 'Chương trình chuyển giao 100% giáo trình từ Carnegie Mellon University (Mỹ). Sinh viên được đào tạo chuyên sâu về kỹ nghệ phần mềm hiện đại, kiến trúc hệ thống lớn, quy trình Agile/Scrum, DevSecOps và AI-driven development.',
     careerProspects: 'Software Engineer, Fullstack Developer, Solution Architect, QA/Test Automation Lead tại các tập đoàn công nghệ hàng đầu thế giới và Việt Nam.',
-    admissionCriteria: 'Tốt nghiệp THPT, xét điểm thi THPT (từ 15đ) hoặc Học bạ (từ 18đ) hoặc ĐGNL (từ 600đ).',
+    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức (Tuyển thẳng, Điểm thi THPT 2026, Học bạ lớp 12, ĐGNL ĐHQG TP.HCM, V-SAT).',
     isActive: true
   },
   {
@@ -22,14 +23,15 @@ export const STUDY_PROGRAMS: StudyProgram[] = [
     code: '116(CMU)',
     name: 'An ninh Mạng chuẩn CMU',
     faculty: 'Viện Đào tạo Quốc tế (VN-US)',
-    partner: 'Đại học Carnegie Mellon (Mỹ)',
+    partner: 'Đại học Carnegie Mellon (Mỹ) - Top 1 Thế giới về CNTT',
     degree: 'Kỹ sư / Cử nhân Đại học Duy Tân & Chứng chỉ hoàn tất từ CMU',
     accreditation: 'Đạt kiểm định quốc tế ABET (Hoa Kỳ)',
     duration: '4 năm',
-    tuitionPerYear: '52.000.000 - 58.000.000 VNĐ',
+    tuitionPerYear: 'Liên hệ tư vấn',
+    tuitionNote: 'Không có mức học phí cố định trong tài liệu K32. Thí sinh được tư vấn học phí trực tiếp; có 05 suất Học bổng Toàn phần 100% học phí (tổng điểm 3 môn THPT từ 25đ trở lên).',
     description: 'Chương trình an toàn thông tin hàng đầu, trang bị kỹ năng phòng thủ không gian mạng, điều tra số (Digital Forensics), bảo mật đám mây, mật mã ứng dụng và kiểm thử thâm nhập (Penetration Testing).',
     careerProspects: 'Cybersecurity Analyst, SOC Engineer, Penetration Tester, Security Consultant tại ngân hàng, tài chính, quân đội và doanh nghiệp công nghệ.',
-    admissionCriteria: 'Tốt nghiệp THPT, xét điểm thi THPT hoặc Học bạ hoặc ĐGNL.',
+    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức (Tuyển thẳng, Điểm thi THPT 2026, Học bạ lớp 12, ĐGNL ĐHQG TP.HCM, V-SAT).',
     isActive: true
   },
   {
@@ -41,10 +43,11 @@ export const STUDY_PROGRAMS: StudyProgram[] = [
     degree: 'Cử nhân Đại học Duy Tân & Chứng chỉ hoàn tất từ CMU',
     accreditation: 'Đạt kiểm định quốc tế ABET (Hoa Kỳ)',
     duration: '4 năm',
-    tuitionPerYear: '48.000.000 - 54.000.000 VNĐ',
+    tuitionPerYear: 'Liên hệ tư vấn',
+    tuitionNote: 'Không có mức học phí cố định trong tài liệu K32. Thí sinh được chuyên viên tư vấn chi tiết; có 05 suất Học bổng Toàn phần 100% học phí cho thí sinh có điểm THPT từ 25đ.',
     description: 'Kết hợp xuất sắc giữa công nghệ thông tin và quản trị chiến lược doanh nghiệp. Đào tạo phân tích dữ liệu kinh doanh (Business Analytics), triển khai ERP, quản trị dự án số.',
     careerProspects: 'Business Analyst (BA), ERP Consultant, IT Project Manager, Data Analyst.',
-    admissionCriteria: 'Tốt nghiệp THPT, xét điểm thi THPT hoặc Học bạ hoặc ĐGNL.',
+    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức tuyển sinh của trường.',
     isActive: true
   },
   {
@@ -56,14 +59,15 @@ export const STUDY_PROGRAMS: StudyProgram[] = [
     degree: 'Cử nhân Đại học Duy Tân & Chứng chỉ hoàn tất từ CMU',
     accreditation: 'Chuẩn đầu ra kiểm định quốc tế',
     duration: '4 năm',
-    tuitionPerYear: '48.000.000 - 54.000.000 VNĐ',
+    tuitionPerYear: 'Liên hệ tư vấn',
+    tuitionNote: 'Không có mức học phí cố định trong tài liệu K32. Thí sinh liên hệ Ban Tuyển sinh để được tư vấn chính sách học phí và xét 05 suất Học bổng Toàn phần 100% (THPT >= 25đ).',
     description: 'Đào tạo các mô hình kinh doanh số, sàn thương mại điện tử, digital marketing đa kênh, thanh toán điện tử và phân tích hành vi khách hàng trực tuyến.',
     careerProspects: 'E-Commerce Manager, Digital Marketing Specialist, Growth Hacker, Quản lý sàn TMĐT.',
-    admissionCriteria: 'Tốt nghiệp THPT, xét điểm thi THPT hoặc Học bạ.',
+    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức tuyển sinh 2026.',
     isActive: true
   },
 
-  // PSU Programs
+  // PSU Programs (Penn State University - Top 1% Thế giới về Kinh tế & Quản trị)
   {
     id: 'psu-ba',
     code: '400(PSU)',
@@ -73,10 +77,11 @@ export const STUDY_PROGRAMS: StudyProgram[] = [
     degree: 'Cử nhân Đại học Duy Tân & Chứng chỉ hoàn tất từ PSU',
     accreditation: 'Chuẩn AACSB (Hoa Kỳ)',
     duration: '4 năm',
-    tuitionPerYear: '46.000.000 - 52.000.000 VNĐ',
+    tuitionPerYear: 'Liên hệ tư vấn',
+    tuitionNote: 'Không có mức học phí cố định trong tài liệu K32. Có 05 suất Học bổng Toàn phần 100% học phí cho thí sinh đạt điểm THPT từ 25đ trở lên.',
     description: 'Chương trình chuẩn PSU đào tạo nhà lãnh đạo doanh nghiệp toàn cầu với tầm nhìn chiến lược, tư duy khởi nghiệp đổi mới sáng tạo và kỹ năng đàm phán quốc tế.',
     careerProspects: 'Brand Manager, Business Development Specialist, Khởi nghiệp kinh doanh, Quản lý vận hành.',
-    admissionCriteria: 'Tốt nghiệp THPT, xét điểm thi THPT hoặc Học bạ.',
+    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức tuyển sinh của trường.',
     isActive: true
   },
   {
@@ -88,10 +93,11 @@ export const STUDY_PROGRAMS: StudyProgram[] = [
     degree: 'Cử nhân Đại học Duy Tân & Chứng chỉ hoàn tất từ PSU',
     accreditation: 'Tích hợp chứng chỉ quốc tế ACCA/CPA',
     duration: '4 năm',
-    tuitionPerYear: '46.000.000 - 52.000.000 VNĐ',
+    tuitionPerYear: 'Liên hệ tư vấn',
+    tuitionNote: 'Không có mức học phí cố định trong tài liệu K32. Thí sinh được chuyên viên tư vấn chính sách học phí; có 05 suất Học bổng Toàn phần 100% học phí (THPT >= 25đ).',
     description: 'Đào tạo chuyên môn kiểm toán tài chính quốc tế theo chuẩn mực IFRS và GAAP, kế toán quản trị và phân tích rủi ro tài chính doanh nghiệp.',
     careerProspects: 'Auditor tại Big 4 (PwC, EY, Deloitte, KPMG), Kế toán trưởng, Kiểm toán viên nội bộ.',
-    admissionCriteria: 'Tốt nghiệp THPT, xét điểm thi THPT hoặc Học bạ.',
+    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức tuyển sinh 2026.',
     isActive: true
   },
   {
@@ -103,10 +109,11 @@ export const STUDY_PROGRAMS: StudyProgram[] = [
     degree: 'Cử nhân Đại học Duy Tân & Chứng chỉ hoàn tất từ PSU',
     accreditation: 'Chuẩn quốc tế PSU',
     duration: '4 năm',
-    tuitionPerYear: '46.000.000 - 52.000.000 VNĐ',
+    tuitionPerYear: 'Liên hệ tư vấn',
+    tuitionNote: 'Không có mức học phí cố định trong tài liệu K32. Thí sinh liên hệ Ban Tuyển sinh để tư vấn; có 05 suất Học bổng Toàn phần 100% học phí (THPT >= 25đ).',
     description: 'Chương trình chuyên sâu về định chế tài chính, quản trị danh mục đầu tư, thẩm định tín dụng, thị trường vốn và ngân hàng thương mại quốc tế.',
     careerProspects: 'Chuyên viên phân tích đầu tư, Chuyên viên tín dụng ngân hàng, Quản lý tài sản (Asset Manager).',
-    admissionCriteria: 'Tốt nghiệp THPT, xét điểm thi THPT hoặc Học bạ.',
+    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức tuyển sinh 2026.',
     isActive: true
   },
   {
@@ -118,10 +125,11 @@ export const STUDY_PROGRAMS: StudyProgram[] = [
     degree: 'Cử nhân Đại học Duy Tân & Chứng chỉ hoàn tất từ PSU',
     accreditation: 'Chuẩn quốc tế công nghệ & tài chính',
     duration: '4 năm',
-    tuitionPerYear: '48.000.000 - 54.000.000 VNĐ',
+    tuitionPerYear: 'Liên hệ tư vấn',
+    tuitionNote: 'Không có mức học phí cố định trong tài liệu K32. Có 05 suất Học bổng Toàn phần 100% học phí (THPT >= 25đ).',
     description: 'Ngành đón đầu xu thế giao thoa công nghệ và dịch vụ tài chính: Blockchain, thuật toán giao dịch tự động (Algo-trading), ví điện tử, chấm điểm tín dụng AI.',
     careerProspects: 'FinTech Product Manager, Blockchain Analyst, Quantitative Researcher, Chuyên viên giải pháp thanh toán số.',
-    admissionCriteria: 'Tốt nghiệp THPT, xét điểm thi THPT hoặc Học bạ.',
+    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức tuyển sinh 2026.',
     isActive: true
   },
   {
@@ -133,14 +141,15 @@ export const STUDY_PROGRAMS: StudyProgram[] = [
     degree: 'Cử nhân Đại học Duy Tân & Chứng chỉ hoàn tất từ PSU',
     accreditation: 'Chuẩn AACSB (Hoa Kỳ)',
     duration: '4 năm',
-    tuitionPerYear: '46.000.000 - 52.000.000 VNĐ',
+    tuitionPerYear: 'Liên hệ tư vấn',
+    tuitionNote: 'Không có mức học phí cố định trong tài liệu K32. Thí sinh liên hệ để được tư vấn chính sách học phí và học bổng theo đợt nhập học.',
     description: 'Đào tạo chuỗi cung ứng toàn cầu, logistics quốc tế, xuất nhập khẩu, chiến lược thâm nhập thị trường nước ngoài và luật thương mại quốc tế.',
     careerProspects: 'Chuyên viên xuất nhập khẩu, Logistics Coordinator, Quản lý quan hệ đối tác quốc tế.',
-    admissionCriteria: 'Tốt nghiệp THPT, xét điểm thi THPT hoặc Học bạ.',
+    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức tuyển sinh 2026.',
     isActive: true
   },
 
-  // CSU Programs
+  // CSU Programs (California State University, Fullerton - Mỹ)
   {
     id: 'csu-arch',
     code: '107(CSU)',
@@ -148,12 +157,13 @@ export const STUDY_PROGRAMS: StudyProgram[] = [
     faculty: 'Viện Đào tạo Quốc tế (VN-US)',
     partner: 'Đại học Bang California (CSU Cal Poly - Mỹ)',
     degree: 'Kiến trúc sư Đại học Duy Tân & Chứng chỉ CSU',
-    accreditation: 'Chuẩn quốc tế Cal Poly',
-    duration: '4.5 năm',
-    tuitionPerYear: '46.000.000 - 52.000.000 VNĐ',
+    accreditation: 'Chuẩn quốc tế CSU Cal Poly',
+    duration: '4.5 - 5 năm',
+    tuitionPerYear: 'Liên hệ tư vấn',
+    tuitionNote: 'Không có mức học phí cố định trong tài liệu K32. Có 05 suất Học bổng Toàn phần 100% (THPT >= 25đ) và 20 suất Học bổng 20% học phí dành riêng cho khối ngành Kiến trúc Xây dựng CSU.',
     description: 'Đào tạo kiến trúc sư hiện đại với tư duy thiết kế bền vững (Green Architecture), công nghệ BIM, thiết kế cảnh quan và quy hoạch đô thị tương lai.',
     careerProspects: 'Kiến trúc sư chủ trì thiết kế, Chuyên viên thiết kế nội thất, Quản lý quy hoạch dự án.',
-    admissionCriteria: 'Xét tổ hợp môn thi + Điểm thi Vẽ Mỹ thuật * 2.',
+    admissionCriteria: 'Xét tổ hợp 2 môn + Điểm thi Vẽ Mỹ thuật * 2 (Điểm XT = Điểm TB môn 1 + Điểm TB môn 2 + Điểm Vẽ * 2 + Điểm ưu tiên).',
     isActive: true
   },
   {
@@ -163,16 +173,17 @@ export const STUDY_PROGRAMS: StudyProgram[] = [
     faculty: 'Viện Đào tạo Quốc tế (VN-US)',
     partner: 'Đại học Bang California (CSU Cal Poly - Mỹ)',
     degree: 'Kỹ sư Xây dựng Đại học Duy Tân & Chứng chỉ CSU',
-    accreditation: 'Chuẩn quốc tế Cal Poly',
-    duration: '4 năm',
-    tuitionPerYear: '46.000.000 - 52.000.000 VNĐ',
+    accreditation: 'Chuẩn quốc tế CSU Cal Poly',
+    duration: '4 - 5 năm',
+    tuitionPerYear: 'Liên hệ tư vấn',
+    tuitionNote: 'Không có mức học phí cố định trong tài liệu K32. Thí sinh được tư vấn học phí cụ thể; có 05 suất Học bổng Toàn phần 100% (THPT >= 25đ) và chính sách Học bổng 20% học phí khối CSU.',
     description: 'Chương trình đào tạo kỹ sư công trình với công nghệ kết cấu chịu lực tiên tiến, quản lý tiến độ và chi phí công trình theo chuẩn thế giới.',
     careerProspects: 'Kỹ sư kết cấu, Chỉ huy trưởng công trình, Tư vấn giám sát dự án xây dựng.',
-    admissionCriteria: 'Tốt nghiệp THPT, xét điểm thi THPT hoặc Học bạ.',
+    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức tuyển sinh của trường.',
     isActive: true
   },
 
-  // TROY Programs
+  // TROY Programs (Troy University, Alabama, Mỹ - Cấp bằng Cử nhân Mỹ 100%)
   {
     id: 'troy-ba',
     code: '400(TROY)',
@@ -181,11 +192,12 @@ export const STUDY_PROGRAMS: StudyProgram[] = [
     partner: 'Đại học Troy (Alabama, Mỹ)',
     degree: 'Bằng Cử nhân chính quy của Đại học Troy (Mỹ) cấp tại Việt Nam',
     accreditation: 'Kiểm định SACSCOC và ACBSP (Hoa Kỳ)',
-    duration: '4 năm',
-    tuitionPerYear: '80.000.000 - 90.000.000 VNĐ',
-    description: 'Học tại Đà Nẵng, nhận 100% bằng Đại học của Đại học Troy (Mỹ). Được Bộ Giáo dục & Đào tạo Việt Nam công nhận văn bằng. Có cơ hội chuyển tiếp 1-2 năm cuối sang campus Mỹ.',
+    duration: '4 năm (11 học kỳ)',
+    tuitionPerYear: 'Liên hệ tư vấn',
+    tuitionNote: 'Theo tài liệu K32, học phí chương trình Troy hợp lý (chỉ bằng khoảng 1/10 so với chi phí thực tế đi du học trực tiếp tại Mỹ). Quỹ học bổng hơn 13 tỷ đồng dành cho thí sinh có điểm THPT từ 23-26đ hoặc IELTS 5.5+.',
+    description: 'Học trọn vẹn tại Đà Nẵng hoặc chuyển tiếp sau Năm 2 sang Đại học Troy (Mỹ). Nhận 100% bằng Cử nhân chính quy của Đại học Troy (Mỹ), được Bộ GD&ĐT Việt Nam công nhận văn bằng toàn diện.',
     careerProspects: 'Làm việc tại các tập đoàn đa quốc gia toàn cầu, chuyên gia tư vấn chiến lược, du học sau đại học tại Mỹ/châu Âu.',
-    admissionCriteria: 'Tốt nghiệp THPT, IELTS từ 5.5 hoặc thi tiếng Anh đầu vào.',
+    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức + Điều kiện tiếng Anh IELTS từ 5.5+ hoặc kiểm tra tiếng Anh đầu vào.',
     isActive: true
   },
   {
@@ -196,11 +208,12 @@ export const STUDY_PROGRAMS: StudyProgram[] = [
     partner: 'Đại học Troy (Alabama, Mỹ)',
     degree: 'Bằng Cử nhân chính quy của Đại học Troy (Mỹ) cấp tại Việt Nam',
     accreditation: 'Kiểm định SACSCOC và ACBSP (Hoa Kỳ)',
-    duration: '4 năm',
-    tuitionPerYear: '80.000.000 - 90.000.000 VNĐ',
+    duration: '4 năm (11 học kỳ)',
+    tuitionPerYear: 'Liên hệ tư vấn',
+    tuitionNote: 'Học phí chỉ bằng khoảng 1/10 so với du học Mỹ trực tiếp. Quỹ học bổng hơn 13 tỷ đồng tài trợ học bổng từ 50% đến 100% học phí cho thí sinh K32 đạt điều kiện điểm THPT hoặc IELTS.',
     description: 'Chương trình liên kết độc quyền cấp bằng Mỹ trong ngành Quản trị Du lịch Khách sạn. Sinh viên thực tập tại các resort 5 sao quốc tế: InterContinental, Marriott, Hyatt.',
     careerProspects: 'General Manager tại khách sạn/resort 5 sao, Quản lý F&B quốc tế, Giám đốc điều hành tour cao cấp.',
-    admissionCriteria: 'Tốt nghiệp THPT, IELTS từ 5.5 hoặc kiểm tra tiếng Anh đầu vào.',
+    admissionCriteria: 'Tốt nghiệp THPT, chứng chỉ IELTS từ 5.5+ hoặc tham gia khóa Anh văn dự bị của chương trình.',
     isActive: true
   },
   {
@@ -211,11 +224,12 @@ export const STUDY_PROGRAMS: StudyProgram[] = [
     partner: 'Đại học Troy (Alabama, Mỹ)',
     degree: 'Bằng Cử nhân Khoa học Máy tính của Đại học Troy (Mỹ)',
     accreditation: 'Kiểm định SACSCOC (Hoa Kỳ)',
-    duration: '4 năm',
-    tuitionPerYear: '80.000.000 - 90.000.000 VNĐ',
+    duration: '4 năm (11 học kỳ)',
+    tuitionPerYear: 'Liên hệ tư vấn',
+    tuitionNote: 'Học phí chỉ bằng 1/10 so với du học trực tiếp tại Mỹ. Thí sinh được tư vấn học phí và xét học bổng từ Quỹ học bổng Đại học Troy Đà Nẵng hơn 13 tỷ đồng.',
     description: 'Nhận bằng cử nhân Computer Science chính quy từ Đại học Troy. Tập trung vào trí tuệ nhân tạo, khoa học dữ liệu, hệ điều hành phân tán và thuật toán nâng cao.',
     careerProspects: 'AI Research Engineer, Data Scientist, Systems Architect tại các công ty công nghệ quốc tế.',
-    admissionCriteria: 'Tốt nghiệp THPT, IELTS từ 5.5 hoặc kiểm tra tiếng Anh đầu vào.',
+    admissionCriteria: 'Tốt nghiệp THPT, IELTS từ 5.5+ hoặc tham gia kỳ kiểm tra tiếng Anh đầu vào.',
     isActive: true
   }
 ];
@@ -240,14 +254,14 @@ export const UNIVERSITY_PARTNERS = [
     name: 'California State University (Mỹ)',
     logoText: 'CSU',
     badge: 'Top Đầu Kiến trúc & Kỹ thuật',
-    description: 'Chương trình Kiến trúc Công trình & Xây dựng Dân dụng chuẩn Cal Poly danh tiếng.'
+    description: 'Chương trình Kiến trúc Công trình & Xây dựng Dân dụng chuẩn CSU Cal Poly danh tiếng.'
   },
   {
     code: 'TROY',
     name: 'Troy University (Alabama, Mỹ)',
     logoText: 'TROY',
     badge: 'Bằng Cử nhân Mỹ 100%',
-    description: 'Cấp bằng Cử nhân chính quy của Đại học Troy (Mỹ) học toàn phần tại Đà Nẵng, công nhận toàn cầu.'
+    description: 'Cấp bằng Cử nhân chính quy của Đại học Troy (Mỹ) học toàn phần tại Đà Nẵng, học phí chỉ bằng 1/10 du học Mỹ.'
   }
 ];
 
@@ -255,54 +269,62 @@ export const ADMISSION_METHODS = [
   {
     id: 'pt1',
     number: '01',
-    title: 'Xét Tuyển Thẳng',
-    criteria: 'Theo quy chế tuyển sinh của Bộ Giáo dục & Đào tạo và đề án tuyển sinh ĐH Duy Tân (HSG quốc gia, thi KHKT).',
-    badge: 'Ưu tiên xét tuyển'
+    title: 'Phương thức 1: Xét Tuyển Thẳng',
+    criteria: 'Xét tuyển thẳng thí sinh theo qui chế của Bộ Giáo dục & Đào tạo (thí sinh đạt giải HSG Quốc gia, Hội thi KHKT cấp Quốc gia).',
+    badge: 'Tuyển thẳng Bộ GD&ĐT'
   },
   {
     id: 'pt2',
     number: '02',
-    title: 'Xét Điểm Thi THPT 2026',
-    criteria: 'Điểm tổng 3 môn xét tuyển từ 15 điểm trở lên tùy chuyên ngành.',
-    badge: 'Ngưỡng từ 15 điểm'
+    title: 'Phương thức 2: Xét Điểm Thi Tốt Nghiệp THPT 2026',
+    criteria: 'Căn cứ kết quả thi tốt nghiệp THPT năm 2026 theo các tổ hợp môn xét tuyển quy định.',
+    badge: 'Kỳ thi THPT 2026'
   },
   {
     id: 'pt3',
     number: '03',
-    title: 'Xét Kết Quả Học Bạ THPT',
-    criteria: 'Tổng điểm trung bình các môn xét tuyển năm Lớp 12 hoặc cả 3 năm THPT từ 18 điểm trở lên.',
-    badge: 'Ngưỡng từ 18 điểm'
+    title: 'Phương thức 3: Xét Kết Quả Học Tập THPT (Học Bạ)',
+    criteria: 'Xét kết quả học tập THPT năm Lớp 12 của thí sinh theo tổ hợp 3 môn xét tuyển.',
+    badge: 'Xét Học bạ Lớp 12'
   },
   {
     id: 'pt4',
     number: '04',
-    title: 'Đánh Giá Năng Lực ĐHQG TP.HCM',
-    criteria: 'Kết quả kỳ thi ĐGNL do ĐHQG TP.HCM tổ chức năm 2026 đạt từ 600 điểm trở lên (ngoại trừ Kiến trúc).',
-    badge: 'Ngưỡng từ 600 điểm'
+    title: 'Phương thức 4: Đánh Giá Năng Lực ĐHQG TP.HCM',
+    criteria: 'Xét kết quả kỳ thi Đánh giá năng lực do ĐH Quốc gia TP.HCM tổ chức năm 2026 (ngoại trừ ngành Kiến trúc).',
+    badge: 'ĐGNL ĐHQG TP.HCM'
   },
   {
     id: 'pt5',
     number: '05',
-    title: 'Kỳ Thi Đánh Giá V-SAT',
-    criteria: 'Xét kết quả kỳ thi V-SAT năm 2026 đạt ngưỡng từ 225 điểm trở lên.',
-    badge: 'Ngưỡng từ 225 điểm'
+    title: 'Phương thức 5: Kỳ Thi Đánh Giá V-SAT',
+    criteria: 'Xét kết quả kỳ thi đánh giá đầu vào đại học trên máy tính (V-SAT) năm 2026.',
+    badge: 'Kỳ thi V-SAT 2026'
   }
 ];
 
 export const SCHOLARSHIP_HIGHLIGHTS = [
   {
-    title: 'Quỹ Học bổng Đại học Troy (Mỹ)',
+    title: 'Quỹ Học bổng Đại học Troy Đà Nẵng',
     value: 'Hơn 13 Tỷ Đồng',
-    detail: 'Học bổng từ 50% - 100% học phí toàn khóa dành cho thí sinh có điểm THPT từ 23 - 26 điểm hoặc IELTS từ 5.5+.'
+    detail: 'Suất học bổng dành cho thí sinh có tổng điểm 3 môn THPT từ 23-26đ hoặc 2 môn từ 16-17đ kèm IELTS 5.5+, hoặc đạt giải Nhất/Nhì/Ba HSG Tỉnh/Quốc gia.'
   },
   {
     title: '55 Suất Học bổng Toàn phần VN-US',
     value: '100% Học phí',
-    detail: 'Dành riêng cho thí sinh đạt từ 25 điểm trở lên trong kỳ thi THPT đăng ký các ngành CMU, PSU, CSU.'
+    detail: 'Dành riêng cho thí sinh đạt từ 25 điểm trở lên trong kỳ thi THPT đăng ký bất kỳ chuyên ngành nào của CMU, PSU, CSU, PNU (05 suất cho mỗi ngành).'
   },
   {
-    title: '20 Suất Học bổng Kiến trúc & Xây dựng',
-    value: 'Toàn phần Khóa học',
-    detail: 'Tài trợ cho tân sinh viên tài năng đam mê ngành Kiến trúc công trình và Xây dựng chuẩn CSU.'
+    title: 'Học bổng 20% Học phí Kiến trúc & Xây dựng CSU',
+    value: '20% Học phí',
+    detail: 'Dành riêng cho thí sinh đăng ký các ngành thuộc khối Kiến trúc Công trình và Xây dựng Dân dụng chuẩn CSU.'
   }
 ];
+
+export const ADMISSION_CONTACT_INFO = {
+  institutionName: 'Trường Đào tạo Quốc tế (VN-US) - Đại học Duy Tân',
+  headquartersAddress: '120 Hoàng Minh Thảo, P. Hòa Khánh Nam, Q. Liên Chiểu, TP. Đà Nẵng',
+  admissionsOfficeAddress: '254 Nguyễn Văn Linh, P. Thạc Gián, Q. Thanh Khê, TP. Đà Nẵng',
+  hotlines: ['0979 407 340', '0888 414 141'],
+  emails: ['tuyensinh.vnus@dtu.edu.vn', 'admission@dtu.edu.vn']
+};

@@ -6,15 +6,23 @@ export const INITIAL_STAFF: UserProfile[] = [
     email: 'admin.tuyensinh@dtu.edu.vn',
     fullName: 'ThS. Nguyễn Văn Hải',
     role: 'admin',
-    department: 'Ban Giám đốc Trung tâm Tư vấn',
+    department: 'Ban Giám đốc & Quản trị Hệ thống',
     phone: '0905123456'
+  },
+  {
+    id: 'usr-manager-1',
+    email: 'manager.tuyensinh@dtu.edu.vn',
+    fullName: 'TS. Đặng Thanh Bình',
+    role: 'manager',
+    department: 'Ban Lãnh đạo Tuyển sinh (Trưởng Ban)',
+    phone: '0905999888'
   },
   {
     id: 'usr-counselor-1',
     email: 'lan.tuyensinh@dtu.edu.vn',
     fullName: 'Trần Thị Mai Lan',
     role: 'counselor',
-    department: 'Bộ phận Tư vấn Trực tiếp & Hotline',
+    department: 'Bộ phận Tư vấn Tuyển sinh & Hotline',
     phone: '0979407340'
   },
   {
