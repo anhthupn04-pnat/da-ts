@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { GraduationCap, PhoneCall, ShieldCheck, Menu, X, ArrowRight, Sparkles } from 'lucide-react';
+import { GraduationCap, ShieldCheck, Menu, X, ArrowRight, Sparkles, Search, FileText } from 'lucide-react';
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -28,46 +28,45 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-7 text-sm font-semibold text-slate-600">
+          <nav className="hidden lg:flex items-center gap-6 text-xs sm:text-sm font-semibold text-slate-600">
             <Link href="/" className="hover:text-blue-700 transition-colors">
               Trang Chủ
             </Link>
             <Link href="/programs" className="hover:text-blue-700 transition-colors flex items-center gap-1.5">
               <span>14 Ngành Quốc Tế</span>
-              <span className="px-1.5 py-0.5 text-[10px] font-bold bg-blue-100 text-blue-800 rounded-md">QUỐC TẾ</span>
+              <span className="px-1.5 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-800 rounded-md">K32</span>
             </Link>
-            <a href="#scholarships" className="hover:text-blue-700 transition-colors">
+            <Link href="/xet-tuyen" className="hover:text-blue-700 transition-colors flex items-center gap-1">
+              <FileText className="w-4 h-4 text-blue-600" />
+              <span>Nộp Hồ Sơ Online</span>
+            </Link>
+            <Link href="/tra-cuu" className="hover:text-blue-700 transition-colors flex items-center gap-1">
+              <Search className="w-4 h-4 text-amber-600" />
+              <span>Tra Cứu & Giấy Báo QR</span>
+            </Link>
+            <a href="/#scholarships" className="hover:text-blue-700 transition-colors">
               Học Bổng 13 Tỷ
-            </a>
-            <a href="#admission-methods" className="hover:text-blue-700 transition-colors">
-              5 Phương Thức
-            </a>
-            <a href="#campus-g" className="hover:text-blue-700 transition-colors">
-              Tòa G Hiện Đại
-            </a>
-            <a href="#contact-info" className="hover:text-blue-700 transition-colors">
-              Liên Hệ
             </a>
           </nav>
 
           {/* Right Action Buttons */}
-          <div className="hidden sm:flex items-center gap-3">
+          <div className="hidden sm:flex items-center gap-2.5">
             <Link
               href="/login"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-blue-900 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors border border-blue-200 shadow-2xs"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-blue-900 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors border border-blue-200 shadow-2xs"
               title="Đăng nhập dành cho cán bộ & chuyên viên các bộ phận tuyển sinh"
             >
               <ShieldCheck className="w-4 h-4 text-blue-700" />
-              <span>Đăng Nhập Chuyên Viên</span>
+              <span>Cổng CRM</span>
             </Link>
 
-            <a
-              href="#registration-form"
-              className="inline-flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold text-white bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 rounded-xl shadow-md shadow-blue-600/25 transition-all hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
+            <Link
+              href="/xet-tuyen"
+              className="inline-flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold text-slate-950 bg-gradient-to-r from-amber-400 via-amber-300 to-amber-400 hover:from-amber-300 hover:to-amber-200 rounded-xl shadow-md shadow-amber-500/25 transition-all hover:scale-105 active:scale-95"
             >
-              <Sparkles className="w-4 h-4 text-amber-300" />
-              <span>Đăng Ký Tư Vấn</span>
-            </a>
+              <Sparkles className="w-4 h-4 text-slate-950" />
+              <span>Nộp Hồ Sơ K32</span>
+            </Link>
           </div>
 
           {/* Mobile menu toggle button */}
@@ -83,59 +82,44 @@ export default function Navbar() {
 
       {/* Mobile dropdown menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-b border-slate-200 bg-white/95 px-4 pt-3 pb-5 space-y-3 shadow-lg">
+        <div className="lg:hidden border-b border-slate-200 bg-white px-4 pt-3 pb-5 space-y-3 shadow-lg text-xs font-semibold">
           <Link
             href="/"
             onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 rounded-md"
+            className="block px-3 py-2 text-slate-800 hover:bg-slate-50 rounded-md"
           >
             Trang Chủ
           </Link>
           <Link
             href="/programs"
             onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 rounded-md"
+            className="block px-3 py-2 text-slate-800 hover:bg-slate-50 rounded-md"
           >
-            14 Ngành Đào Tạo Quốc Tế (CMU, PSU, CSU, TROY)
+            14 Ngành Quốc Tế K32 (CMU, PSU, CSU, TROY)
           </Link>
-          <a
-            href="#scholarships"
+          <Link
+            href="/xet-tuyen"
             onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 rounded-md"
+            className="block px-3 py-2 text-blue-700 bg-blue-50 font-bold rounded-md"
           >
-            Học Bổng Tuyển Sinh 13 Tỷ
-          </a>
-          <a
-            href="#admission-methods"
+            Nộp Hồ Sơ Xét Tuyển Trực Tuyến (Paperless)
+          </Link>
+          <Link
+            href="/tra-cuu"
             onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 rounded-md"
+            className="block px-3 py-2 text-amber-700 bg-amber-50 font-bold rounded-md"
           >
-            5 Phương Thức Xét Tuyển
-          </a>
-          <a
-            href="#campus-g"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 rounded-md"
-          >
-            Cơ Sở Vật Chất Tòa G
-          </a>
+            Tra Cứu Hồ Sơ & Kết Quả (VietQR & Giấy Báo)
+          </Link>
           <div className="pt-2 border-t border-slate-100 flex flex-col gap-2">
             <Link
               href="/login"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-blue-900 bg-blue-50 border border-blue-200 rounded-xl"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold text-blue-900 bg-blue-50 border border-blue-200 rounded-xl"
             >
               <ShieldCheck className="w-4 h-4 text-blue-700" />
-              <span>Đăng Nhập Cán Bộ & Chuyên Viên</span>
+              <span>Đăng Nhập Cán Bộ CRM</span>
             </Link>
-            <a
-              href="#registration-form"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-blue-700 rounded-lg shadow-sm"
-            >
-              <span>Đăng Ký Tư Vấn Trực Tuyến</span>
-              <ArrowRight className="w-4 h-4" />
-            </a>
           </div>
         </div>
       )}

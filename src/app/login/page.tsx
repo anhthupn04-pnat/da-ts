@@ -17,7 +17,8 @@ import {
   ArrowLeft,
   CheckCircle2,
   Sparkles,
-  Building2
+  Building2,
+  FileCheck
 } from 'lucide-react';
 
 export default function LoginPage() {
@@ -40,7 +41,7 @@ export default function LoginPage() {
       icon: <UserCheck className="w-5 h-5 text-emerald-600" />,
       bg: 'bg-emerald-50 hover:bg-emerald-100/70 border-emerald-200',
       badge: 'bg-emerald-100 text-emerald-800',
-      description: 'Chăm sóc lead, gọi điện/Zalo tư vấn chương trình đào tạo & học bổng, tiếp nhận hồ sơ, nhập dữ liệu Excel.'
+      description: 'Chăm sóc lead, gọi điện/Zalo tư vấn chương trình đào tạo & học bổng K32, tiếp nhận hồ sơ, nhập dữ liệu Excel.'
     },
     {
       role: 'marketer' as Role,
@@ -54,6 +55,17 @@ export default function LoginPage() {
       description: 'Quản trị chiến dịch đa kênh (TikTok, Facebook, Web), lập lịch bài đăng, sử dụng Trợ lý AI sáng tạo.'
     },
     {
+      role: 'verifier' as Role,
+      staffEmail: 'ngoc.verify@dtu.edu.vn',
+      title: 'Cán Bộ Hậu Kiểm & Xét Tuyển',
+      department: 'Tổ Hậu kiểm & Thẩm định Hồ sơ Xét tuyển',
+      name: 'ThS. Hoàng Thị Bích Ngọc',
+      icon: <FileCheck className="w-5 h-5 text-teal-600" />,
+      bg: 'bg-teal-50 hover:bg-teal-100/70 border-teal-200',
+      badge: 'bg-teal-100 text-teal-800',
+      description: 'Tiếp nhận hồ sơ số hóa (học bạ, bằng tốt nghiệp, CCCD), đối chiếu minh chứng 2 màn hình và thẩm định điểm trong 30 giây.'
+    },
+    {
       role: 'manager' as Role,
       staffEmail: 'manager.tuyensinh@dtu.edu.vn',
       title: 'Trưởng Ban Tuyển Sinh (Quản Lý)',
@@ -62,18 +74,18 @@ export default function LoginPage() {
       icon: <Users className="w-5 h-5 text-blue-600" />,
       bg: 'bg-blue-50 hover:bg-blue-100/70 border-blue-200',
       badge: 'bg-blue-100 text-blue-800',
-      description: 'Giám sát toàn bộ tiến độ, phân công chuyên viên xử lý hồ sơ, duyệt nội dung và xem báo cáo tổng hợp.'
+      description: 'Giám sát toàn bộ tiến độ, phân bổ Round-Robin, theo dõi KPI chuyên viên, phê duyệt các trường hợp đặc biệt.'
     },
     {
       role: 'admin' as Role,
       staffEmail: 'admin.tuyensinh@dtu.edu.vn',
-      title: 'Quản Trị Viên Hệ Thống (Admin)',
+      title: 'Super Admin (Quản Trị Tối Cao)',
       department: 'Ban Giám đốc & Quản trị Hệ thống',
       name: 'ThS. Nguyễn Văn Hải',
       icon: <Shield className="w-5 h-5 text-purple-600" />,
       bg: 'bg-purple-50 hover:bg-purple-100/70 border-purple-200',
       badge: 'bg-purple-100 text-purple-800',
-      description: 'Toàn quyền cấu hình hệ thống, quản lý tài khoản nhân sự, kết nối Database Supabase/Local, sao lưu dữ liệu.'
+      description: 'Toàn quyền cấu hình hệ thống, quản lý tài khoản nhân sự, phân bổ chỉ tiêu, xem nhật ký kiểm toán vĩnh viễn (Audit Logs).'
     }
   ];
 
@@ -131,7 +143,7 @@ export default function LoginPage() {
         </Link>
 
         <span className="text-amber-400 font-bold tracking-wider uppercase text-[11px] bg-white/10 px-3 py-1 rounded-full border border-amber-400/20">
-          Cổng Quản Trị Tuyển Sinh Nội Bộ
+          Cổng Nội Bộ K32 (2026)
         </span>
       </div>
 
@@ -147,7 +159,7 @@ export default function LoginPage() {
             Cổng Đăng Nhập Cán Bộ & Chuyên Viên Tuyển Sinh
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
-            Hệ thống CRM số hóa tuyển sinh & marketing – Viện Đào tạo Quốc tế (VN-US) • Đại học Duy Tân.
+            Hệ thống CRM số hóa tuyển sinh & marketing K32 – Viện Đào tạo Quốc tế (VN-US) • Đại học Duy Tân.
             Được phân quyền riêng biệt cho từng bộ phận nghiệp vụ.
           </p>
         </div>

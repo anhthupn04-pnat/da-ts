@@ -13,7 +13,7 @@ export const STUDY_PROGRAMS: StudyProgram[] = [
     duration: '4 năm',
     description: 'Chương trình chuyển giao 100% giáo trình từ Carnegie Mellon University (Mỹ). Sinh viên được đào tạo chuyên sâu về kỹ nghệ phần mềm hiện đại, kiến trúc hệ thống lớn, quy trình Agile/Scrum, DevSecOps và AI-driven development.',
     careerProspects: 'Software Engineer, Fullstack Developer, Solution Architect, QA/Test Automation Lead tại các tập đoàn công nghệ hàng đầu thế giới và Việt Nam.',
-    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức (Tuyển thẳng, Điểm thi THPT, Học bạ lớp 12, ĐGNL ĐHQG TP.HCM, V-SAT).',
+    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức (Tuyển thẳng, Điểm thi THPT 2026, Học bạ lớp 12, ĐGNL ĐHQG TP.HCM, V-SAT).',
     isActive: true
   },
   {
@@ -27,7 +27,7 @@ export const STUDY_PROGRAMS: StudyProgram[] = [
     duration: '4 năm',
     description: 'Chương trình an toàn thông tin hàng đầu, trang bị kỹ năng phòng thủ không gian mạng, điều tra số (Digital Forensics), bảo mật đám mây, mật mã ứng dụng và kiểm thử thâm nhập (Penetration Testing).',
     careerProspects: 'Cybersecurity Analyst, SOC Engineer, Penetration Tester, Security Consultant tại ngân hàng, tài chính, quân đội và doanh nghiệp công nghệ.',
-    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức (Tuyển thẳng, Điểm thi THPT, Học bạ lớp 12, ĐGNL ĐHQG TP.HCM, V-SAT).',
+    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức (Tuyển thẳng, Điểm thi THPT 2026, Học bạ lớp 12, ĐGNL ĐHQG TP.HCM, V-SAT).',
     isActive: true
   },
   {
@@ -55,7 +55,7 @@ export const STUDY_PROGRAMS: StudyProgram[] = [
     duration: '4 năm',
     description: 'Đào tạo các mô hình kinh doanh số, sàn thương mại điện tử, digital marketing đa kênh, thanh toán điện tử và phân tích hành vi khách hàng trực tuyến.',
     careerProspects: 'E-Commerce Manager, Digital Marketing Specialist, Growth Hacker, Quản lý sàn TMĐT.',
-    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức tuyển sinh của trường.',
+    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức tuyển sinh 2026.',
     isActive: true
   },
 
@@ -85,7 +85,7 @@ export const STUDY_PROGRAMS: StudyProgram[] = [
     duration: '4 năm',
     description: 'Đào tạo chuyên môn kiểm toán tài chính quốc tế theo chuẩn mực IFRS và GAAP, kế toán quản trị và phân tích rủi ro tài chính doanh nghiệp.',
     careerProspects: 'Auditor tại Big 4 (PwC, EY, Deloitte, KPMG), Kế toán trưởng, Kiểm toán viên nội bộ.',
-    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức tuyển sinh của trường.',
+    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức tuyển sinh 2026.',
     isActive: true
   },
   {
@@ -99,7 +99,7 @@ export const STUDY_PROGRAMS: StudyProgram[] = [
     duration: '4 năm',
     description: 'Chương trình chuyên sâu về định chế tài chính, quản trị danh mục đầu tư, thẩm định tín dụng, thị trường vốn và ngân hàng thương mại quốc tế.',
     careerProspects: 'Chuyên viên phân tích đầu tư, Chuyên viên tín dụng ngân hàng, Quản lý tài sản (Asset Manager).',
-    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức tuyển sinh của trường.',
+    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức tuyển sinh 2026.',
     isActive: true
   },
   {
@@ -113,7 +113,7 @@ export const STUDY_PROGRAMS: StudyProgram[] = [
     duration: '4 năm',
     description: 'Ngành đón đầu xu thế giao thoa công nghệ và dịch vụ tài chính: Blockchain, thuật toán giao dịch tự động (Algo-trading), ví điện tử, chấm điểm tín dụng AI.',
     careerProspects: 'FinTech Product Manager, Blockchain Analyst, Quantitative Researcher, Chuyên viên giải pháp thanh toán số.',
-    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức tuyển sinh của trường.',
+    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức tuyển sinh 2026.',
     isActive: true
   },
   {
@@ -127,7 +127,7 @@ export const STUDY_PROGRAMS: StudyProgram[] = [
     duration: '4 năm',
     description: 'Đào tạo chuỗi cung ứng toàn cầu, logistics quốc tế, xuất nhập khẩu, chiến lược thâm nhập thị trường nước ngoài và luật thương mại quốc tế.',
     careerProspects: 'Chuyên viên xuất nhập khẩu, Logistics Coordinator, Quản lý quan hệ đối tác quốc tế.',
-    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức tuyển sinh của trường.',
+    admissionCriteria: 'Tốt nghiệp THPT, xét tuyển theo 05 phương thức tuyển sinh 2026.',
     isActive: true
   },
 
@@ -248,9 +248,9 @@ export const ADMISSION_METHODS = [
   {
     id: 'pt2',
     number: '02',
-    title: 'Phương thức 2: Xét Điểm Thi Tốt Nghiệp THPT',
-    criteria: 'Căn cứ kết quả thi tốt nghiệp THPT theo các tổ hợp môn xét tuyển quy định.',
-    badge: 'Kỳ thi Tốt nghiệp THPT'
+    title: 'Phương thức 2: Xét Điểm Thi Tốt Nghiệp THPT 2026',
+    criteria: 'Căn cứ kết quả thi tốt nghiệp THPT năm 2026 theo các tổ hợp môn xét tuyển quy định.',
+    badge: 'Kỳ thi THPT 2026'
   },
   {
     id: 'pt3',
@@ -263,15 +263,15 @@ export const ADMISSION_METHODS = [
     id: 'pt4',
     number: '04',
     title: 'Phương thức 4: Đánh Giá Năng Lực ĐHQG TP.HCM',
-    criteria: 'Xét kết quả kỳ thi Đánh giá năng lực do ĐH Quốc gia TP.HCM tổ chức (ngoại trừ ngành Kiến trúc).',
+    criteria: 'Xét kết quả kỳ thi Đánh giá năng lực do ĐH Quốc gia TP.HCM tổ chức năm 2026 (ngoại trừ ngành Kiến trúc).',
     badge: 'ĐGNL ĐHQG TP.HCM'
   },
   {
     id: 'pt5',
     number: '05',
     title: 'Phương thức 5: Kỳ Thi Đánh Giá V-SAT',
-    criteria: 'Xét kết quả kỳ thi đánh giá đầu vào đại học trên máy tính (V-SAT).',
-    badge: 'Kỳ thi V-SAT'
+    criteria: 'Xét kết quả kỳ thi đánh giá đầu vào đại học trên máy tính (V-SAT) năm 2026.',
+    badge: 'Kỳ thi V-SAT 2026'
   }
 ];
 

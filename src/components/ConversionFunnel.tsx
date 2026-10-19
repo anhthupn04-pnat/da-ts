@@ -1,6 +1,19 @@
+'use client';
+
 import React from 'react';
 import { Lead } from '@/types';
-import { Users, PhoneForwarded, MessageSquareText, FileCheck, CheckCircle } from 'lucide-react';
+import {
+  Users,
+  PhoneOff,
+  PhoneForwarded,
+  Flame,
+  FileClock,
+  FileCheck,
+  Award,
+  CheckCircle2,
+  CreditCard,
+  XCircle
+} from 'lucide-react';
 
 interface ConversionFunnelProps {
   leads: Lead[];
@@ -9,59 +22,100 @@ interface ConversionFunnelProps {
 export default function ConversionFunnel({ leads }: ConversionFunnelProps) {
   const total = leads.length || 1;
 
-  const countNew = leads.length;
-  const countContacted = leads.filter(l => l.status !== 'new' && l.status !== 'cancelled').length;
-  const countConsulting = leads.filter(l => ['consulting', 'registered', 'enrolled'].includes(l.status)).length;
-  const countRegistered = leads.filter(l => ['registered', 'enrolled'].includes(l.status)).length;
-  const countEnrolled = leads.filter(l => l.status === 'enrolled').length;
+  // 10 giai đoạn
+  const countNew = leads.filter(l => l.status === 'new').length;
+  const countUnreachable = leads.filter(l => l.status === 'unreachable').length;
+  const countConsulted1 = leads.filter(l => l.status === 'consulted_1').length;
+  const countHot = leads.filter(l => l.status === 'hot_lead').length;
+  const countWaitingTranscript = leads.filter(l => l.status === 'waiting_transcript').length;
+  const countSubmitted = leads.filter(l => l.status === 'submitted_app').length;
+  const countConditional = leads.filter(l => l.status === 'conditional_admit').length;
+  const countConfirmed = leads.filter(l => l.status === 'confirmed_enroll').length;
+  const countPaid = leads.filter(l => l.status === 'tuition_paid' || l.paymentStatus === 'tuition_paid').length;
+  const countCancelled = leads.filter(l => l.status === 'cancelled').length;
 
-  const steps = [
+  const funnelStages = [
     {
-      title: 'Tiếp nhận Mới',
+      title: '1. Mới tiếp nhận (Leads Thô)',
       count: countNew,
       percent: Math.round((countNew / total) * 100),
-      color: 'bg-blue-600',
+      color: 'bg-slate-500',
       icon: Users
     },
     {
-      title: 'Đã Liên Hệ / Kết Nối',
-      count: countContacted,
-      percent: Math.round((countContacted / total) * 100),
-      color: 'bg-indigo-600',
+      title: '2. Chưa liên hệ được',
+      count: countUnreachable,
+      percent: Math.round((countUnreachable / total) * 100),
+      color: 'bg-amber-500',
+      icon: PhoneOff
+    },
+    {
+      title: '3. Đã tư vấn lần 1',
+      count: countConsulted1,
+      percent: Math.round((countConsulted1 / total) * 100),
+      color: 'bg-blue-600',
       icon: PhoneForwarded
     },
     {
-      title: 'Đang Tư Vấn Chuyên Sâu',
-      count: countConsulting,
-      percent: Math.round((countConsulting / total) * 100),
-      color: 'bg-violet-600',
-      icon: MessageSquareText
+      title: '4. Quan tâm cao (Lead Nóng)',
+      count: countHot,
+      percent: Math.round((countHot / total) * 100),
+      color: 'bg-orange-500',
+      icon: Flame
     },
     {
-      title: 'Đã Nộp Hồ Sơ / Đăng Ký',
-      count: countRegistered,
-      percent: Math.round((countRegistered / total) * 100),
-      color: 'bg-amber-500',
+      title: '5. Chờ học bạ THPT',
+      count: countWaitingTranscript,
+      percent: Math.round((countWaitingTranscript / total) * 100),
+      color: 'bg-purple-600',
+      icon: FileClock
+    },
+    {
+      title: '6. Đã nộp hồ sơ xét tuyển',
+      count: countSubmitted,
+      percent: Math.round((countSubmitted / total) * 100),
+      color: 'bg-indigo-600',
       icon: FileCheck
     },
     {
-      title: 'Nhập Học Chính Thức',
-      count: countEnrolled,
-      percent: Math.round((countEnrolled / total) * 100),
+      title: '7. Trúng tuyển có điều kiện',
+      count: countConditional,
+      percent: Math.round((countConditional / total) * 100),
+      color: 'bg-teal-600',
+      icon: Award
+    },
+    {
+      title: '8. Đã xác nhận nhập học',
+      count: countConfirmed,
+      percent: Math.round((countConfirmed / total) * 100),
+      color: 'bg-cyan-600',
+      icon: CheckCircle2
+    },
+    {
+      title: '9. Đã đóng học phí / Nhập học',
+      count: countPaid,
+      percent: Math.round((countPaid / total) * 100),
       color: 'bg-emerald-600',
-      icon: CheckCircle
+      icon: CreditCard
+    },
+    {
+      title: '10. Từ chối / Hủy hồ sơ',
+      count: countCancelled,
+      percent: Math.round((countCancelled / total) * 100),
+      color: 'bg-rose-500',
+      icon: XCircle
     }
   ];
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-xs">
-      <div className="flex items-center justify-between mb-6">
+    <div className="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-2xs space-y-4">
+      <div className="flex items-center justify-between pb-3 border-b border-slate-100">
         <div>
           <h3 className="text-base font-bold text-slate-900">
-            Phễu Chuyển Đổi Tuyển Sinh
+            Phễu Chuyển Đổi Đường Ống Tuyển Sinh (10 Giai Đoạn)
           </h3>
           <p className="text-xs text-slate-500 mt-0.5">
-            Tỷ lệ chuyển đổi qua các giai đoạn từ tiếp nhận đến nhập học
+            Đo lường tỷ lệ thí sinh rơi rụng qua từng vòng để tối ưu hóa phương pháp tư vấn
           </p>
         </div>
         <span className="text-xs font-bold px-2.5 py-1 bg-blue-50 text-blue-700 rounded-lg border border-blue-200">
@@ -69,30 +123,27 @@ export default function ConversionFunnel({ leads }: ConversionFunnelProps) {
         </span>
       </div>
 
-      <div className="space-y-4">
-        {steps.map((step, idx) => {
-          const Icon = step.icon;
+      <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
+        {funnelStages.map((stage, idx) => {
+          const Icon = stage.icon;
           return (
-            <div key={idx} className="space-y-1.5">
+            <div key={idx} className="space-y-1">
               <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2 font-semibold text-slate-700">
-                  <span className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[10px] text-slate-600 font-bold">
-                    {idx + 1}
-                  </span>
-                  <Icon className="w-3.5 h-3.5 text-slate-500" />
-                  <span>{step.title}</span>
+                <div className="flex items-center gap-2 font-medium text-slate-700">
+                  <Icon className="w-3.5 h-3.5 text-slate-400" />
+                  <span className="truncate">{stage.title}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-extrabold text-slate-900">{step.count} thí sinh</span>
-                  <span className="text-slate-400">({step.percent}%)</span>
+                <div className="flex items-center gap-1.5 shrink-0 font-mono">
+                  <strong className="text-slate-900">{stage.count}</strong>
+                  <span className="text-slate-400 text-[11px]">({stage.percent}%)</span>
                 </div>
               </div>
 
-              {/* Progress bar */}
-              <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden p-0.5">
+              {/* Bar */}
+              <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                 <div
-                  className={`h-full ${step.color} rounded-full transition-all duration-500 ease-out`}
-                  style={{ width: `${Math.max(step.percent, 3)}%` }}
+                  className={`h-full ${stage.color} rounded-full transition-all duration-500`}
+                  style={{ width: `${Math.max(stage.percent, stage.count > 0 ? 3 : 0)}%` }}
                 />
               </div>
             </div>

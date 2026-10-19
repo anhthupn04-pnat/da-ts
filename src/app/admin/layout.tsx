@@ -20,9 +20,10 @@ import {
   X,
   Shield,
   LogOut,
-  Building2,
+  FileCheck,
+  Search,
   CheckCircle2,
-  Lock
+  CalendarCheck
 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -51,22 +52,28 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     router.push('/login');
   };
 
-  // Define full navigation items with role permissions
+  // Định nghĩa đầy đủ menu phân quyền cho 5 vai trò
   const allNavigation = [
     {
-      name: 'Bảng Điều Khiển',
+      name: 'Bảng Điều Khiển & Nhắc Việc',
       href: '/admin',
       icon: LayoutDashboard,
-      roles: ['admin', 'manager', 'counselor', 'marketer']
+      roles: ['admin', 'manager', 'counselor', 'marketer', 'verifier']
     },
     {
-      name: 'Quản Lý Thí Sinh & Lead',
+      name: 'Quản Lý Thí Sinh & Đường Ống',
       href: '/admin/leads',
       icon: Users,
       roles: ['admin', 'manager', 'counselor']
     },
     {
-      name: 'Chương Trình Đào Tạo',
+      name: 'Hậu Kiểm & Thẩm Định Điểm',
+      href: '/admin/verification',
+      icon: FileCheck,
+      roles: ['admin', 'manager', 'verifier']
+    },
+    {
+      name: 'Chương Trình & Chỉ Tiêu',
       href: '/admin/programs',
       icon: BookOpen,
       roles: ['admin', 'manager', 'counselor']
@@ -81,36 +88,38 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       name: 'Trợ Lý AI Tuyển Sinh',
       href: '/admin/ai-assistant',
       icon: Bot,
-      roles: ['admin', 'manager', 'marketer']
+      roles: ['admin', 'manager', 'marketer', 'counselor']
     },
     {
-      name: 'Báo Cáo & Xuất Dữ Liệu',
+      name: 'Báo Cáo Phễu & Hiệu Suất KPI',
       href: '/admin/reports',
       icon: BarChart3,
-      roles: ['admin', 'manager', 'counselor', 'marketer']
+      roles: ['admin', 'manager', 'counselor', 'marketer', 'verifier']
     },
     {
-      name: 'Cấu Hình & Cơ Sở Dữ Liệu',
+      name: 'Cấu Hình RBAC & Audit Logs',
       href: '/admin/settings',
       icon: Settings,
       roles: ['admin', 'manager']
     }
   ];
 
-  // Filter navigation by current user's role
+  // Lọc navigation theo role người dùng hiện tại
   const userRole = currentUser?.role || 'admin';
   const navigation = allNavigation.filter(item => item.roles.includes(userRole));
 
   const getRoleBadge = (role?: string) => {
     switch (role) {
       case 'admin':
-        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-900/60 text-purple-300 border border-purple-700/50">Admin Hệ Thống</span>;
+        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-900/60 text-purple-300 border border-purple-700/50">Super Admin</span>;
       case 'manager':
-        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-900/60 text-blue-300 border border-blue-700/50">Trưởng Ban Tuyển Sinh</span>;
+        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-900/60 text-blue-300 border border-blue-700/50">Admissions Manager</span>;
       case 'counselor':
-        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-900/60 text-emerald-300 border border-emerald-700/50">Chuyên Viên Tư Vấn</span>;
+        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-900/60 text-emerald-300 border border-emerald-700/50">Admissions Officer</span>;
+      case 'verifier':
+        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-teal-900/60 text-teal-300 border border-teal-700/50">Verification Officer</span>;
       case 'marketer':
-        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-900/60 text-amber-300 border border-amber-700/50">Chuyên Viên Marketing</span>;
+        return <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-900/60 text-amber-300 border border-amber-700/50">Marketing Officer</span>;
       default:
         return null;
     }
@@ -142,7 +151,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </div>
               <div className="flex flex-col">
                 <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
-                  CRM Tuyển Sinh
+                  Admissions CRM & Portal
                 </span>
                 <span className="text-sm font-extrabold text-white">
                   VN-US Duy Tân
@@ -163,7 +172,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div className="p-4 mx-3 my-3 rounded-2xl bg-slate-800/80 border border-slate-700/60">
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                  Bộ Phận Đang Làm Việc
+                  Cán Bộ Tác Nghiệp
                 </span>
                 {getRoleBadge(currentUser.role)}
               </div>
@@ -173,6 +182,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <p className="text-[11px] text-blue-300 truncate mt-0.5">
                 {currentUser.department}
               </p>
+              {currentUser.role === 'counselor' && (
+                <div className="mt-2 pt-2 border-t border-slate-700/50 flex items-center justify-between text-[10px] text-emerald-400 font-medium">
+                  <span>Phạm vi: {currentUser.assignedRegion || 'Được phân công'}</span>
+                  <span>Chỉ tiêu: {currentUser.targetQuota || 80}</span>
+                </div>
+              )}
             </div>
           )}
 
@@ -203,11 +218,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Sidebar Footer */}
         <div className="p-4 border-t border-slate-800 space-y-2">
           <Link
+            href="/tra-cuu"
+            className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-medium text-amber-300 hover:text-amber-200 hover:bg-amber-950/30 rounded-xl transition"
+          >
+            <Search className="w-4 h-4" />
+            <span>Cổng Tra Cứu Trực Tuyến</span>
+          </Link>
+
+          <Link
             href="/"
             className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Về Cổng Công Khai</span>
+            <span>Về Trang Chủ Tuyển Sinh</span>
           </Link>
 
           <button
@@ -221,9 +244,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="px-3.5 py-1 text-[11px] text-slate-500 flex items-center justify-between">
             <span className="flex items-center gap-1">
               <Shield className="w-3 h-3 text-emerald-500" />
-              Bảo Mật SSL
+              RBAC & Database v2.0
             </span>
-            <span className="font-mono text-slate-400">v1.2-VNUS</span>
+            <span className="font-mono text-slate-400">VNUS-K32</span>
           </div>
         </div>
       </aside>
@@ -242,12 +265,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </button>
             <div>
               <h2 className="text-sm sm:text-base font-bold text-slate-800 truncate">
-                Hệ Thống Số Hóa Tuyển Sinh & Marketing VN-US
+                Hệ Thống Website & Quản Trị Tuyển Sinh Số Hóa Toàn Diện
               </h2>
               {currentUser && (
-                <span className="text-[11px] text-slate-500 hidden sm:block">
-                  {currentUser.department}
-                </span>
+                <div className="flex items-center gap-2 text-[11px] text-slate-500 hidden sm:flex">
+                  <span>{currentUser.department}</span>
+                  <span className="text-slate-300">•</span>
+                  <span className="text-blue-600 font-medium">Bảo mật cấp độ Database & Audit Trail</span>
+                </div>
               )}
             </div>
           </div>

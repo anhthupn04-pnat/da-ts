@@ -1,43 +1,57 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { STUDY_PROGRAMS } from '@/data/programsData';
-import { addLead } from '@/data/storage';
-import { CheckCircle2, AlertCircle, Send, Sparkles, Shield, User, Phone, Mail, MapPin, School, BookOpen, Calendar } from 'lucide-react';
+import { PROVINCES_AND_SCHOOLS, EXAM_BLOCKS } from '@/data/provincesAndSchools';
+import { addLead, sendOmnichannelMessage } from '@/data/storage';
+import {
+  CheckCircle2,
+  AlertCircle,
+  Send,
+  Sparkles,
+  Shield,
+  User,
+  Phone,
+  Mail,
+  MapPin,
+  School,
+  BookOpen,
+  QrCode,
+  ArrowRight
+} from 'lucide-react';
 
 export default function LeadRegistrationForm() {
-  const [currentYear, setCurrentYear] = useState<number>(2026);
-
-  React.useEffect(() => {
-    setCurrentYear(new Date().getFullYear());
-  }, []);
-
   const [formData, setFormData] = useState({
     fullName: '',
     phone: '',
+    idCardNumber: '',
     email: '',
     province: 'Đà Nẵng',
-    highSchool: '',
-    graduationYear: currentYear,
+    highSchool: 'THPT Chuyên Lê Quý Đôn',
+    graduationYear: 2026,
     programId: STUDY_PROGRAMS[0].id,
+    secondaryProgramId: STUDY_PROGRAMS[1].id,
+    examBlock: 'A00',
+    estimatedScore: 24.5,
     source: 'website' as const,
     notes: '',
     agreedPolicy: true,
-    // Honeypot for bot detection
-    websiteUrl: ''
+    websiteUrl: '' // honeypot
   });
 
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error'; text: string; leadId?: string } | null>(null);
+
+  const selectedProvinceData = PROVINCES_AND_SCHOOLS.find(p => p.name === formData.province);
+  const suggestedSchools = selectedProvinceData ? selectedProvinceData.schools : [];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatusMessage(null);
 
     // Bot check (honeypot)
-    if (formData.websiteUrl) {
-      return;
-    }
+    if (formData.websiteUrl) return;
 
     // Validation
     const cleanPhone = formData.phone.trim().replace(/[\s\-\.]/g, '');
@@ -45,6 +59,15 @@ export default function LeadRegistrationForm() {
       setStatusMessage({
         type: 'error',
         text: 'Vui lòng nhập số điện thoại di động hợp lệ (10 số, ví dụ: 0981234567 hoặc 0888414141).'
+      });
+      return;
+    }
+
+    const cleanCccd = formData.idCardNumber.replace(/\s/g, '');
+    if (cleanCccd && cleanCccd.length !== 12) {
+      setStatusMessage({
+        type: 'error',
+        text: 'Số CCCD / Mã định danh phải đúng 12 chữ số nếu điền.'
       });
       return;
     }
@@ -68,15 +91,18 @@ export default function LeadRegistrationForm() {
     setLoading(true);
 
     try {
-      // Direct call to storage layer (ensures immediate availability across the app)
       const result = addLead({
         fullName: formData.fullName.trim(),
         phone: cleanPhone,
+        idCardNumber: cleanCccd || undefined,
         email: formData.email.trim(),
         province: formData.province,
         highSchool: formData.highSchool.trim() || 'Chưa cập nhật',
-        graduationYear: Number(formData.graduationYear) || currentYear,
+        graduationYear: 2026,
         programId: formData.programId,
+        secondaryProgramId: formData.secondaryProgramId || undefined,
+        examBlock: formData.examBlock,
+        estimatedScore: Number(formData.estimatedScore) || 24.0,
         source: 'website',
         status: 'new',
         priority: 'high',
@@ -91,19 +117,32 @@ export default function LeadRegistrationForm() {
       } else {
         setStatusMessage({
           type: 'success',
-          text: 'Chúc mừng bạn! Yêu cầu tư vấn đã được gửi thành công đến Ban Tuyển sinh Viện Đào tạo Quốc tế (VN-US).',
+          text: 'Chúc mừng bạn! Yêu cầu tư vấn đã được lưu vào CSDL tuyển sinh. Chuyên viên sẽ liên hệ trong 30 phút.',
           leadId: result.lead?.id
         });
 
-        // Reset form
+        // Tự động kích hoạt mô phỏng Zalo ZNS
+        sendOmnichannelMessage(
+          result.lead!.id,
+          'zalo_zns',
+          'ZNS_WELCOME',
+          'Chào mừng bạn đến với Cổng Tuyển sinh Quốc tế K32',
+          `Chào ${result.lead!.fullName}, cảm ơn bạn đã đăng ký tư vấn ngành ${result.lead!.programName}. Mã hồ sơ của bạn là ${result.lead!.id}. Bạn có thể tra cứu tiến độ bất kỳ lúc nào tại tra-cuu.`
+        );
+
+        // Reset
         setFormData({
           fullName: '',
           phone: '',
+          idCardNumber: '',
           email: '',
           province: 'Đà Nẵng',
-          highSchool: '',
-          graduationYear: currentYear,
+          highSchool: 'THPT Chuyên Lê Quý Đôn',
+          graduationYear: 2026,
           programId: STUDY_PROGRAMS[0].id,
+          secondaryProgramId: STUDY_PROGRAMS[1].id,
+          examBlock: 'A00',
+          estimatedScore: 24.5,
           source: 'website',
           notes: '',
           agreedPolicy: true,
@@ -130,13 +169,13 @@ export default function LeadRegistrationForm() {
           <div>
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 mb-2">
               <Sparkles className="w-3 h-3 text-amber-300" />
-              Đăng Ký Tư Vấn Tuyển Sinh Trực Tuyến
+              Đăng Ký Tuyển Sinh K32 - 2026
             </span>
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-              Đăng Ký Tư Vấn & Xét Tuyển Học Bổng
+              Đăng Ký Tư Vấn & Xét Tuyển Học Bổng 13 Tỷ
             </h3>
             <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl">
-              Nhận bộ tài liệu hướng dẫn nhập học, thông tin xét học bổng 13 Tỷ và được chuyên viên tư vấn 1-1 miễn phí.
+              Nhận bộ tài liệu PDF hướng dẫn nhập học K32, thông tin học bổng toàn phần CMU/PSU/CSU/Troy và được chuyên viên tư vấn 1-1 miễn phí.
             </p>
           </div>
         </div>
@@ -144,11 +183,9 @@ export default function LeadRegistrationForm() {
 
       {/* Form Content */}
       <div className="p-6 sm:p-8">
-        
-        {/* Alerts */}
         {statusMessage && (
           <div
-            className={`p-4 rounded-2xl mb-6 flex items-start gap-3 text-sm animate-fade-in ${
+            className={`p-4 rounded-2xl mb-6 text-xs sm:text-sm flex items-start gap-3 animate-fade-in ${
               statusMessage.type === 'success'
                 ? 'bg-emerald-50 text-emerald-900 border border-emerald-200'
                 : 'bg-rose-50 text-rose-900 border border-rose-200'
@@ -160,10 +197,17 @@ export default function LeadRegistrationForm() {
               <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
             )}
             <div className="space-y-1">
-              <div className="font-semibold">{statusMessage.text}</div>
+              <p className="font-semibold">{statusMessage.text}</p>
               {statusMessage.leadId && (
-                <div className="text-xs text-emerald-700">
-                  Mã tiếp nhận hồ sơ: <span className="font-mono font-bold">{statusMessage.leadId}</span>. Chuyên viên sẽ liên hệ lại qua điện thoại / Zalo trong vòng 24 giờ.
+                <div className="pt-2 flex items-center gap-2">
+                  <span className="text-xs">Mã hồ sơ của bạn: <strong className="font-mono text-blue-700 bg-white px-2 py-0.5 rounded border border-blue-200">{statusMessage.leadId}</strong></span>
+                  <Link
+                    href={`/tra-cuu`}
+                    className="inline-flex items-center gap-1 font-bold text-xs text-blue-700 hover:underline"
+                  >
+                    <span>Tra cứu tiến độ & Giấy báo QR ngay</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
                 </div>
               )}
             </div>
@@ -171,7 +215,7 @@ export default function LeadRegistrationForm() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Honeypot hidden input */}
+          {/* Honeypot hidden */}
           <input
             type="text"
             name="websiteUrl"
@@ -182,22 +226,21 @@ export default function LeadRegistrationForm() {
             autoComplete="off"
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
             {/* Họ và tên */}
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                Họ và tên thí sinh <span className="text-rose-500">*</span>
+                Họ và Tên Học Sinh <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                 <input
                   type="text"
                   required
-                  placeholder="Ví dụ: Nguyễn Văn An"
+                  placeholder="Ví dụ: Nguyễn Hoàng Long"
                   value={formData.fullName}
                   onChange={e => setFormData({ ...formData, fullName: e.target.value })}
-                  className="w-full pl-10 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600 focus:border-transparent transition"
+                  className="w-full pl-10 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600 focus:border-transparent transition font-medium"
                 />
               </div>
             </div>
@@ -205,17 +248,34 @@ export default function LeadRegistrationForm() {
             {/* Số điện thoại */}
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                Số điện thoại (có Zalo) <span className="text-rose-500">*</span>
+                Số Điện Thoại (Zalo) <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                 <input
                   type="tel"
                   required
-                  placeholder="09xx xxx xxx hoặc 08xx xxx xxx"
+                  placeholder="Ví dụ: 0905123456"
                   value={formData.phone}
                   onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full pl-10 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600 focus:border-transparent transition"
+                  className="w-full pl-10 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600 focus:border-transparent transition font-medium"
+                />
+              </div>
+            </div>
+
+            {/* Số CCCD */}
+            <div>
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                Số CCCD / Định Danh (12 số)
+              </label>
+              <div className="relative">
+                <Shield className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                <input
+                  type="text"
+                  placeholder="Ví dụ: 048208001234 (để tra cứu giấy báo)"
+                  value={formData.idCardNumber}
+                  onChange={e => setFormData({ ...formData, idCardNumber: e.target.value })}
+                  className="w-full pl-10 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600 focus:border-transparent transition font-mono"
                 />
               </div>
             </div>
@@ -223,48 +283,43 @@ export default function LeadRegistrationForm() {
             {/* Email */}
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                Địa chỉ Email <span className="text-rose-500">*</span>
+                Hòm Thư Email Nhận Tài Liệu
               </label>
               <div className="relative">
                 <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                 <input
                   type="email"
-                  required
-                  placeholder="nhan-tai-lieu@gmail.com"
+                  placeholder="hoanglong.dtu@gmail.com"
                   value={formData.email}
                   onChange={e => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full pl-10 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600 focus:border-transparent transition"
+                  className="w-full pl-10 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600 focus:border-transparent transition font-medium"
                 />
               </div>
             </div>
 
-            {/* Tỉnh / Thành phố */}
+            {/* Tỉnh thành */}
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                Tỉnh / Thành phố <span className="text-rose-500">*</span>
+                Tỉnh / Thành Phố <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 <MapPin className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                 <select
                   value={formData.province}
-                  onChange={e => setFormData({ ...formData, province: e.target.value })}
-                  className="w-full pl-10 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600 focus:border-transparent transition"
+                  onChange={e => {
+                    const newProv = e.target.value;
+                    const provObj = PROVINCES_AND_SCHOOLS.find(p => p.name === newProv);
+                    setFormData({
+                      ...formData,
+                      province: newProv,
+                      highSchool: provObj?.schools[0] || 'THPT Khác'
+                    });
+                  }}
+                  className="w-full pl-10 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600 focus:border-transparent transition font-medium"
                 >
-                  <option value="Đà Nẵng">Đà Nẵng</option>
-                  <option value="Quảng Nam">Quảng Nam</option>
-                  <option value="Thừa Thiên Huế">Thừa Thiên Huế</option>
-                  <option value="Quảng Ngãi">Quảng Ngãi</option>
-                  <option value="Quảng Bình">Quảng Bình</option>
-                  <option value="Quảng Trị">Quảng Trị</option>
-                  <option value="Nghệ An">Nghệ An</option>
-                  <option value="Hà Tĩnh">Hà Tĩnh</option>
-                  <option value="Bình Định">Bình Định</option>
-                  <option value="Khánh Hòa">Khánh Hòa</option>
-                  <option value="Gia Lai">Gia Lai</option>
-                  <option value="Đắk Lắk">Đắk Lắk</option>
-                  <option value="Hà Nội">Hà Nội</option>
-                  <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
-                  <option value="Khác">Tỉnh thành khác</option>
+                  {PROVINCES_AND_SCHOOLS.map(p => (
+                    <option key={p.id} value={p.name}>{p.name} ({p.region})</option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -272,142 +327,104 @@ export default function LeadRegistrationForm() {
             {/* Trường THPT */}
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                Trường THPT
+                Trường THPT Đang Học (Gợi ý tự động)
               </label>
               <div className="relative">
                 <School className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                 <input
-                  type="text"
-                  placeholder="Ví dụ: THPT Phan Châu Trinh, Lê Quý Đôn..."
+                  list="home-school-suggestions"
+                  placeholder="Chọn hoặc nhập trường THPT..."
                   value={formData.highSchool}
                   onChange={e => setFormData({ ...formData, highSchool: e.target.value })}
-                  className="w-full pl-10 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600 focus:border-transparent transition"
-                />
-              </div>
-            </div>
-
-            {/* Năm tốt nghiệp THPT / Năm dự kiến xét tuyển */}
-            <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                Năm tốt nghiệp THPT / Xét tuyển <span className="text-rose-500">*</span>
-              </label>
-              <div className="relative">
-                <Calendar className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-                <select
-                  value={formData.graduationYear}
-                  onChange={e => setFormData({ ...formData, graduationYear: Number(e.target.value) })}
                   className="w-full pl-10 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600 focus:border-transparent transition font-medium"
-                >
-                  <option value={currentYear + 1}>Năm {currentYear + 1} (Học sinh Lớp 11)</option>
-                  <option value={currentYear}>Năm {currentYear} (Học sinh Lớp 12 / Năm nay)</option>
-                  <option value={currentYear - 1}>Năm {currentYear - 1} (Đã tốt nghiệp THPT)</option>
-                  <option value={currentYear - 2}>Năm {currentYear - 2} (Đã tốt nghiệp THPT)</option>
-                  <option value={currentYear - 3}>Năm {currentYear - 3} trở về trước</option>
-                </select>
+                />
+                <datalist id="home-school-suggestions">
+                  {suggestedSchools.map(sch => (
+                    <option key={sch} value={sch} />
+                  ))}
+                </datalist>
               </div>
             </div>
 
-            {/* Ngành học quan tâm */}
+            {/* Nguyện vọng 1 */}
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                Chương trình / Ngành học quan tâm <span className="text-rose-500">*</span>
+                Nguyện Vọng 1 (Quan Tâm Nhất) <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 <BookOpen className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                 <select
                   value={formData.programId}
                   onChange={e => setFormData({ ...formData, programId: e.target.value })}
-                  className="w-full pl-10 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600 focus:border-transparent transition font-medium"
+                  className="w-full pl-10 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600 focus:border-transparent transition font-bold text-blue-900"
                 >
-                  <optgroup label="Chương trình Du học Troy (Mỹ - Cấp bằng Đại học Troy)">
-                    {STUDY_PROGRAMS.filter(p => p.id.startsWith('troy')).map(p => (
-                      <option key={p.id} value={p.id}>
-                        {p.name} [{p.code}]
-                      </option>
-                    ))}
-                  </optgroup>
-                  <optgroup label="Chương trình Tiên tiến CMU (Mỹ - Đạt kiểm định ABET)">
-                    {STUDY_PROGRAMS.filter(p => p.id.startsWith('cmu')).map(p => (
-                      <option key={p.id} value={p.id}>
-                        {p.name} [{p.code}]
-                      </option>
-                    ))}
-                  </optgroup>
-                  <optgroup label="Chương trình Tiên tiến PSU (Mỹ - Chuẩn AACSB)">
-                    {STUDY_PROGRAMS.filter(p => p.id.startsWith('psu')).map(p => (
-                      <option key={p.id} value={p.id}>
-                        {p.name} [{p.code}]
-                      </option>
-                    ))}
-                  </optgroup>
-                  <optgroup label="Chương trình Tiên tiến CSU (Mỹ - Cal Poly)">
-                    {STUDY_PROGRAMS.filter(p => p.id.startsWith('csu')).map(p => (
-                      <option key={p.id} value={p.id}>
-                        {p.name} [{p.code}]
-                      </option>
-                    ))}
-                  </optgroup>
+                  {STUDY_PROGRAMS.map(p => (
+                    <option key={p.id} value={p.id}>
+                      {p.name} ({p.partner})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Nguyện vọng 2 */}
+            <div>
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                Nguyện Vọng 2 (Dự Phòng)
+              </label>
+              <div className="relative">
+                <BookOpen className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                <select
+                  value={formData.secondaryProgramId}
+                  onChange={e => setFormData({ ...formData, secondaryProgramId: e.target.value })}
+                  className="w-full pl-10 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600 focus:border-transparent transition font-medium text-slate-700"
+                >
+                  <option value="">-- Không đăng ký NV2 --</option>
+                  {STUDY_PROGRAMS.map(p => (
+                    <option key={p.id} value={p.id}>
+                      {p.name} ({p.partner})
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
           </div>
 
-          {/* Ghi chú hoặc câu hỏi */}
-          <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-              Câu hỏi hoặc nguyện vọng học bổng cần giải đáp
-            </label>
-            <textarea
-              rows={2}
-              placeholder="Ví dụ: Em muốn hỏi về điều kiện xét học bổng toàn phần CMU với điểm thi 26 điểm; chính sách ký túc xá hay thủ tục xét tuyển..."
-              value={formData.notes}
-              onChange={e => setFormData({ ...formData, notes: e.target.value })}
-              className="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600 focus:border-transparent transition"
-            />
-          </div>
-
-          {/* Chính sách quyền riêng tư */}
-          <div className="flex items-start gap-2.5 pt-1">
-            <input
-              type="checkbox"
-              id="agreedPolicy"
-              checked={formData.agreedPolicy}
-              onChange={e => setFormData({ ...formData, agreedPolicy: e.target.checked })}
-              className="mt-1 w-4 h-4 text-blue-600 rounded-sm border-slate-300 focus:ring-blue-500"
-            />
-            <label htmlFor="agreedPolicy" className="text-xs text-slate-600 leading-relaxed cursor-pointer select-none">
-              Tôi đồng ý nhận tài liệu tư vấn tuyển sinh và thông báo học bổng chính thức từ Trung tâm Tư vấn Tuyển sinh Trường Đào tạo Quốc tế (VN-US) – Đại học Duy Tân. Thông tin cá nhân được bảo mật tuyệt đối.
-            </label>
-          </div>
-
-          {/* Submit button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3.5 px-6 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-blue-700 via-indigo-700 to-slate-900 hover:from-blue-800 hover:to-slate-950 shadow-md shadow-blue-700/20 hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group cursor-pointer"
-          >
-            {loading ? (
-              <span className="inline-flex items-center gap-2">
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                Đang xử lý tiếp nhận hồ sơ...
+          {/* Policy agreement */}
+          <div className="pt-2">
+            <label className="flex items-start gap-2.5 text-xs text-slate-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.agreedPolicy}
+                onChange={e => setFormData({ ...formData, agreedPolicy: e.target.checked })}
+                className="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span>
+                Tôi đồng ý nhận tài liệu cẩm nang tuyển sinh K32, thông báo xét duyệt học bổng và cuộc gọi tư vấn 1-1 từ Ban Tuyển sinh VN-US Đại học Duy Tân.
               </span>
-            ) : (
-              <>
-                <span>Gửi Đăng Ký Tư Vấn & Nhận Hướng Dẫn Tuyển Sinh</span>
-                <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </>
-            )}
-          </button>
-        </form>
+            </label>
+          </div>
 
-        <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-          <span className="flex items-center gap-1.5">
-            <Shield className="w-3.5 h-3.5 text-emerald-600" />
-            Hệ thống bảo vệ dữ liệu thí sinh theo Nghị định 13/2023/NĐ-CP
-          </span>
-          <span className="hidden sm:inline">Phản hồi qua Zalo trong vòng 24h</span>
-        </div>
+          {/* Submit Button */}
+          <div className="pt-2">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 hover:from-blue-800 hover:to-indigo-800 text-white font-bold text-sm shadow-lg shadow-blue-600/30 transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer group"
+            >
+              {loading ? (
+                <span>Đang Gửi Đăng Ký Lên Hệ Thống...</span>
+              ) : (
+                <>
+                  <span>Gửi Đăng Ký Tư Vấn & Nhận Cẩm Nang K32 Ngay</span>
+                  <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
+            </button>
+          </div>
+        </form>
       </div>
+
     </div>
   );
 }

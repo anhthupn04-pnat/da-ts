@@ -23,7 +23,7 @@ export default function HomePage() {
     },
     {
       q: 'Điều kiện nhận Học bổng toàn phần VN-US và Quỹ học bổng Troy 13 Tỷ là gì?',
-      a: 'Thí sinh đạt tổng điểm 3 môn từ 25 điểm trở lên trong kỳ thi Tốt nghiệp THPT sẽ được xét nhận học bổng toàn phần các ngành CMU, PSU, CSU. Với Quỹ học bổng Troy 13 Tỷ, thí sinh có điểm THPT từ 23-26đ hoặc có chứng chỉ IELTS từ 5.5+ sẽ nhận các mức học bổng giá trị toàn khóa.'
+      a: 'Thí sinh đạt tổng điểm 3 môn từ 25 điểm trở lên trong kỳ thi Tốt nghiệp THPT 2026 sẽ được xét nhận học bổng toàn phần các ngành CMU, PSU, CSU. Với Quỹ học bổng Troy 13 Tỷ, thí sinh có điểm THPT từ 23-26đ hoặc có chứng chỉ IELTS từ 5.5+ sẽ nhận các mức học bổng giá trị toàn khóa.'
     },
     {
       q: 'Kiểm định ABET và AACSB có ý nghĩa gì đối với sinh viên?',
@@ -50,7 +50,7 @@ export default function HomePage() {
             
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-amber-300 border border-amber-400/30 backdrop-blur-md shadow-xs">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>Cổng Thông Tin Tuyển Sinh & Tư Vấn Hướng Nghiệp Đại Học Quốc Tế</span>
+              <span>Cổng Thông Tin Tuyển Sinh & Tư Vấn Hướng Nghiệp K32 (2026)</span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
@@ -63,26 +63,33 @@ export default function HomePage() {
             </p>
 
             {/* CTA action buttons */}
-            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <a
-                href="#registration-form"
-                className="w-full sm:w-auto px-7 py-3.5 rounded-xl font-bold text-sm text-slate-950 bg-gradient-to-r from-amber-400 via-amber-300 to-amber-400 hover:from-amber-300 hover:to-amber-200 shadow-lg shadow-amber-500/25 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+            <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                href="/xet-tuyen"
+                className="w-full sm:w-auto px-6 py-3.5 rounded-xl font-bold text-sm text-slate-950 bg-gradient-to-r from-amber-400 via-amber-300 to-amber-400 hover:from-amber-300 hover:to-amber-200 shadow-lg shadow-amber-500/25 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
               >
-                <span>Đăng Ký Tư Vấn & Nhận Học Bổng</span>
+                <span>Nộp Hồ Sơ Xét Tuyển Online</span>
                 <ArrowRight className="w-4 h-4 text-slate-950" />
-              </a>
+              </Link>
+
+              <Link
+                href="/tra-cuu"
+                className="w-full sm:w-auto px-5 py-3.5 rounded-xl font-semibold text-xs sm:text-sm text-white bg-blue-600/60 hover:bg-blue-600/90 border border-blue-400/30 backdrop-blur-md transition-all flex items-center justify-center gap-2"
+              >
+                <span>Tra Cứu Tiến Độ & Giấy Báo QR</span>
+              </Link>
 
               <a
-                href="#programs-section"
-                className="w-full sm:w-auto px-7 py-3.5 rounded-xl font-semibold text-sm text-white bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md transition-all flex items-center justify-center gap-2"
+                href="#registration-form"
+                className="w-full sm:w-auto px-5 py-3.5 rounded-xl font-semibold text-xs sm:text-sm text-white bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md transition-all flex items-center justify-center gap-2"
               >
                 <BookOpen className="w-4 h-4 text-blue-300" />
-                <span>Khám Phá 14 Ngành Quốc Tế</span>
+                <span>Đăng Ký Tư Vấn 1-1</span>
               </a>
 
               <Link
                 href="/admin"
-                className="w-full sm:w-auto px-5 py-3.5 rounded-xl font-semibold text-xs text-blue-200 hover:text-white bg-blue-900/40 hover:bg-blue-900/60 border border-blue-700/50 transition-all flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-4 py-3.5 rounded-xl font-semibold text-xs text-blue-200 hover:text-white bg-slate-800/80 hover:bg-slate-800 border border-slate-700 transition-all flex items-center justify-center gap-1.5"
               >
                 <ShieldCheck className="w-4 h-4 text-blue-400" />
                 <span>Cổng Quản Trị CRM</span>
@@ -159,7 +166,7 @@ export default function HomePage() {
           
           <div className="text-center max-w-3xl mx-auto mb-12">
             <span className="text-xs font-bold text-blue-700 uppercase tracking-wider">
-              Danh Mục Đào Tạo Đại Học Quốc Tế
+              Danh Mục Đào Tạo K32
             </span>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 mt-1.5 tracking-tight">
               14 Chương Trình Quốc Tế Xuất Sắc
@@ -247,7 +254,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-14">
             <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
-              Chính Sách Học Bổng & Khuyến Học
+              Chính Sách Khuyến Học K32 (2026)
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-1.5 tracking-tight">
               Quỹ Học Bổng Hơn 13 Tỷ Đồng
@@ -297,7 +304,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-14">
             <span className="text-xs font-bold text-blue-700 uppercase tracking-wider">
-              Phương Thức Tuyển Sinh Đại Học Chính Quy
+              Phương Thức Tuyển Sinh K32
             </span>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 mt-1.5 tracking-tight">
               05 Phương Thức Xét Tuyển Linh Hoạt
@@ -411,7 +418,7 @@ export default function HomePage() {
               Giải Đáp Thắc Mắc
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">
-              Câu Hỏi Thường Gặp Về Tuyển Sinh Đại Học Quốc Tế
+              Câu Hỏi Thường Gặp Về Tuyển Sinh K32
             </h2>
           </div>
 
