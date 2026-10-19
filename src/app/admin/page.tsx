@@ -21,7 +21,9 @@ import {
   Calendar,
   Sparkles,
   PlusCircle,
-  AlertCircle
+  AlertCircle,
+  UserPlus,
+  Shield
 } from 'lucide-react';
 
 export default function AdminDashboardPage() {
@@ -43,6 +45,8 @@ export default function AdminDashboardPage() {
   }, []);
 
   if (!stats) return null;
+
+  const isAdmin = currentUser?.role === 'ADMIN' || currentUser?.role === 'admin';
 
   // Uncontacted new leads that need attention
   const urgentLeads = leads.filter(l => l.status === 'new').slice(0, 5);
@@ -66,7 +70,7 @@ export default function AdminDashboardPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <Link
               href="/admin/leads"
               className="px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs shadow-md transition flex items-center gap-1.5"
@@ -74,6 +78,16 @@ export default function AdminDashboardPage() {
               <Users className="w-4 h-4" />
               <span>Xử Lý Danh Sách Lead</span>
             </Link>
+
+            {isAdmin && (
+              <Link
+                href="/admin/users"
+                className="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-xs shadow-md transition flex items-center gap-1.5"
+              >
+                <UserPlus className="w-4 h-4 text-emerald-100" />
+                <span>+ Thêm Chuyên Viên / Quản Lý Tài Khoản</span>
+              </Link>
+            )}
 
             <Link
               href="/admin/ai-assistant"
@@ -85,6 +99,33 @@ export default function AdminDashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Admin Quick Banner Card */}
+      {isAdmin && (
+        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-blue-900/90 via-indigo-900/80 to-slate-900 text-white border border-blue-500/30 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-600/30 border border-blue-400/30 flex items-center justify-center shrink-0">
+              <Shield className="w-5 h-5 text-amber-400" />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                <span>Quản Lý Tài Khoản & Phân Quyền Chuyên Viên</span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Dành Riêng Admin</span>
+              </h4>
+              <p className="text-xs text-slate-300 mt-0.5">
+                Tạo mới tài khoản chuyên viên tuyển sinh, cấp quyền (Admin / Staff), đổi mật khẩu hoặc mở/khóa tài khoản trực tiếp trong CSDL.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/admin/users"
+            className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shrink-0 shadow-sm"
+          >
+            <UserPlus className="w-4 h-4 text-amber-300" />
+            <span>Vào Trang Quản Lý Tài Khoản</span>
+          </Link>
+        </div>
+      )}
 
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
