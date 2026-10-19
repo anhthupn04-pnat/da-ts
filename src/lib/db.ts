@@ -110,11 +110,27 @@ export function getSqliteDb(): DatabaseSync {
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
+  const anhThuHash = bcrypt.hashSync('0102024', 10);
   const adminHash = bcrypt.hashSync('Admin@VNUS2026!', 10);
   const managerHash = bcrypt.hashSync('Manager@VNUS2026!', 10);
   const admissionsHash = bcrypt.hashSync('Staff@VNUS2026!', 10);
   const marketingHash = bcrypt.hashSync('Marketing@VNUS2026!', 10);
   const now = new Date().toISOString();
+
+  // 0. ADMIN - Anh Thư (Quản trị viên)
+  insertStmt.run(
+    '00000000-0000-0000-0000-000000000000',
+    'Anh Thư',
+    'anhthuphan0102',
+    'anhthuphan0102@gmail.com',
+    anhThuHash,
+    'ADMIN',
+    'ACTIVE',
+    '0905010224',
+    'Ban Quản Trị Hệ Thống VN-US',
+    now,
+    now
+  );
 
   // 1. ADMIN - Quản trị viên hệ thống
   insertStmt.run(
