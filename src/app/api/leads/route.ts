@@ -1,29 +1,56 @@
 import { NextResponse } from 'next/server';
-import { getLeads, addLead, getSafeCurrentUser } from '@/data/storage';
+import {
+  queryLeadsFromDb,
+  createLeadInDb,
+  updateLeadInDb,
+  deleteLeadFromDb,
+  batchAssignLeadsInDb
+} from '@/lib/db';
 
+/**
+ * GET /api/leads
+ * Lấy danh sách thí sinh từ cơ sở dữ liệu SQLite & Supabase
+ * Hỗ trợ bộ lọc role, userId (phân quyền cho chuyên viên), search, status, programId
+ */
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const role = searchParams.get('role');
-    const userId = searchParams.get('userId');
+    const role = searchParams.get('role') || undefined;
+    const userId = searchParams.get('userId') || undefined;
+    const search = searchParams.get('search') || undefined;
+    const status = searchParams.get('status') || undefined;
+    const programId = searchParams.get('programId') || undefined;
 
-    let user = getSafeCurrentUser();
-    if (role && userId) {
-      user = { ...user, role: role as any, id: userId };
-    }
+    const leads = await queryLeadsFromDb({
+      role,
+      userId,
+      search,
+      status,
+      programId
+    });
 
-    const leads = getLeads(user);
-    return NextResponse.json({ success: true, count: leads.length, leads });
+    return NextResponse.json({
+      success: true,
+      count: leads.length,
+      leads
+    });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: `Lỗi truy vấn danh sách thí sinh: ${error.message}` },
+      { status: 500 }
+    );
   }
 }
 
+/**
+ * POST /api/leads
+ * Lưu hồ sơ thí sinh đăng ký tư vấn hoặc nộp xét tuyển trực tuyến trực tiếp vào Database
+ */
 export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    // Server-side validation
+    // 1. Validation họ tên
     if (!body.fullName || body.fullName.trim().length < 2) {
       return NextResponse.json(
         { success: false, error: 'Họ và tên thí sinh phải có ít nhất 2 ký tự.' },
@@ -31,6 +58,7 @@ export async function POST(request: Request) {
       );
     }
 
+    // 2. Validation số điện thoại (10 số Việt Nam)
     const cleanPhone = (body.phone || '').replace(/[\s\-\.]/g, '');
     if (!/^(0|\+84)[3|5|7|8|9][0-9]{8}$/.test(cleanPhone)) {
       return NextResponse.json(
@@ -39,6 +67,7 @@ export async function POST(request: Request) {
       );
     }
 
+    // 3. Validation CCCD (12 số nếu có)
     const cleanCccd = (body.idCardNumber || '').replace(/[\s\-\.]/g, '');
     if (cleanCccd && cleanCccd.length !== 12) {
       return NextResponse.json(
@@ -47,6 +76,7 @@ export async function POST(request: Request) {
       );
     }
 
+    // 4. Validation ngành đào tạo
     if (!body.programId) {
       return NextResponse.json(
         { success: false, error: 'Vui lòng chọn chuyên ngành đăng ký xét tuyển.' },
@@ -54,7 +84,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const result = addLead({
+    // 5. Lưu bền vững vào CSDL Database
+    const lead = await createLeadInDb({
       fullName: body.fullName.trim(),
       phone: cleanPhone,
       idCardNumber: cleanCccd || undefined,
@@ -65,22 +96,92 @@ export async function POST(request: Request) {
       programId: body.programId,
       secondaryProgramId: body.secondaryProgramId || undefined,
       examBlock: body.examBlock || 'A00',
-      estimatedScore: body.estimatedScore ? Number(body.estimatedScore) : undefined,
+      estimatedScore: body.estimatedScore !== undefined ? Number(body.estimatedScore) : undefined,
       source: body.source || 'website',
+      utmCampaign: body.utmCampaign || undefined,
       status: body.status || 'new',
       priority: body.priority || 'medium',
+      assignedTo: body.assignedTo || undefined,
+      assignedToName: body.assignedToName || undefined,
+      departmentId: body.departmentId || undefined,
+      paymentStatus: body.paymentStatus || 'unpaid',
+      feePaidAmount: body.feePaidAmount !== undefined ? Number(body.feePaidAmount) : undefined,
+      paymentTransactionId: body.paymentTransactionId || undefined,
+      paymentDate: body.paymentDate || undefined,
       documents: body.documents || undefined,
-      notes: body.notes || 'Đăng ký xét tuyển trực tuyến'
+      notes: body.notes || 'Đăng ký xét tuyển trực tuyến',
+      allowUpdateIfExists: body.allowUpdateIfExists ?? true
     });
 
-    if (!result.success) {
-      return NextResponse.json({ success: false, error: result.error }, { status: 409 });
-    }
-
-    return NextResponse.json({ success: true, lead: result.lead }, { status: 201 });
+    return NextResponse.json({ success: true, lead }, { status: 201 });
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: `Lỗi máy chủ khi xử lý tiếp nhận thông tin: ${error.message}` },
+      { success: false, error: error.message },
+      { status: 400 }
+    );
+  }
+}
+
+/**
+ * PATCH /api/leads
+ * Cập nhật thông tin hồ sơ thí sinh hoặc phân công hàng loạt trong Database
+ */
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json();
+
+    // Phân công hàng loạt
+    if (body.action === 'batch_assign') {
+      const { leadIds, staffId, staffName } = body;
+      if (!Array.isArray(leadIds) || leadIds.length === 0 || !staffId) {
+        return NextResponse.json(
+          { success: false, error: 'Dữ liệu phân công không hợp lệ.' },
+          { status: 400 }
+        );
+      }
+      const count = await batchAssignLeadsInDb(leadIds, staffId, staffName || 'Chuyên viên');
+      return NextResponse.json({ success: true, count });
+    }
+
+    // Cập nhật từng hồ sơ
+    if (!body.id) {
+      return NextResponse.json(
+        { success: false, error: 'Thiếu mã hồ sơ thí sinh cần cập nhật.' },
+        { status: 400 }
+      );
+    }
+
+    const updated = await updateLeadInDb(body.id, body.updates || body);
+    return NextResponse.json({ success: true, lead: updated });
+  } catch (error: any) {
+    return NextResponse.json(
+      { success: false, error: `Lỗi cập nhật hồ sơ: ${error.message}` },
+      { status: 400 }
+    );
+  }
+}
+
+/**
+ * DELETE /api/leads
+ * Xóa vĩnh viễn hồ sơ thí sinh khỏi Database
+ */
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json(
+        { success: false, error: 'Vui lòng cung cấp mã hồ sơ thí sinh cần xóa.' },
+        { status: 400 }
+      );
+    }
+
+    await deleteLeadFromDb(id);
+    return NextResponse.json({ success: true, message: `Đã xóa hồ sơ ${id} thành công.` });
+  } catch (error: any) {
+    return NextResponse.json(
+      { success: false, error: `Lỗi xóa hồ sơ: ${error.message}` },
       { status: 500 }
     );
   }

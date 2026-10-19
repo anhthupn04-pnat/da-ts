@@ -91,43 +91,59 @@ export default function LeadRegistrationForm() {
     setLoading(true);
 
     try {
-      const result = addLead({
-        fullName: formData.fullName.trim(),
-        phone: cleanPhone,
-        idCardNumber: cleanCccd || undefined,
-        email: formData.email.trim(),
-        province: formData.province,
-        highSchool: formData.highSchool.trim() || 'Chưa cập nhật',
-        graduationYear: 2026,
-        programId: formData.programId,
-        secondaryProgramId: formData.secondaryProgramId || undefined,
-        examBlock: formData.examBlock,
-        estimatedScore: Number(formData.estimatedScore) || 24.0,
-        source: 'website',
-        status: 'new',
-        priority: 'high',
-        notes: formData.notes.trim() || 'Đăng ký tư vấn trực tuyến từ Cổng thông tin Tuyển sinh.'
+      const response = await fetch('/api/leads', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          fullName: formData.fullName.trim(),
+          phone: cleanPhone,
+          idCardNumber: cleanCccd || undefined,
+          email: formData.email.trim(),
+          province: formData.province,
+          highSchool: formData.highSchool.trim() || 'Chưa cập nhật',
+          graduationYear: 2026,
+          programId: formData.programId,
+          secondaryProgramId: formData.secondaryProgramId || undefined,
+          examBlock: formData.examBlock,
+          estimatedScore: Number(formData.estimatedScore) || 24.0,
+          source: 'website',
+          status: 'new',
+          priority: 'high',
+          notes: formData.notes.trim() || 'Đăng ký tư vấn trực tuyến từ Cổng thông tin Tuyển sinh.'
+        })
       });
 
-      if (!result.success) {
+      const resData = await response.json();
+
+      if (!response.ok || !resData.success) {
         setStatusMessage({
           type: 'error',
-          text: result.error || 'Có lỗi xảy ra khi lưu thông tin. Vui lòng thử lại.'
+          text: resData.error || 'Có lỗi xảy ra khi lưu thông tin. Vui lòng thử lại.'
         });
       } else {
+        const lead = resData.lead;
         setStatusMessage({
           type: 'success',
           text: 'Chúc mừng bạn! Yêu cầu tư vấn đã được lưu vào CSDL tuyển sinh. Chuyên viên sẽ liên hệ trong 30 phút.',
-          leadId: result.lead?.id
+          leadId: lead?.id
         });
+
+        // Đồng bộ cache cục bộ để đồng bộ tức thì trên trình duyệt
+        try {
+          addLead(lead);
+        } catch {
+          // ignore duplicate in local cache
+        }
 
         // Tự động kích hoạt mô phỏng Zalo ZNS
         sendOmnichannelMessage(
-          result.lead!.id,
+          lead.id,
           'zalo_zns',
           'ZNS_WELCOME',
           'Chào mừng bạn đến với Cổng Tuyển sinh Quốc tế VN-US',
-          `Chào ${result.lead!.fullName}, cảm ơn bạn đã đăng ký tư vấn ngành ${result.lead!.programName}. Mã hồ sơ của bạn là ${result.lead!.id}. Bạn có thể tra cứu tiến độ bất kỳ lúc nào tại tra-cuu.`
+          `Chào ${lead.fullName}, cảm ơn bạn đã đăng ký tư vấn ngành ${lead.programName}. Mã hồ sơ của bạn là ${lead.id}. Bạn có thể tra cứu tiến độ bất kỳ lúc nào tại mục Tra Cứu.`
         );
 
         // Reset
@@ -152,7 +168,7 @@ export default function LeadRegistrationForm() {
     } catch {
       setStatusMessage({
         type: 'error',
-        text: 'Lỗi kết nối hệ thống. Vui lòng kiểm tra đường truyền hoặc gọi trực tiếp Hotline 0979 407 340.'
+        text: 'Lỗi kết nối máy chủ CSDL. Vui lòng kiểm tra đường truyền hoặc gọi trực tiếp Hotline 0979 407 340.'
       });
     } finally {
       setLoading(false);

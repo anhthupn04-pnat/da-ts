@@ -87,11 +87,23 @@ export default function LeadsManagementPage() {
   // Reminders
   const [todayReminders, setTodayReminders] = useState<any[]>([]);
 
-  const loadData = () => {
+  const loadData = async () => {
     const user = getCurrentUser() || getSafeCurrentUser();
     setCurrentUser(user);
+    // 1. Tải nhanh từ bộ nhớ cục bộ
     setLeads(getLeads(user));
     setTodayReminders(getTodayFollowUpReminders(user));
+
+    // 2. Tải trực tiếp từ CSDL trung tâm qua API /api/leads
+    try {
+      const res = await fetch(`/api/leads?role=${encodeURIComponent(user.role)}&userId=${encodeURIComponent(user.id)}`);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.leads)) {
+        setLeads(data.leads);
+      }
+    } catch {
+      // nếu gặp lỗi mạng thì giữ dữ liệu cache cục bộ
+    }
   };
 
   useEffect(() => {
@@ -123,24 +135,37 @@ export default function LeadsManagementPage() {
   });
 
   // Xóa thí sinh (Ràng buộc: chỉ Admin & Manager)
-  const handleDelete = (id: string, name: string) => {
+  const handleDelete = async (id: string, name: string) => {
     if (currentUser.role === 'counselor') {
       alert('Chuyên viên tư vấn không có quyền xóa thí sinh theo chính sách bảo mật!');
       return;
     }
 
     if (confirm(`Bạn có chắc chắn muốn xóa vĩnh viễn hồ sơ thí sinh: ${name}?`)) {
-      const res = deleteLead(id, currentUser);
-      if (res.success) {
-        loadData();
-      } else {
-        alert(res.error);
+      try {
+        const res = await fetch(`/api/leads?id=${encodeURIComponent(id)}`, {
+          method: 'DELETE'
+        });
+        const data = await res.json();
+        if (data.success) {
+          deleteLead(id, currentUser);
+          await loadData();
+        } else {
+          alert(data.error || 'Lỗi khi xóa hồ sơ khỏi CSDL.');
+        }
+      } catch (err: any) {
+        const res = deleteLead(id, currentUser);
+        if (res.success) {
+          loadData();
+        } else {
+          alert(res.error);
+        }
       }
     }
   };
 
   // Tạo mới hồ sơ một chạm
-  const handleCreateLead = (e: React.FormEvent) => {
+  const handleCreateLead = async (e: React.FormEvent) => {
     e.preventDefault();
     setAddError(null);
 
@@ -158,32 +183,41 @@ export default function LeadsManagementPage() {
       return;
     }
 
-    const res = addLead({
-      fullName: newLeadForm.fullName.trim(),
-      phone: cleanPhone,
-      idCardNumber: cleanCccd || undefined,
-      email: newLeadForm.email.trim(),
-      highSchool: newLeadForm.highSchool.trim(),
-      province: newLeadForm.province,
-      graduationYear: 2026,
-      programId: newLeadForm.programId,
-      secondaryProgramId: newLeadForm.secondaryProgramId || undefined,
-      examBlock: newLeadForm.examBlock,
-      estimatedScore: Number(newLeadForm.estimatedScore) || undefined,
-      source: newLeadForm.source,
-      status: 'new',
-      priority: newLeadForm.priority,
-      notes: newLeadForm.notes.trim()
-    }, currentUser);
+    try {
+      const response = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: newLeadForm.fullName.trim(),
+          phone: cleanPhone,
+          idCardNumber: cleanCccd || undefined,
+          email: newLeadForm.email.trim(),
+          highSchool: newLeadForm.highSchool.trim(),
+          province: newLeadForm.province,
+          graduationYear: 2026,
+          programId: newLeadForm.programId,
+          secondaryProgramId: newLeadForm.secondaryProgramId || undefined,
+          examBlock: newLeadForm.examBlock,
+          estimatedScore: Number(newLeadForm.estimatedScore) || undefined,
+          source: newLeadForm.source,
+          status: 'new',
+          priority: newLeadForm.priority,
+          notes: newLeadForm.notes.trim()
+        })
+      });
 
-    if (!res.success) {
-      setAddError(res.error || 'Có lỗi xảy ra khi tạo thí sinh.');
-      return;
+      const resData = await response.json();
+      if (!response.ok || !resData.success) {
+        setAddError(resData.error || 'Có lỗi xảy ra khi tạo thí sinh.');
+        return;
+      }
+
+      setAddModalOpen(false);
+      await loadData();
+      alert(`Đã lưu thành công vào CSDL với mã hồ sơ: ${resData.lead?.id}!`);
+    } catch (err: any) {
+      setAddError(`Lỗi kết nối máy chủ CSDL: ${err.message}`);
     }
-
-    setAddModalOpen(false);
-    loadData();
-    alert(`Đã lưu thành công vào CSDL với mã hồ sơ: ${res.lead?.id}!`);
   };
 
   // Xoay vòng Round-Robin

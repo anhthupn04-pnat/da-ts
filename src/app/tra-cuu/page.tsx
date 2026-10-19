@@ -34,11 +34,32 @@ export default function PublicLookupPortal() {
   const [selectedFee, setSelectedFee] = useState<'app_fee' | 'tuition_deposit'>('app_fee');
   const [paymentSuccessMsg, setPaymentSuccessMsg] = useState<string | null>(null);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     setSearched(true);
     const clean = query.replace(/[\s\-\.]/g, '').toLowerCase();
 
+    // 1. Tra cứu trực tiếp từ Cơ sở dữ liệu trung tâm
+    try {
+      const res = await fetch(`/api/leads?search=${encodeURIComponent(clean)}`);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.leads) && data.leads.length > 0) {
+        const found = data.leads.find((l: Lead) => {
+          const p = l.phone.replace(/[\s\-\.]/g, '');
+          const c = (l.idCardNumber || '').replace(/[\s\-\.]/g, '');
+          const id = l.id.toLowerCase();
+          return p === clean || c === clean || id === clean;
+        });
+        if (found) {
+          setCandidate(found);
+          return;
+        }
+      }
+    } catch {
+      // Tiếp tục tìm trong bộ nhớ cục bộ nếu ngoại tuyến
+    }
+
+    // 2. Tìm trong bộ nhớ cục bộ fallback
     const all = getAllRawLeads();
     const found = all.find(l => {
       const p = l.phone.replace(/[\s\-\.]/g, '');

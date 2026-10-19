@@ -81,7 +81,7 @@ export default function OnlineAdmissionsPortal() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
 
@@ -102,51 +102,68 @@ export default function OnlineAdmissionsPortal() {
     setLoading(true);
 
     try {
-      const res = addLead({
-        fullName: formData.fullName.trim(),
-        phone: cleanPhone,
-        idCardNumber: cleanCccd || undefined,
-        email: formData.email.trim(),
-        highSchool: formData.highSchool.trim(),
-        province: formData.province,
-        graduationYear: 2026,
-        programId: formData.programId,
-        secondaryProgramId: formData.secondaryProgramId || undefined,
-        examBlock: formData.examBlock,
-        estimatedScore: Number(formData.estimatedScore) || 24.0,
-        source: 'website',
-        status: 'submitted_app',
-        priority: 'high',
-        documents: {
-          transcriptPhotos,
-          idCardFront,
-          verificationStatus: 'pending',
-          verifiedScoreMath: Number(formData.scoreMath),
-          verifiedScoreLiterature: Number(formData.scoreLiterature),
-          verifiedScoreEnglish: Number(formData.scoreEnglish),
-          verificationNotes: 'Thí sinh nộp trực tuyến qua E-Form Paperless Admissions.'
+      const response = await fetch('/api/leads', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
         },
-        notes: formData.notes.trim() || 'Nộp hồ sơ xét tuyển trực tuyến qua E-Form'
+        body: JSON.stringify({
+          fullName: formData.fullName.trim(),
+          phone: cleanPhone,
+          idCardNumber: cleanCccd || undefined,
+          email: formData.email.trim(),
+          highSchool: formData.highSchool.trim(),
+          province: formData.province,
+          graduationYear: 2026,
+          programId: formData.programId,
+          secondaryProgramId: formData.secondaryProgramId || undefined,
+          examBlock: formData.examBlock,
+          estimatedScore: Number(formData.estimatedScore) || 24.0,
+          source: 'website',
+          status: 'submitted_app',
+          priority: 'high',
+          documents: {
+            transcriptPhotos,
+            idCardFront,
+            verificationStatus: 'pending',
+            verifiedScoreMath: Number(formData.scoreMath),
+            verifiedScoreLiterature: Number(formData.scoreLiterature),
+            verifiedScoreEnglish: Number(formData.scoreEnglish),
+            verificationNotes: 'Thí sinh nộp trực tuyến qua E-Form Paperless Admissions.'
+          },
+          notes: formData.notes.trim() || 'Nộp hồ sơ xét tuyển trực tuyến qua E-Form',
+          allowUpdateIfExists: true
+        })
       });
 
-      if (!res.success) {
-        setErrorMsg(res.error || 'Có lỗi xảy ra khi nộp hồ sơ.');
+      const resData = await response.json();
+
+      if (!response.ok || !resData.success) {
+        setErrorMsg(resData.error || 'Có lỗi xảy ra khi nộp hồ sơ.');
         setLoading(false);
         return;
       }
 
-      setSubmittedCandidate(res.lead);
+      const candidate = resData.lead;
+      setSubmittedCandidate(candidate);
+
+      // Đồng bộ cache cục bộ
+      try {
+        addLead(candidate);
+      } catch {
+        // ignore duplicate in local cache
+      }
 
       // Tự động kích hoạt mô phỏng Zalo ZNS / SMS
       sendOmnichannelMessage(
-        res.lead!.id,
+        candidate.id,
         'zalo_zns',
         'ZNS_APP_RECEIVED',
         'Xác nhận đã tiếp nhận hồ sơ xét tuyển trực tuyến VN-US',
-        `Chào bạn ${res.lead!.fullName}, Hội đồng Tuyển sinh VN-US Đại học Duy Tân xác nhận đã tiếp nhận hồ sơ xét tuyển ${res.lead!.id} ngành ${res.lead!.programName}. Cán bộ hậu kiểm sẽ thẩm định minh chứng học bạ trong thời gian sớm nhất!`
+        `Chào bạn ${candidate.fullName}, Hội đồng Tuyển sinh VN-US Đại học Duy Tân xác nhận đã tiếp nhận hồ sơ xét tuyển ${candidate.id} ngành ${candidate.programName}. Cán bộ hậu kiểm sẽ thẩm định minh chứng học bạ trong thời gian sớm nhất!`
       );
     } catch (err: any) {
-      setErrorMsg(`Lỗi máy chủ: ${err.message}`);
+      setErrorMsg(`Lỗi kết nối máy chủ CSDL: ${err.message}`);
     } finally {
       setLoading(false);
     }
