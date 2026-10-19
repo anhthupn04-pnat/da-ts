@@ -62,18 +62,17 @@ Hệ thống sẽ biên dịch tĩnh (Static Generation & Route Handlers) đảm
 
 ---
 
-### Giai đoạn 2: Triển khai lên Vercel (1-Click Deploy)
+### Giai đoạn 2: Triển khai lên Vercel (https://da-ts.vercel.app/)
 
-1. Đăng nhập vào **[https://vercel.com](https://vercel.com)** (bằng tài khoản GitHub của bạn).
-2. Bấm nút **"Add New..."** → Chọn **"Project"**.
-3. Tìm và bấm **"Import"** repository `trung-tam-tu-van-sinh-vien` vừa đẩy lên.
-4. Tại màn hình **Configure Project**:
-   - **Framework Preset:** Next.js (Vercel tự động nhận diện).
-   - **Root Directory:** `./` (để mặc định).
-   - **Build Command:** `next build` (để mặc định).
-5. Bấm nút **"Deploy"**.
-6. Sau khoảng 1-2 phút, Vercel sẽ cấp cho bạn một đường link công khai (ví dụ: `https://trung-tam-tu-van-sinh-vien.vercel.app`).
-👉 **Bây giờ bạn có thể gửi đường link này cho đồng nghiệp, hội đồng tuyển sinh và mọi người vào test thử trên máy tính lẫn điện thoại di động!**
+- **Trang Production chính thức:** [https://da-ts.vercel.app/](https://da-ts.vercel.app/)
+- **Hệ thống phân quyền 4 vai trò (4-Tier RBAC):**
+  1. `ADMIN` (Quản trị viên): Toàn quyền quản lý tài khoản, phân quyền, cấu hình hệ thống và audit trail.
+  2. `MANAGER` (Quản lý): Phân bổ hồ sơ (Round-Robin, theo địa bàn), duyệt kết quả trúng tuyển, báo cáo KPI tuyển sinh & marketing.
+  3. `STAFF_ADMISSIONS` (Chuyên viên Tuyển sinh): Quản lý danh sách thí sinh phụ trách, nhật ký tư vấn, xác thực học bạ/CCCD.
+  4. `STAFF_MARKETING` (Chuyên viên Marketing): Quản lý nguồn leads, chiến dịch Landing Page, mã UTM, import leads thô và lịch bài viết.
+- **Quy trình CI/CD tự động:**
+  - Mỗi lần chạy `git push origin main`, Webhook tự động kích hoạt Vercel build và publish bản mới trực tiếp lên domain `https://da-ts.vercel.app/`.
+  - Triển khai trực tiếp qua terminal (fallback command): `npx vercel --prod --yes`.
 
 ---
 
